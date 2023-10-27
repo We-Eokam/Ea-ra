@@ -35,7 +35,7 @@ export default function NtzPage() {
             <InfoButtonBlack>
               보조금 혜택
             </InfoButtonBlack>
-            <InfoImage src="/images/bojogeum.png" />
+            <InfoImage src="/images/subsidy.png" />
           </InfoButton>
 
           <InfoButton>
