@@ -2,6 +2,7 @@ import styled from "styled-components"
 import NavBar from "../../components/NavBar/NavBar"
 import MainFrame from "../../components/MainFrame/MainFrame"
 import { ReactComponent as PigCoin } from "../../assets/icons/pig-coin.svg"
+import { ShadowBox } from "../../components/ShadowBox/ShadowBox"
 
 export default function NtzPage() {
   return (
@@ -9,23 +10,21 @@ export default function NtzPage() {
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
       <MainFrame headbar="no" navbar="yes" bgcolor="background" marginsize="medium">
         <CPointContainer>
-          <InnerContainer>
-            <TextLine>
-              <Bold>환경구해</Bold>님이
-            </TextLine>
-            <TextLine>
-              이번달 모은 <Green>탄소중립포인트</Green>는
-            </TextLine>
-            <CPoint>
-              <Bold>12,610</Bold>원
-            </CPoint>
-            <PigCoinFrame>
-              <PigCoin/>
-            </PigCoinFrame>
-            <Notice>
-              익월 <Bold>17-21일</Bold> 중 입금될 예정입니다
-            </Notice>
-          </InnerContainer>
+          <TextLine>
+            <Bold>환경구해</Bold>님이
+          </TextLine>
+          <TextLine>
+            이번달 모은 <Green>탄소중립포인트</Green>는
+          </TextLine>
+          <CPoint>
+            <Bold>12,610</Bold>원
+          </CPoint>
+          <PigCoinFrame>
+            <PigCoin/>
+          </PigCoinFrame>
+          <Notice>
+            익월 <Bold>17-21일</Bold> 중 입금될 예정입니다
+          </Notice>
         </CPointContainer>
 
         <InfoButtonsFrame>
@@ -73,7 +72,7 @@ export default function NtzPage() {
         </InfoButtonsFrame>
 
         <CPointContainer style={{marginTop:'8px', height:'288px'}}>
-          <InnerContainer>
+
             <TextLine>
               <Bold>나의 활동 요약</Bold>
             </TextLine>
@@ -83,8 +82,6 @@ export default function NtzPage() {
             <div style={{marginTop:'80px', marginLeft:'40px'}}>
               여기에 차트
             </div>
-
-          </InnerContainer>
         </CPointContainer>
       </MainFrame>
       <NavBar />
@@ -93,19 +90,10 @@ export default function NtzPage() {
   )
 }
 
-const CPointContainer = styled.div`
-  position: relative;
-  width: 100%;
+const CPointContainer = styled(ShadowBox)`
   height: 308px;
   margin-top: 54px;
-  background-color: var(--white);
-  border-radius: 10px;
-  box-shadow: 2px 2px 6px rgba(0,0,0, 0.04);
   padding-top: 20px;
-`
-
-const InnerContainer = styled.div`
-  position: relative;
   font-size: 18px;
   font-weight: 400;
 `
@@ -183,7 +171,6 @@ const InfoButtonBlack = styled.div`
   position: relative;
   margin-top: 4px;
   margin-left: 12px;
-  color: var(--black);
   font-size: 14px;
   font-weight: 600;
 `
