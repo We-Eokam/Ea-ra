@@ -20,14 +20,27 @@
 }
 
 #root {
+  /* PC */
   width: 100dvw;
-  max-width: 580px;
+  max-width: 544px;
   height: 100dvh;
+
+  /* iOS */
+  /* width: 390px;
+  height: 852px; */
+
+  /* Android */
+  /* width: 360px;
+  height: 800px; */
+
+
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--white);
+
+  overflow: hidden;
 }
 
 body {
