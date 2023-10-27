@@ -7,6 +7,9 @@ import NtzPage from "../pages/NtzPage/NtzPage";
 import MyPage from "../pages/MyPage/MyPage";
 
 
+import Subsidy from "../pages/NtzPage/Subsidy";
+
+
 export default function Router() {
   return (
     <BrowserRouter>
@@ -16,8 +19,9 @@ export default function Router() {
         <Route path="/feed" element={<FeedPage />}></Route>
         <Route path="/act" element={<ActPage />}></Route>
         <Route path="/netzero" element={<NtzPage />}></Route>
+        <Route path="/netzero/subsidy" element={<Subsidy />}></Route>
         <Route path="/mypage" element={<MyPage />}></Route>
-      </Routes>
+      </Routes>b
     </BrowserRouter>
   );
 }
