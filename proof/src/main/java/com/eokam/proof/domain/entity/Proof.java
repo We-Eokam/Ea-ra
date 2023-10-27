@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.eokam.proof.domain.value.ActivityType;
+import com.eokam.proof.domain.constant.ActivityType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

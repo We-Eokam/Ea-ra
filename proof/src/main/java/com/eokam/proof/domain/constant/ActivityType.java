@@ -1,4 +1,4 @@
-package com.eokam.proof.domain.value;
+package com.eokam.proof.domain.constant;
 
 public enum ActivityType {
 	ELECTRONIC_RECEIPT("전자영수증"),
