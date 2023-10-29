@@ -1,6 +1,6 @@
 package com.eokam.cpoint.common;
 
-import com.eokam.cpoint.presentation.dto.Member;
+import com.eokam.cpoint.presentation.dto.MemberDto;
 import com.eokam.cpoint.presentation.dto.MemberRole;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +25,7 @@ public class CommonSteps {
         try{
             String JWT_쿠키 = Base64.getUrlEncoder().encodeToString(
                     objectMapper.writeValueAsString(
-                            Member.builder()
+                            MemberDto.builder()
                                     .memberId(memberId)
                                     .memberRole(MemberRole.MEMBER)
                                     .build()
