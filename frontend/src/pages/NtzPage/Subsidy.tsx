@@ -10,7 +10,7 @@ export default function Subsidy() {
   return (
     <>
       <HeadBar pagename="" bgcolor="white" backbutton="yes" />
-      <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="large" >
+      <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="large">
         <Title style={{marginTop: '48px'}}>
           탄소중립 포인트 제도,<br/>아직도 가입 안하셨나요?
         </Title>
@@ -51,6 +51,7 @@ export default function Subsidy() {
         <SubTitleNoMargin>
           현금, 참여기업 / 카드사 포인트 (1인당 최대 7만원 지원)
         </SubTitleNoMargin>
+        <ForMargin />
       </MainFrame>
       <SignUpFrame>
         <SingupButton>
@@ -113,4 +114,8 @@ const SingupButton = styled(LongButton)`
   margin-left: 16px;
   margin-right: 16px;
   margin-top: 14px;
+`
+const ForMargin = styled.div`
+  height: 88px;
+  width: 100%;
 `
