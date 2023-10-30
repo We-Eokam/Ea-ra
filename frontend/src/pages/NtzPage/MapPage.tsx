@@ -1,8 +1,7 @@
-import React from "react";
+// import React from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
-import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 
 interface CategoryProps {
