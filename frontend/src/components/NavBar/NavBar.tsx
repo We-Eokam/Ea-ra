@@ -52,7 +52,7 @@ const NavBarFrame = styled.div`
   background-color: var(--white);
   justify-content: center;
   color: var(--nav-gray);
-  z-index: 999;
+  z-index: 2;
 `
 
 const NavBarInner = styled.div`

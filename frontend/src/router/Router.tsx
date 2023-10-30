@@ -10,6 +10,7 @@ import MyPage from "../pages/MyPage/MyPage";
 
 import Subsidy from "../pages/NtzPage/Subsidy";
 import MapPage from "../pages/NtzPage/MapPage";
+import CompanyPage from "../pages/NtzPage/CompanyPage";
 
 
 export default function Router() {
@@ -24,6 +25,7 @@ export default function Router() {
         <Route path="/netzero" element={<NtzPage />}></Route>
         <Route path="/netzero/subsidy" element={<Subsidy />}></Route>
         <Route path="/netzero/map" element={<MapPage />}></Route>
+        <Route path="/netzero/company" element={<CompanyPage />}></Route>
         <Route path="/mypage" element={<MyPage />}></Route>
       </Routes>
     </BrowserRouter>
