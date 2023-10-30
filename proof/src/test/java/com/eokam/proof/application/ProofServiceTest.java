@@ -39,7 +39,7 @@ class ProofServiceTest extends BaseServiceTest {
 		// given
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
-		given(proofRepository.findAllByProofId(1L)).willReturn(EXPECTED_MY_PROOF_LIST());
+		given(proofRepository.findAllByMemberId(1L)).willReturn(EXPECTED_MY_PROOF_LIST());
 
 		// when
 		List<Proof> actualResponse = proofService.getMyProofList(testJwt);
