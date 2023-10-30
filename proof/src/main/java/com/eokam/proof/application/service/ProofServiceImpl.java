@@ -3,7 +3,6 @@ package com.eokam.proof.application.service;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,6 @@ public class ProofServiceImpl implements ProofService {
 		return proofRepository.findAllByMemberId(memberId)
 			.stream()
 			.map(ProofDto::from)
-			.collect(Collectors.toList());
+			.toList();
 	}
 }

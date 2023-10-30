@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -53,8 +52,10 @@ class ProofServiceTest extends BaseServiceTest {
 
 		// then
 		assertThat(actualResponse).usingRecursiveAssertion()
-			.isEqualTo(EXPECTED_MY_PROOF_LIST.stream().map(ProofDto::from).collect(
-				Collectors.toList()));
+			.isEqualTo(EXPECTED_MY_PROOF_LIST.stream()
+				.map(ProofDto::from)
+				.toList()
+			);
 	}
 
 	private void generateProof(Long i) {
