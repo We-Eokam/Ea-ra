@@ -46,4 +46,13 @@ public class CpointSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 탄소중립실천포인트_활동요약_조회(String JWT_쿠키){
+        return RestAssured.given()
+                .cookie(JWT_쿠키)
+                .queryParam("type","category")
+                .when()
+                .get("/cpoint")
+                .then()
+                .extract();
+    }
 }
