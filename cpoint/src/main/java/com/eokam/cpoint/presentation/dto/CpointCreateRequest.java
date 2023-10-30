@@ -18,4 +18,7 @@ public class CpointCreateRequest {
     @Positive(message = "적립할 포인트는 양수여야합니다.")
     private Integer amount;
 
+    @NotNull(message="탄소중립실천포인트 관련 활동이 필요합니다.")
+    private ActivityType activityType;
+
 }
