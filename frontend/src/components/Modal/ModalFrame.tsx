@@ -4,8 +4,6 @@ export const ModalFrame = styled.div`
   position: absolute;
   left: 0;
   right: 0;
-  padding-left: 20px;
-  padding-right: 20px;
   height: 92%;
   bottom: 0;
   background-color: var(--white);

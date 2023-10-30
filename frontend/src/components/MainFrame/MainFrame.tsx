@@ -32,11 +32,11 @@ export default function MainFrame({
   }
 
   if (marginsize === "small") {
-    marginsides = 16;
+    marginsides = 4.44;
   } else if (marginsize === "medium") {
-    marginsides = 20;
+    marginsides = 5.56;
   } else if (marginsize === "large") {
-    marginsides = 24;
+    marginsides = 6.67;
   } else if (marginsize === "no") {
     marginsides = 0;
   }
@@ -48,9 +48,9 @@ export default function MainFrame({
         height: `calc(100% - ${frame}px)`,
         marginTop: `${marginTop}px`,
         marginBottom: `${marginBottom}px`,
-        paddingLeft: `${marginsides}px`,
-        paddingRight: `${marginsides}px`,
-        padding: `0px ${marginsides}px`,
+        // paddingLeft: `${marginsides}%`,
+        // paddingRight: `${marginsides}%`,
+        padding: `0px ${marginsides}%`,
       }}
     >
       {children}
