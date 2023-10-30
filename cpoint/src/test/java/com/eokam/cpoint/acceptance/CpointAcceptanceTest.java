@@ -1,5 +1,6 @@
 package com.eokam.cpoint.acceptance;
 
+import com.eokam.cpoint.presentation.dto.ActivityType;
 import com.eokam.cpoint.presentation.dto.CpointCreateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -35,7 +36,13 @@ public class CpointAcceptanceTest {
     @Test
     void 예상탄소중립실천포인트를_볼수있다(){
         //given
-        var 생성_요청 = CpointCreateRequest.builder().amount(500).memberId(1L).build();
+        var 생성_요청 = CpointCreateRequest
+                .builder()
+                .amount(100)
+                .memberId(1L)
+                .activityType(ActivityType.ELECTRONIC_RECEIPT)
+                .build();
+
         var 생성_응답 = 탄소중립실천포인트가_적립됨(생성_요청);
         HTTP_상태코드를_검증한다(생성_응답,정상생성);
 
@@ -45,7 +52,7 @@ public class CpointAcceptanceTest {
 
         //then
         HTTP_상태코드를_검증한다(조회_응답, 정상조회);
-        탄소중립실천포인트_조회_검증(조회_응답,500);
+        탄소중립실천포인트_조회_검증(조회_응답,1100);
     }
 
 
