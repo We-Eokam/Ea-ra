@@ -55,5 +55,27 @@ public class CpointAcceptanceTest {
         탄소중립실천포인트_조회_검증(조회_응답,1100);
     }
 
+    @Test
+    void 예상탄소중립실천포인트를_적립할수있다(){
+        //given
+        var 생성_요청 = CpointCreateRequest
+                .builder()
+                .amount(100)
+                .memberId(1L)
+                .activityType(ActivityType.ELECTRONIC_RECEIPT)
+                .build();
+
+        //when
+        var 생성_응답 = 탄소중립실천포인트가_적립됨(생성_요청);
+
+        //then
+        HTTP_상태코드를_검증한다(생성_응답,정상생성);
+
+        var 요청_JWT_쿠키 = JWT_쿠키_생성(1L);
+        var 조회_응답 = 탄소중립실천포인트를_조회하면(요청_JWT_쿠키);
+
+        HTTP_상태코드를_검증한다(조회_응답, 정상조회);
+        탄소중립실천포인트_조회_검증(조회_응답,1100);
+    }
 
 }
