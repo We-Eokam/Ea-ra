@@ -51,6 +51,6 @@ public class Proof {
 	@Column(length = 100)
 	private String contents;
 
-	@OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "proof", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<ProofImage> proofImages;
 }

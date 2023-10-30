@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eokam.proof.application.dto.ProofDto;
+import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseServiceTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
@@ -46,10 +48,14 @@ class ProofServiceTest extends BaseServiceTest {
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
 		// when
-		List<Proof> actualResponse = proofService.getMyProofList(testJwt);
+		List<ProofDto> actualResponse = proofService.getMyProofList(testJwt);
 
 		// then
-		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(EXPECTED_MY_PROOF_LIST);
+		assertThat(actualResponse).usingRecursiveAssertion()
+			.isEqualTo(EXPECTED_MY_PROOF_LIST.stream()
+				.map(ProofDto::from)
+				.toList()
+			);
 	}
 
 	private void generateProof(Long i) {
