@@ -1,9 +1,8 @@
 package com.eokam.accusation.presentation.controller;
 
-import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +28,9 @@ public class AccusationController {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AccusationResponse> createAccusation(
 		@RequestPart(value = "file", required = false) List<MultipartFile> images,
-		@RequestPart(value = "content") AccusationRequest request) throws IOException {
+		@RequestPart(value = "content") AccusationRequest request) {
 		AccusationDto accusationDto = accusationService.createAccusation(AccusationDto.of(request), images);
 		AccusationResponse response = AccusationResponse.from(accusationDto);
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+		return ResponseEntity.created(URI.create("/accusation/" + response.getAccusationId())).body(response);
 	}
 }
