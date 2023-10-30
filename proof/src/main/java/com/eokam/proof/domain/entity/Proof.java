@@ -42,7 +42,7 @@ public class Proof {
 	private ActivityType activityType;
 
 	@Column(name = "c_company_id")
-	private Long CCompanyId;
+	private Long cCompanyId;
 
 	@Column(nullable = false)
 	@CreatedDate

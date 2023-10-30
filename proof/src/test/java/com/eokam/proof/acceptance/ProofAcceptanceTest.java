@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import com.eokam.proof.common.AcceptanceTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
@@ -92,7 +93,7 @@ public class ProofAcceptanceTest extends AcceptanceTest {
 					.memberId(1L)
 					.activityType(ActivityType.ELECTRONIC_RECEIPT)
 					.proofImages(imageList)
-					.CCompanyId(1L)
+					.cCompanyId(1L)
 					.build()
 				)
 			);
