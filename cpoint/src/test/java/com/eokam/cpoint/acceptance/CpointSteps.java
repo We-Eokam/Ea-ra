@@ -1,5 +1,6 @@
 package com.eokam.cpoint.acceptance;
 
+import com.eokam.cpoint.presentation.dto.CCompanyDetailRequest;
 import com.eokam.cpoint.presentation.dto.CCompanyListRetrieveRequest;
 import com.eokam.cpoint.presentation.dto.CpointCreateRequest;
 import io.restassured.RestAssured;
@@ -35,4 +36,14 @@ public class CpointSteps {
                 .then()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 탄소중립실천포인트_연계기업_상세조회(final CCompanyDetailRequest 상세조회요청){
+        return RestAssured.given()
+                .queryParam("companyId",상세조회요청.getCompanyId())
+                .when()
+                .get("/cpoint/company")
+                .then()
+                .extract();
+    }
+
 }
