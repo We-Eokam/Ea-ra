@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccusationCreateRequest {
+public class AccusationRequest {
 	private Long witnessId;
 
 	private Long memberId;
 
 	private ActivityType activityType;
+
+	private String activityDetail;
 
 }
