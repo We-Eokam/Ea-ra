@@ -1,6 +1,7 @@
 package com.eokam.cpoint.acceptance;
 
 import com.eokam.cpoint.presentation.dto.ActivityType;
+import com.eokam.cpoint.presentation.dto.CCompanyDetailRequest;
 import com.eokam.cpoint.presentation.dto.CCompanyListRetrieveRequest;
 import com.eokam.cpoint.presentation.dto.CpointCreateRequest;
 import io.restassured.response.ExtractableResponse;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import io.restassured.RestAssured;
 import static com.eokam.cpoint.acceptance.CpointSteps.탄소중립실천포인트를_조회하면;
+import static com.eokam.cpoint.acceptance.CpointSteps.탄소중립실천포인트_연계기업_상세조회;
 import static com.eokam.cpoint.common.CommonSteps.HTTP_상태코드를_검증한다;
 import static com.eokam.cpoint.acceptance.CpointSteps.탄소중립실천포인트가_적립됨;
 import static com.eokam.cpoint.acceptance.CpointSteps.탄소중립실천포인트_연계기업_목록조회;
@@ -37,6 +39,10 @@ public class CpointAcceptanceTest {
 
     private void 탄소중립실천포인트_연계기업_목록_조회_검증(final ExtractableResponse<Response> 응답){
         assertThat(응답.jsonPath().getList("companies")).hasSizeGreaterThan(0);
+    }
+
+    private void 탄소중립실천포인트_연계기업_상세_조회_검증(final ExtractableResponse<Response> 응답,final Long 기업PK){
+        assertThat(응답.jsonPath().getInt("companyId")).isEqualTo(기업PK);
     }
 
     @Test
@@ -85,19 +91,37 @@ public class CpointAcceptanceTest {
     }
 
     @Test
-    void 탄소중립실천포인트_연계기업_목록을_조회할수있다(){
+    void 탄소중립실천포인트_연계기업_목록을_조회할수있다() {
         //given
-        var 조회_요청 = CCompanyListRetrieveRequest.
-                builder().
-                activityType(ActivityType.ELECTRONIC_RECEIPT)
+        var 조회_요청 = CCompanyListRetrieveRequest
+                .builder()
+                .activityType(ActivityType.ELECTRONIC_RECEIPT)
                 .build();
 
         //when
         var 조회_응답 = 탄소중립실천포인트_연계기업_목록조회(조회_요청);
 
         //then
-        HTTP_상태코드를_검증한다(조회_응답,정상조회);
+        HTTP_상태코드를_검증한다(조회_응답, 정상조회);
         탄소중립실천포인트_연계기업_목록_조회_검증(조회_응답);
     }
 
+    @Test
+    void 탄소중립실천포인트_연계기업을_상세조회할수있다(){
+        //given
+        var 기업PK = 1L;
+
+        var 조회_요청 = CCompanyDetailRequest
+                .builder()
+                .companyId(기업PK)
+                .build();
+
+        //then
+        var 조회_응답 = 탄소중립실천포인트_연계기업_상세조회(조회_요청);
+
+        //then
+        HTTP_상태코드를_검증한다(조회_응답,정상조회);
+        탄소중립실천포인트_연계기업_상세_조회_검증(조회_응답,기업PK);
+
+    }
 }
