@@ -2,6 +2,7 @@ package com.eokam.proof.acceptance;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -40,33 +41,18 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.body().jsonPath().getList("proof")).hasSize(5);
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-		List<Object> proofIdList = response.body().jsonPath().getList("proof.proof_id");
-		List<Object> activityTypeList = response.body().jsonPath().getList("proof.activity_type");
-		List<Object> cCompanyIdList = response.body().jsonPath().getList("proof.c_company_id");
-		List<Object> createdAtList = response.body().jsonPath().getList("proof.created_at");
-		List<Object> pictureList = response.body().jsonPath().getList("proof.picture");
+		List<Long> proofIdList = response.body().jsonPath().getList("proof.proof_id");
+		List<ActivityType> activityTypeList = response.body().jsonPath().getList("proof.activity_type");
+		List<Long> cCompanyIdList = response.body().jsonPath().getList("proof.c_company_id");
+		List<LocalDateTime> createdAtList = response.body().jsonPath().getList("proof.created_at");
+		List<String> pictureList = response.body().jsonPath().getList("proof.picture");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(proofIdList.get(i).toString())
-				.hasToString(
-					proofList.get(i).getProofId().toString()
-				);
-			assertThat(activityTypeList.get(i).toString())
-				.hasToString(
-					proofList.get(i).getActivityType().toString()
-				);
-			assertThat(cCompanyIdList.get(i).toString())
-				.hasToString(
-					proofList.get(i).getCCompanyId().toString()
-				);
-			assertThat(createdAtList.get(i).toString())
-				.hasToString(
-					proofList.get(i).getCreatedAt().toString()
-				);
-			assertThat(pictureList.get(i).toString())
-				.hasToString(
-					proofList.get(i).getProofImages().get(0).getFileUrl()
-				);
+			assertThat(proofIdList.get(i)).isEqualTo(proofList.get(i).getProofId());
+			assertThat(activityTypeList.get(i)).isEqualTo(proofList.get(i).getActivityType());
+			assertThat(cCompanyIdList.get(i)).isEqualTo(proofList.get(i).getCCompanyId());
+			assertThat(createdAtList.get(i)).isEqualTo(proofList.get(i).getCreatedAt());
+			assertThat(pictureList.get(i)).isEqualTo(proofList.get(i).getProofImages().get(0).getFileUrl());
 		});
 	}
 
