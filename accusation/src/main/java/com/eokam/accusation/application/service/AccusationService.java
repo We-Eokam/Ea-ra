@@ -1,0 +1,14 @@
+package com.eokam.accusation.application.service;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.eokam.accusation.application.dto.AccusationDto;
+
+public interface AccusationService {
+
+	AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile) throws
+		IOException;
+}
