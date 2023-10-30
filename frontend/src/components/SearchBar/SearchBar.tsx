@@ -22,7 +22,6 @@ export default function SearchBar() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    console.log(inputValue);
   }
 
   const handleErase = () => {
@@ -30,8 +29,8 @@ export default function SearchBar() {
   }
 
   return (
-
     <SearchBarFrame>
+      <SideMargin />
       <SearchWindow>
         <SearchIcon />
         <SearchInput
@@ -43,9 +42,14 @@ export default function SearchBar() {
         {inputValue && <CloseRing onClick={handleErase} />}
       </SearchWindow>
       {isFocused && <CancelButton onClick={handleCancel}>취소</CancelButton>}
+      <SideMargin />
     </SearchBarFrame>
   );
 }
+
+const SideMargin = styled.div`
+  width: 20px;
+`;
 
 const SearchBarFrame = styled.div`
   position: relative;
@@ -54,10 +58,11 @@ const SearchBarFrame = styled.div`
   border-bottom: 0.5px solid var(--gray);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const SearchWindow = styled.div`
-  margin: 0px 20px;
+  /* margin: 0px 20px; */
   padding: 0px 6px;
   width: 100%;
   height: 32px;
@@ -80,5 +85,5 @@ const CancelButton = styled.div`
   white-space: nowrap;
   font-size: 14px;
   font-weight: 400;
-  margin-right: 20px;
+  margin-left: 12px;
 `;
