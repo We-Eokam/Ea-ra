@@ -20,7 +20,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
 public class ProofAcceptanceTest extends AcceptanceTest {
-	private static final String API_BASH_PATH = "/proof";
+	private static final String API_BASE_PATH = "/proof";
 
 	@Autowired
 	private ProofRepository proofRepository;
@@ -71,7 +71,7 @@ public class ProofAcceptanceTest extends AcceptanceTest {
 	private static ExtractableResponse<Response> 내_인증_내역_조회(Long pageNo, Long size) {
 		return RestAssured.given().log().all()
 			.when()
-			.get(API_BASH_PATH + "/me?page=" + pageNo.toString() + "&size=" + size.toString())
+			.get(API_BASE_PATH + "/me?page=" + pageNo.toString() + "&size=" + size.toString())
 			.then().log().all()
 			.extract();
 	}
