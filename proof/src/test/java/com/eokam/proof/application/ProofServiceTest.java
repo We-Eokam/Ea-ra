@@ -1,7 +1,6 @@
 package com.eokam.proof.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,25 +10,32 @@ import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eokam.proof.common.BaseServiceTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
+import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
 
 class ProofServiceTest extends BaseServiceTest {
 
-	@InjectMocks
+	@Autowired
 	ProofService proofService;
 
-	@Mock
+	@Autowired
 	ProofRepository proofRepository;
+
+	@Autowired
+	ProofImageRepository proofImageRepository;
+
+	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 
 	@Test
 	@DisplayName("내 인증 내역 조회를 성공")
+	@Transactional
 	void getMyProofListSuccess() {
 		LongStream.range(1, 6).forEach(this::generateProof);
 
@@ -39,99 +45,81 @@ class ProofServiceTest extends BaseServiceTest {
 		// given
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
-		given(proofRepository.findAllByMemberId(1L)).willReturn(EXPECTED_MY_PROOF_LIST());
-
 		// when
 		List<Proof> actualResponse = proofService.getMyProofList(testJwt);
 
 		// then
-		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(EXPECTED_MY_PROOF_LIST());
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(EXPECTED_MY_PROOF_LIST);
 	}
 
 	private void generateProof(Long i) {
-		proofRepository.save(Proof.builder()
+		Proof proof1 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
 			.cCompanyId(1L)
-			.proofImages(TEST_IMAGE)
 			.build());
 
-		proofRepository.save(Proof.builder()
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test1.jpg")
+			.fileUrl("http://test1.com")
+			.proof(proof1)
+			.build());
+
+		Proof proof2 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.DISPOSABLE_CUP)
 			.cCompanyId(2L)
-			.proofImages(TEST_IMAGE)
 			.build());
 
-		proofRepository.save(Proof.builder()
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test2.jpg")
+			.fileUrl("http://test2.com")
+			.proof(proof2)
+			.build());
+
+		Proof proof3 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.MULTI_USE_CONTAINER)
 			.cCompanyId(3L)
-			.proofImages(TEST_IMAGE)
 			.build());
 
-		proofRepository.save(Proof.builder()
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test3.jpg")
+			.fileUrl("http://test3.com")
+			.proof(proof3)
+			.build());
+
+		Proof proof4 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.TUMBLER)
 			.cCompanyId(4L)
-			.proofImages(TEST_IMAGE)
 			.build());
 
-		proofRepository.save(Proof.builder()
-			.memberId(1L)
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test4.jpg")
+			.fileUrl("http://test4.com")
+			.proof(proof4)
+			.build());
+
+		Proof proof5 = proofRepository.save(Proof.builder()
+			.memberId(i)
 			.activityType(ActivityType.EMISSION_FREE_CAR)
 			.cCompanyId(5L)
-			.proofImages(TEST_IMAGE)
 			.build());
-	}
 
-	private static final List<ProofImage> TEST_IMAGE = List.of(
-		ProofImage.builder()
-			.fileUrl("http://test")
-			.fileName("test.jpg")
-			.build()
-	);
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test5.jpg")
+			.fileUrl("http://test5.com")
+			.proof(proof5)
+			.build());
 
-	private static List<Proof> EXPECTED_MY_PROOF_LIST() {
-		List<Proof> proofList = new ArrayList<>();
-
-		proofList.add(
-			Proof.builder()
-				.memberId(1L)
-				.activityType(ActivityType.ELECTRONIC_RECEIPT)
-				.cCompanyId(1L)
-				.proofImages(TEST_IMAGE)
-				.build());
-		proofList.add(
-			Proof.builder()
-				.memberId(1L)
-				.activityType(ActivityType.DISPOSABLE_CUP)
-				.cCompanyId(2L)
-				.proofImages(TEST_IMAGE)
-				.build());
-		proofList.add(
-			Proof.builder()
-				.memberId(1L)
-				.activityType(ActivityType.MULTI_USE_CONTAINER)
-				.cCompanyId(3L)
-				.proofImages(TEST_IMAGE)
-				.build());
-		proofList.add(
-			Proof.builder()
-				.memberId(1L)
-				.activityType(ActivityType.TUMBLER)
-				.cCompanyId(4L)
-				.proofImages(TEST_IMAGE)
-				.build());
-		proofList.add(
-			Proof.builder()
-				.memberId(1L)
-				.activityType(ActivityType.EMISSION_FREE_CAR)
-				.cCompanyId(5L)
-				.proofImages(TEST_IMAGE)
-				.build());
-
-		return proofList;
+		if (i == 1) {
+			EXPECTED_MY_PROOF_LIST.add(proof1);
+			EXPECTED_MY_PROOF_LIST.add(proof2);
+			EXPECTED_MY_PROOF_LIST.add(proof3);
+			EXPECTED_MY_PROOF_LIST.add(proof4);
+			EXPECTED_MY_PROOF_LIST.add(proof5);
+		}
 	}
 
 }
