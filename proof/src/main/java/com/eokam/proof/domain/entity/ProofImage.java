@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class ProofImage {
 	@Id
 	@GeneratedValue
-	Long proofPhotoId;
+	Long proofImageId;
 
 	@ManyToOne
 	@JoinColumn(name = "proofId")
