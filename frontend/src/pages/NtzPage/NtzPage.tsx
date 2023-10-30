@@ -60,7 +60,7 @@ export default function NtzPage() {
 
           </InfoButton>
 
-          <InfoButton>
+          <InfoButton style={{marginRight: '3.5px'}}>
           <InfoButtonGray>
               카카오톡으로
             </InfoButtonGray>
@@ -139,7 +139,7 @@ const Green = styled(Bold)`
 
 const InfoButtonsFrame = styled.div`
   position: relative;
-  width: calc(100% + 20px);
+  width: calc(100%);
   height: 132px;
   margin-top: 8px;
   display: flex;

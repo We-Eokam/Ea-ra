@@ -11,4 +11,6 @@ export const ModalFrame = styled.div`
   background-color: var(--white);
   border-radius: 25px 25px 0px 0px;
   box-shadow: 0px -2px 16px rgba(0, 0, 0, 0.12);
+  overflow-y: scroll;
+  overflow-x: hidden;
 `

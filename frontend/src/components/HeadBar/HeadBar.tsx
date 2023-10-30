@@ -36,7 +36,7 @@ const HeadBarFrame = styled.div`
   border-bottom: 1px solid var(--gray);;
   /* border: 1px black solid; */
 
-  z-index: 999;
+  z-index: 998;
 `
 
 const HeadBarContext = styled.div`
