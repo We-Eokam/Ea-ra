@@ -1,8 +1,7 @@
-import React from "react";
+// import React from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
-import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 
 interface CategoryProps {
@@ -115,7 +114,7 @@ export default function MapPage() {
 
 const Categories = styled.div`
   position: absolute;
-  z-index: 999;
+  z-index: 3;
   margin-top: 96px;
   width: 100%;
   height: 52px;
@@ -139,7 +138,7 @@ const Category = styled.div<CategoryProps>`
   height: 32px;
   width: auto;
   border-radius: 20px;
-  border: ${(props) => (props.isSelected ? "none" : "1px solid var(--gray)")};
+  border: ${(props) => (props.isSelected ? "1px solid transparent" : "1px solid var(--gray)")};
   background-color: ${(props) =>
     props.isSelected ? "var(--primary)" : "var(--white)"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--dark-gray)")};
