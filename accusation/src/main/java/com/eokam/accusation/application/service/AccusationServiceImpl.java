@@ -27,13 +27,20 @@ public class AccusationServiceImpl implements AccusationService {
 
 	@Override
 	@Transactional
-	public AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile) throws
-		IOException {
+	public AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile) {
+		List<String> fileUrls = getFileUrls(multipartFile);
 		Accusation accusation = accusationRepository.save(Accusation.from(accusationDto));
-		List<String> fileUrls = s3UploadService.uploadFile(multipartFile);
 		for (String fileUrl : fileUrls) {
 			accusationImageRepository.save(AccusationImage.of(accusation, fileUrl));
 		}
 		return AccusationDto.of(accusation, fileUrls);
+	}
+	
+	public List<String> getFileUrls(List<MultipartFile> multipartFile) {
+		try {
+			return s3UploadService.uploadFile(multipartFile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
