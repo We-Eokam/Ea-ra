@@ -1,4 +1,4 @@
-package com.eokam.proof.application;
+package com.eokam.proof.application.service;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eokam.proof.application.dto.ProofDto;
-import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseServiceTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;

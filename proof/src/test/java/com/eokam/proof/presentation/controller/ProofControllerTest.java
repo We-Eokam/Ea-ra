@@ -1,4 +1,4 @@
-package com.eokam.proof.presentation;
+package com.eokam.proof.presentation.controller;
 
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
