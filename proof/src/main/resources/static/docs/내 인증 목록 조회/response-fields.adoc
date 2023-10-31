@@ -1,0 +1,40 @@
+|===
+|Path|Type|Description
+
+|`+proof+`
+|`+Array+`
+|인증 목록 배열
+
+|`+proof[].proof_id+`
+|`+Number+`
+|인증 ID
+
+|`+proof[].activity_type+`
+|`+String+`
+|활동 타입
+
+|`+proof[].c_company_id+`
+|`+Number+`
+|탄소 중립 포인트 제도 기업 ID
+
+|`+proof[].created_at+`
+|`+String+`
+|인증 생성 시간
+
+|`+proof[].picture+`
+|`+Array+`
+|인증 사진 배열
+
+|`+proof[].picture[].url+`
+|`+String+`
+|인증 사진 URL
+
+|`+proof[].picture[].name+`
+|`+String+`
+|인증 사진 파일 명
+
+|`+proof[].content+`
+|`+Null+`
+|기타 인증의 경우 내용
+
+|===

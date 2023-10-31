@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/proof/me?page=0&size=5' \
+    'Cookie:access-token=Header.MQ==.Secret'
+----
