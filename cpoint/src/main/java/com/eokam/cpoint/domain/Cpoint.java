@@ -35,7 +35,7 @@ public class Cpoint extends BaseEntity {
 	private Long memberId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "company_id")
+	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
 
 }
