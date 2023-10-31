@@ -221,7 +221,25 @@ class ProofControllerTest extends BaseControllerTest {
 					)
 				)
 			);
+	}
 
+	@Test
+	@DisplayName("내 인증 목록 컨텐츠 없음")
+	void getMyProofList_NO_CONTENT() throws Exception {
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		// when & then
+		this.mockMvc.perform(get("/proof/me")
+				.param("page", "0")
+				.param("size", "5")
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isNoContent());
 	}
 
 	@ParameterizedTest
