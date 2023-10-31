@@ -1,6 +1,6 @@
 package com.eokam.proof.presentation;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.cookies.CookieDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -16,7 +17,6 @@ import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
@@ -50,13 +50,12 @@ class ProofControllerTest extends BaseControllerTest {
 
 		// when & then
 		this.mockMvc.perform(get("/proof/me")
-				.param("page", "1")
+				.param("page", "0")
 				.param("size", "5")
 				.cookie(new Cookie("access-token", testJwt))
 			)
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(header().exists(HttpHeaders.COOKIE))
 			.andExpect(jsonPath("proof")
 				.isArray()
 			)
@@ -64,125 +63,149 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(0).getProofId())
 			)
 			.andExpect(jsonPath("proof[0].activity_type")
-				.value(EXPECTED_MY_PROOF_LIST.get(0).getActivityType())
+				.value(EXPECTED_MY_PROOF_LIST.get(0).getActivityType().name())
 			)
 			.andExpect(jsonPath("proof[0].c_company_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(0).getCCompanyId())
 			)
 			.andExpect(jsonPath("proof[0].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(0).getCreatedAt())
+				.value(EXPECTED_MY_PROOF_LIST.get(0)
+					.getCreatedAt()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(
+				jsonPath("proof[0].picture")
+					.isArray()
 			)
 			.andExpect(
 				jsonPath("proof[0].picture[0].url")
-					.value(EXPECTED_MY_PROOF_LIST.get(0).getProofImages().get(0).getFileUrl())
+					.value("http://test1.com")
 			)
 			.andExpect(
 				jsonPath("proof[0].picture[0].name")
-					.value(EXPECTED_MY_PROOF_LIST.get(0).getProofImages().get(0).getFileName())
+					.value("test1.jpg")
 			)
 			.andExpect(jsonPath("proof[0].content")
-				.value("null")
+				.doesNotExist()
 			)
 			.andExpect(jsonPath("proof[1].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(1).getProofId())
 			)
 			.andExpect(jsonPath("proof[1].activity_type")
-				.value(EXPECTED_MY_PROOF_LIST.get(1).getActivityType())
+				.value(EXPECTED_MY_PROOF_LIST.get(1).getActivityType().name())
 			)
 			.andExpect(jsonPath("proof[1].c_company_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(1).getCCompanyId())
 			)
 			.andExpect(jsonPath("proof[1].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(1).getCreatedAt())
+				.value(EXPECTED_MY_PROOF_LIST.get(1)
+					.getCreatedAt()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(
+				jsonPath("proof[1].picture")
+					.isArray()
 			)
 			.andExpect(
 				jsonPath("proof[1].picture[0].url")
-					.value(EXPECTED_MY_PROOF_LIST.get(1).getProofImages().get(0).getFileUrl())
+					.value("http://test2.com")
 			)
 			.andExpect(
 				jsonPath("proof[1].picture[0].name")
-					.value(EXPECTED_MY_PROOF_LIST.get(1).getProofImages().get(0).getFileName())
+					.value("test2.jpg")
 			)
 			.andExpect(jsonPath("proof[1].content")
-				.value("null")
+				.doesNotExist()
 			)
 			.andExpect(jsonPath("proof[2].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(2).getProofId())
 			)
 			.andExpect(jsonPath("proof[2].activity_type")
-				.value(EXPECTED_MY_PROOF_LIST.get(2).getActivityType())
+				.value(EXPECTED_MY_PROOF_LIST.get(2).getActivityType().name())
 			)
 			.andExpect(jsonPath("proof[2].c_company_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(2).getCCompanyId())
 			)
 			.andExpect(jsonPath("proof[2].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(2).getCreatedAt())
+				.value(EXPECTED_MY_PROOF_LIST.get(2)
+					.getCreatedAt()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(
+				jsonPath("proof[2].picture")
+					.isArray()
 			)
 			.andExpect(
 				jsonPath("proof[2].picture[0].url")
-					.value(EXPECTED_MY_PROOF_LIST.get(2).getProofImages().get(0).getFileUrl())
+					.value("http://test3.com")
 			)
 			.andExpect(
 				jsonPath("proof[2].picture[0].name")
-					.value(EXPECTED_MY_PROOF_LIST.get(2).getProofImages().get(0).getFileName())
+					.value("test3.jpg")
 			)
 			.andExpect(jsonPath("proof[2].content")
-				.value("null")
+				.doesNotExist()
 			)
 			.andExpect(jsonPath("proof[3].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(3).getProofId())
 			)
 			.andExpect(jsonPath("proof[3].activity_type")
-				.value(EXPECTED_MY_PROOF_LIST.get(3).getActivityType())
+				.value(EXPECTED_MY_PROOF_LIST.get(3).getActivityType().name())
 			)
 			.andExpect(jsonPath("proof[3].c_company_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(3).getCCompanyId())
 			)
 			.andExpect(jsonPath("proof[3].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(3).getCreatedAt())
+				.value(EXPECTED_MY_PROOF_LIST.get(3)
+					.getCreatedAt()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(
+				jsonPath("proof[3].picture")
+					.isArray()
 			)
 			.andExpect(
 				jsonPath("proof[3].picture[0].url")
-					.value(EXPECTED_MY_PROOF_LIST.get(3).getProofImages().get(0).getFileUrl())
+					.value("http://test4.com")
 			)
 			.andExpect(
 				jsonPath("proof[3].picture[0].name")
-					.value(EXPECTED_MY_PROOF_LIST.get(3).getProofImages().get(0).getFileName())
+					.value("test4.jpg")
 			)
 			.andExpect(jsonPath("proof[3].content")
-				.value("null")
+				.doesNotExist()
 			)
 			.andExpect(jsonPath("proof[4].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(4).getProofId())
 			)
 			.andExpect(jsonPath("proof[4].activity_type")
-				.value(EXPECTED_MY_PROOF_LIST.get(4).getActivityType())
+				.value(EXPECTED_MY_PROOF_LIST.get(4).getActivityType().name())
 			)
 			.andExpect(jsonPath("proof[4].c_company_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(4).getCCompanyId())
 			)
 			.andExpect(jsonPath("proof[4].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(4).getCreatedAt())
+				.value(EXPECTED_MY_PROOF_LIST.get(4)
+					.getCreatedAt()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(
+				jsonPath("proof[4].picture")
+					.isArray()
 			)
 			.andExpect(
 				jsonPath("proof[4].picture[0].url")
-					.value(EXPECTED_MY_PROOF_LIST.get(4).getProofImages().get(0).getFileUrl())
+					.value("http://test5.com")
 			)
 			.andExpect(
 				jsonPath("proof[4].picture[0].name")
-					.value(EXPECTED_MY_PROOF_LIST.get(4).getProofImages().get(0).getFileName())
+					.value("test5.jpg")
 			)
 			.andExpect(jsonPath("proof[4].content")
-				.value("null")
+				.doesNotExist()
 			)
 			.andDo(document("내 인증 목록 조회",
-					requestHeaders(
-						headerWithName(HttpHeaders.COOKIE).description("Access Token"),
-						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header")
-					),
-					responseHeaders(
-						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header")
-					),
+					requestCookies(cookieWithName("access-token").description("액세스 토큰")),
 					responseFields(
 						fieldWithPath("proof").description("인증 목록 배열"),
 						fieldWithPath("proof[].proof_id").description("인증 ID"),

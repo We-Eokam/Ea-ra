@@ -50,6 +50,12 @@ dependencyManagement {
 
 tasks.named('test') {
     outputs.dir snippetsDir
+
+    copy {
+        from snippetsDir
+        into "src/main/resources/static/docs"
+    }
+
     useJUnitPlatform()
 }
 

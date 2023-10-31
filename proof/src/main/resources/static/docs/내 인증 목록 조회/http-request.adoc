@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /proof/me?page=0&size=5 HTTP/1.1
+Host: localhost:8080
+Cookie: access-token=Header.MQ==.Secret
+
+----
