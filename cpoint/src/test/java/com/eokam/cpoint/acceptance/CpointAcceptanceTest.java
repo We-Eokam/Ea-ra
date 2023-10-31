@@ -1,7 +1,7 @@
 package com.eokam.cpoint.acceptance;
 
 import static com.eokam.cpoint.acceptance.CpointSteps.*;
-import static com.eokam.cpoint.common.CommonSteps.*;
+import static com.eokam.cpoint.acceptance.common.CommonSteps.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.ArrayList;
