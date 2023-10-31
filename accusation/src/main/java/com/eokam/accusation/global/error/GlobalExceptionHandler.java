@@ -9,6 +9,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,6 +68,17 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
 		HttpMessageNotReadableException e) {
 		log.error("handleMissingServletRequestParameterException", e);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	/**
+	 * multipart/form-data 요청의 일부가 손실되었을 때 발생
+	 */
+	@ExceptionHandler(MissingServletRequestPartException.class)
+	protected ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
+		HttpMessageNotReadableException e) {
+		log.error("handleMissingServletRequestPartException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
