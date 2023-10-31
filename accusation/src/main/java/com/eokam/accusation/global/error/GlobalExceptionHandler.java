@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,18 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleBindException(BindException e) {
 		log.error("handleBindException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getBindingResult());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(errorResponse);
+	}
+
+	/**
+	 * 주로 @RequestParam enum으로 binding 못했을 경우 발생
+	 */
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+		MethodArgumentTypeMismatchException e) {
+		log.error("handleMethodArgumentTypeMismatchException", e);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(errorResponse);
 	}
