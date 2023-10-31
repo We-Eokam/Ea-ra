@@ -46,7 +46,7 @@ export default function FeedPage() {
     <>
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
       <SearchBar />
-      <MainFrame headbar="no" navbar="yes" bgcolor="var(--white)" marginsize="small">
+      <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
         {PostExample.map((post, index) => (
           <PostFrame key={index}>
             <WriterContainer>
