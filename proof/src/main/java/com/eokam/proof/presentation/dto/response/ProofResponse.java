@@ -1,4 +1,4 @@
-package com.eokam.proof.presentation.dto;
+package com.eokam.proof.presentation.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

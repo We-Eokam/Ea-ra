@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eokam.proof.application.service.ProofService;
-import com.eokam.proof.presentation.dto.MyProofListResponse;
-import com.eokam.proof.presentation.dto.ProofResponse;
+import com.eokam.proof.presentation.dto.response.MyProofListResponse;
+import com.eokam.proof.presentation.dto.response.ProofResponse;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,10 @@ public class ProofController {
 			proofService.getMyProofList(accessToken, page, size).stream()
 				.map(ProofResponse::from)
 				.toList());
+
+		if (response.proof().isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
 
 		return ResponseEntity.ok().body(response);
 	}

@@ -208,6 +208,7 @@ class ProofControllerTest extends BaseControllerTest {
 			)
 			.andDo(document("내 인증 목록 조회",
 					requestCookies(cookieWithName("access-token").description("액세스 토큰")),
+
 					responseFields(
 						fieldWithPath("proof").description("인증 목록 배열"),
 						fieldWithPath("proof[].proof_id").description("인증 ID"),
@@ -239,7 +240,9 @@ class ProofControllerTest extends BaseControllerTest {
 				.cookie(new Cookie("access-token", testJwt))
 			)
 			.andDo(print())
-			.andExpect(status().isNoContent());
+			.andExpect(status().isNoContent())
+			.andDo(document("내 인증 목록 조회 - 204",
+				requestCookies(cookieWithName("access-token").description("액세스 토큰"))));
 	}
 
 	@ParameterizedTest
