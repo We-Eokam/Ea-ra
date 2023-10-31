@@ -70,6 +70,16 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		});
 	}
 
+	@Test
+	@DisplayName(("내 인증 내역 조회 시 컨텐츠 없음을 반환한다."))
+	void 내_인증_내역_조회_컨텐츠없음() {
+		// when
+		ExtractableResponse<Response> response = 내_인증_내역_조회(0L, 5L);
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+	}
+
 	private static ExtractableResponse<Response> 내_인증_내역_조회(Long page, Long size) {
 		long memberId = 1L;
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
