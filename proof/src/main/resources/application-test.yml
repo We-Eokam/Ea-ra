@@ -1,14 +1,13 @@
 spring:
   datasource:
-    username: sa
-    password:
-    url: jdbc:h2:mem:test
-    driver-class-name: org.h2.Driver
-    hikari:
-      jdbc-url: jdbc:h2:mem:test
-  jpa:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+jpa:
+  hibernate:
+    ddl-auto: create
+  properties:
     hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+      dialect: org.hibernate.dialect.H2Dialect
