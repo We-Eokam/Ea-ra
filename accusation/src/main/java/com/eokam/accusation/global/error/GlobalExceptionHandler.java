@@ -2,6 +2,7 @@ package com.eokam.accusation.global.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,5 +46,16 @@ public class GlobalExceptionHandler {
 		log.error("handleHttpRequestMethodNotSupportedException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED.toString(), e.getMessage());
 		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
+	}
+
+	/**
+	 * 잘못된 형식의 요청을 보냈을 경우 발생
+	 */
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+		HttpMessageNotReadableException e) {
+		log.error("handleHttpMessageNotReadableException", e);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 }
