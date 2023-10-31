@@ -5,13 +5,12 @@ import java.util.List;
 
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
-import com.eokam.proof.domain.entity.ProofImage;
 
 import lombok.Builder;
 
 @Builder
 public record ProofDto(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId, LocalDateTime createdAt,
-					   String content, List<ProofImage> proofImages) {
+					   String content, List<ProofImageDto> proofImages) {
 	public static ProofDto from(Proof proof) {
 		return ProofDto.builder()
 			.proofId(proof.getProofId())
@@ -20,7 +19,11 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 			.cCompanyId(proof.getCCompanyId())
 			.createdAt(proof.getCreatedAt())
 			.content(proof.getContents())
-			.proofImages(proof.getProofImages())
+			.proofImages(
+				proof.getProofImages().stream()
+					.map(ProofImageDto::from)
+					.toList()
+			)
 			.build();
 	}
 }

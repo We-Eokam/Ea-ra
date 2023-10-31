@@ -1,6 +1,7 @@
 package com.eokam.proof.domain.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -51,6 +52,7 @@ public class Proof {
 	@Column(length = 100)
 	private String contents;
 
-	@OneToMany(mappedBy = "proof", cascade = CascadeType.REMOVE, orphanRemoval = true)
-	private List<ProofImage> proofImages;
+	@Builder.Default
+	@OneToMany(mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProofImage> proofImages = new ArrayList<>();
 }

@@ -24,7 +24,7 @@ public class ProofImage {
 	Long proofImageId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "proofId")
+	@JoinColumn(name = "proof_id", nullable = false)
 	Proof proof;
 
 	@Column(nullable = false)
