@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import com.eokam.cpoint.presentation.dto.ActivityType;
 import com.eokam.cpoint.presentation.dto.CCompanyDetailRequest;
 import com.eokam.cpoint.presentation.dto.CCompanyListRetrieveRequest;
+import com.eokam.cpoint.presentation.dto.CStoreNearbyListRetrieveRequest;
 import com.eokam.cpoint.presentation.dto.CpointCreateRequest;
 
 import io.restassured.RestAssured;
@@ -46,6 +47,10 @@ public class CpointAcceptanceTest {
 
 	private void 탄소중립실천포인트_활동요약_조회_검증(final ExtractableResponse<Response> 응답, Integer 카테고리수) {
 		assertThat(응답.jsonPath().getList("categories")).hasSize(카테고리수);
+	}
+
+	private void 주변_탄소중립실천포인트_연계매장_조회_검증(final ExtractableResponse<Response> 응답) {
+		assertThat(응답.jsonPath().getList("stores")).isNotNull();
 	}
 
 	@Test
@@ -176,5 +181,23 @@ public class CpointAcceptanceTest {
 		//then
 		HTTP_상태코드를_검증한다(조회_응답, 정상조회);
 		탄소중립실천포인트_활동요약_조회_검증(조회_응답, 생성_요청_목록_리스트.size());
+	}
+
+	@Test
+	void 주변_탄소중립포인트_연계매장을_찾을수있다() {
+		//given
+		var 조회_요청 = CStoreNearbyListRetrieveRequest
+			.builder()
+			.latitude(37.501315)
+			.longitude(127.039653)
+			.radius(100)
+			.build();
+
+		//when
+		var 조회_응답 = 주변_탄소중립실천포인트_연계매장_조회(조회_요청);
+
+		//then
+		HTTP_상태코드를_검증한다(조회_응답, 정상조회);
+		주변_탄소중립실천포인트_연계매장_조회_검증(조회_응답);
 	}
 }
