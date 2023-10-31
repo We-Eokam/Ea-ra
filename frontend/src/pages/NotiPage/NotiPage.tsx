@@ -4,6 +4,7 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import FollowBtn from "../../components/Buttons/FollowButton";
+import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
 
 export default function NotiPage() {
   const NoticeExample = [
