@@ -48,7 +48,7 @@ class ProofServiceTest extends BaseServiceTest {
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
 		// when
-		List<ProofDto> actualResponse = proofService.getMyProofList(testJwt);
+		List<ProofDto> actualResponse = proofService.getMyProofList(testJwt, 0, 5);
 
 		// then
 		assertThat(actualResponse).usingRecursiveAssertion()
