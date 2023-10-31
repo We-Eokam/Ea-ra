@@ -1,4 +1,4 @@
-package com.eokam.proof.presentation;
+package com.eokam.proof.presentation.controller;
 
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -16,6 +16,8 @@ import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.eokam.proof.common.BaseControllerTest;
@@ -220,6 +222,28 @@ class ProofControllerTest extends BaseControllerTest {
 				)
 			);
 
+	}
+
+	@ParameterizedTest
+	@CsvSource({"1, 0", "-1, 1", "two, 1", "1, two"})
+	@DisplayName("올바르지 않은 Query Param 을 입력 시 에러")
+	void getMyProofList_Fail(String page, String size) throws Exception {
+		LongStream.range(1, 6).forEach(this::generateProof);
+
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		// when & then
+		this.mockMvc.perform(get("/proof/me")
+				.param("page", page)
+				.param("size", size)
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest());
 	}
 
 	private void generateProof(Long i) {
