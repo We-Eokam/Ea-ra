@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -55,6 +56,17 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
 		HttpMessageNotReadableException e) {
 		log.error("handleHttpMessageNotReadableException", e);
+		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	/**
+	 * 기대한 요청 Parameter를 찾지 못한 경우 발생
+	 */
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	protected ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+		HttpMessageNotReadableException e) {
+		log.error("handleMissingServletRequestParameterException", e);
 		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
