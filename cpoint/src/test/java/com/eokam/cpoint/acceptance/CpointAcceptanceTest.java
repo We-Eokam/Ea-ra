@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import com.eokam.cpoint.presentation.dto.ActivityType;
+import com.eokam.cpoint.domain.ActivityType;
 import com.eokam.cpoint.presentation.dto.CCompanyDetailRequest;
 import com.eokam.cpoint.presentation.dto.CCompanyListRetrieveRequest;
 import com.eokam.cpoint.presentation.dto.CStoreNearbyListRetrieveRequest;
