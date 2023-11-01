@@ -9,5 +9,5 @@ import com.eokam.proof.domain.entity.Proof;
 
 @Repository
 public interface ProofRepository extends JpaRepository<Proof, Long> {
-	Page<Proof> findAllByMemberId(Long proofId, Pageable pageable);
+	Page<Proof> findAllByMemberId(Long memberId, Pageable pageable);
 }
