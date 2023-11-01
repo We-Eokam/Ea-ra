@@ -97,12 +97,44 @@ class ProofRepositoryTest extends BaseRepositoryTest {
 			assertThat(proofPage.getContent().get(i).getMemberId()).isEqualTo(1L);
 			assertThat(proofPage.getContent().get(i).getCCompanyId()).isEqualTo(i + 1);
 			assertTrue(Hibernate.isInitialized(proofPage.getContent().get(i).getProofImages()));
-			assertThat(proofPage.getContent().get(i).getContents()).isNull();
+			assertThat(proofPage.getContent().get(i).getContents()).isNullOrEmpty();
 		});
 		assertThat(proofPage.getContent().get(0).getActivityType()).isEqualTo(ActivityType.ELECTRONIC_RECEIPT);
 		assertThat(proofPage.getContent().get(1).getActivityType()).isEqualTo(ActivityType.DISPOSABLE_CUP);
 		assertThat(proofPage.getContent().get(2).getActivityType()).isEqualTo(ActivityType.MULTI_USE_CONTAINER);
 		assertThat(proofPage.getContent().get(3).getActivityType()).isEqualTo(ActivityType.TUMBLER);
 		assertThat(proofPage.getContent().get(4).getActivityType()).isEqualTo(ActivityType.EMISSION_FREE_CAR);
+	}
+
+	@Test
+	@DisplayName("인증을 생성하는 테스트")
+	void createProof() {
+		// given
+		Proof proof = Proof.builder()
+			.memberId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.build();
+
+		ProofImage proofImage = ProofImage.builder()
+			.fileName("test")
+			.fileUrl("http://www.test.com")
+			.proof(proof)
+			.build();
+
+		// when
+		Proof savedProof = proofRepository.save(proof);
+		ProofImage savedProofImage = proofImageRepository.save(proofImage);
+
+		// then
+		assertThat(savedProof.getMemberId()).isEqualTo(proof.getMemberId());
+		assertThat(savedProof.getActivityType()).isEqualTo(proof.getActivityType());
+		assertThat(savedProof.getCCompanyId()).isEqualTo(proof.getCCompanyId());
+		assertThat(savedProof.getContents()).isNullOrEmpty();
+		assertTrue(Hibernate.isInitialized(savedProof.getProofImages()));
+
+		assertThat(savedProofImage.getFileName()).isEqualTo(proofImage.getFileName());
+		assertThat(savedProofImage.getFileUrl()).isEqualTo(proofImage.getFileUrl());
+		assertThat(savedProofImage.getProof()).isEqualTo(proofImage.getProof());
 	}
 }
