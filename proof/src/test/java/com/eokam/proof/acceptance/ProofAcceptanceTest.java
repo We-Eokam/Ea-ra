@@ -13,6 +13,7 @@ import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import com.eokam.proof.common.AcceptanceTest;
@@ -96,6 +97,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 		// then
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
 	}
 
 	@Test
@@ -112,6 +114,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 		// then
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
 	}
 
 	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) {
