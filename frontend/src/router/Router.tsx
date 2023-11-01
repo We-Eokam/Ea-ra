@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "../pages/LoginPage/LoginPage";
+import SignupPage from "../pages/LoginPage/SignupPage";
 import MainPage from "../pages/MainPage/MainPage";
 import NotiPage from "../pages/NotiPage/NotiPage";
 import FeedPage from "../pages/FeedPage/FeedPage";
@@ -18,6 +19,7 @@ export default function Router() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
+        <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>
         <Route path="/feed" element={<FeedPage />}></Route>

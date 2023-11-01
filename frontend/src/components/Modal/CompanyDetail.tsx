@@ -106,7 +106,7 @@ const Background = styled(ModalBackground)<BackgroundProps>`
 `;
 
 const CompanyDetailModal = styled(ModalFrame)<ModalProps>`
-  height: 42%;
+  height: 372px;
   z-index: 4;
   animation: ${({ isclosing }) => (isclosing ? slideOut : slideIn)} 0.35s
     ease-in-out;
@@ -152,7 +152,7 @@ const CompanyPoints = styled.span`
   margin-top: 8px;
   font-size: 13px;
   color: var(--dark-gray);
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 `;
 
 const ConnectButton = styled(LongButton)`
