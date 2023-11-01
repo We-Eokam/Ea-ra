@@ -12,4 +12,5 @@ export const ShortButton = styled.div`
   align-items: center;
   font-size: 13.5px;
   font-weight: 400;
+  cursor: pointer;
 `

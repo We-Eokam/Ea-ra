@@ -12,4 +12,5 @@ export const LongButton = styled.div`
   align-items: center;
   font-size: 15px;
   font-weight: 400;
+  cursor: pointer;
 `
