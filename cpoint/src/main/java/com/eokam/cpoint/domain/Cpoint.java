@@ -51,4 +51,8 @@ public class Cpoint extends BaseEntity {
 		this.company = company;
 		this.createdAt = createdAt;
 	}
+
+	public void minusMonthsCreatedAtForTest(Long months) {
+		this.createdAt = this.createdAt.minusMonths(months);
+	}
 }
