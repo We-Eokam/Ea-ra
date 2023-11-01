@@ -3,7 +3,7 @@ import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
-import { ShortButton } from "../../components/Buttons/ShortButton";
+import { ShortButton } from "../../style";
 
 export default function MainPage() {
   var progress = 100;
@@ -64,7 +64,9 @@ export default function MainPage() {
           </WeekdayFrame>
 
           <ButtonsFrame>
-            <LeftButton>남은 빚 갚기</LeftButton>
+            <ShortButton background="var(--third)" color="var(--primary)" >
+              남은 빚 갚기
+            </ShortButton>
             <ShortButton>월별 내역</ShortButton>
           </ButtonsFrame>
         </HomeFrame>
@@ -159,9 +161,3 @@ const ButtonsFrame = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
-const LeftButton = styled(ShortButton)`
-  background-color: var(--third);
-  color: var(--primary);
-`;
-

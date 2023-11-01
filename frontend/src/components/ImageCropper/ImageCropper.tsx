@@ -3,7 +3,7 @@ import { Cropper, ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import "../../style/ImageCropper.css";
 import styled from "styled-components";
-import { ShortButton } from "../Buttons/ShortButton";
+import { ShortButton } from "../../style";
 import { ReactComponent as RotateSvg } from "../../assets/icons/rotate-icon.svg";
 import { ReactComponent as ResetSvg } from "../../assets/icons/reset-icon.svg";
 
@@ -107,9 +107,11 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
               onChange={(e) => rotateImage(Number(e.target.value))}
             />
             <div className="footer">
-              <LeftButton onClick={handleCancleClick}>
+              <ShortButton
+                background="var(--third)" color="var(--primary)" 
+                onClick={handleCancleClick}>
                 취소
-              </LeftButton>
+              </ShortButton>
               <ShortButton onClick={getCropData}>
                 적용하기
               </ShortButton>
@@ -155,7 +157,3 @@ const Slider = styled.input`
   margin: 10px 0;
 `;
 
-const LeftButton = styled(ShortButton)`
-  background-color: var(--third);
-  color: var(--primary);
-`;

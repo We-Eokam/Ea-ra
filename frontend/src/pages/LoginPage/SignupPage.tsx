@@ -2,8 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
-import { ShortButton } from "../../components/Buttons/ShortButton";
-import { LongButton } from "../../components/Buttons/LongButton";
+import { ShortButton, LongButton } from "../../style";
 import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
 
 interface GenderButtonProps {

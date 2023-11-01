@@ -4,8 +4,8 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
-import { ShortButton } from "../../components/Buttons/ShortButton";
-import { LongButton } from "../../components/Buttons/LongButton";
+import { ShortButton } from "../../style";
+import { LongButton } from "../../style";
 
 export default function PostPage() {
   const [type, setType] = useState(0);
@@ -20,7 +20,7 @@ export default function PostPage() {
     "그린업",
     "(주)다와",
   ];
-  const [companyIdx, setCompanyIdx] = useState<number | null>(null);
+  const [selectIdx, setSelectIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -38,7 +38,7 @@ export default function PostPage() {
   const handleRegist = (select: boolean) => {
     setIsRegist(select);
     if (select === false) {
-      setCompanyIdx(null);
+      setSelectIdx(null);
     }
   };
 
@@ -62,18 +62,18 @@ export default function PostPage() {
         <InfoFrame>
           <InfoName>참여 기업 등록</InfoName>
           <ButtonsFrame>
-            <Buton
+            <Button
               onClick={() => handleRegist(false)}
               isSelected={isRegist === false}
             >
               아니요
-            </Buton>
-            <Buton
+            </Button>
+            <Button
               onClick={() => handleRegist(true)}
               isSelected={isRegist === true}
             >
               예
-            </Buton>
+            </Button>
           </ButtonsFrame>
         </InfoFrame>
         {isRegist && (
@@ -81,13 +81,13 @@ export default function PostPage() {
             <InfoName>기업선택</InfoName>
             <ButtonsFrame>
               {companys.map((company, idx) => (
-                <Buton
-                  style={{ width: "30%" }}
-                  onClick={() => setCompanyIdx(idx)}
-                  isSelected={companyIdx === idx}
+                <Button
+                  width="30%"
+                  onClick={() => setSelectIdx(idx)}
+                  isSelected={selectIdx === idx}
                 >
                   {company}
-                </Buton>
+                </Button>
               ))}
             </ButtonsFrame>
           </InfoFrame>
@@ -125,13 +125,13 @@ const ButtonsFrame = styled.div`
   position: relative;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  gap: 5%;
   flex-flow: wrap;
 `;
 
-const Buton = styled(ShortButton)<{ isSelected: boolean }>`
-  border: ${(props) =>
-    props.isSelected ? "1px solid transparent" : "1px solid var(--nav-gray)"};
+const Button = styled(ShortButton)<{ isSelected: boolean }>`
+  box-shadow: ${(props) =>
+    props.isSelected ? "" : "0 0 0 1px var(--nav-gray) inset"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--nav-gray)")};
   background-color: ${(props) =>
     props.isSelected ? "var(--primary)" : "var(--white)"};

@@ -4,7 +4,7 @@ import styled from "styled-components"
 import HeadBar from "../../components/HeadBar/HeadBar"
 import NavBar from "../../components/NavBar/NavBar"
 import MainFrame from "../../components/MainFrame/MainFrame"
-import { LongButton } from "../../components/Buttons/LongButton"
+import { LongButton } from "../../style"
 
 export default function Subsidy() {
   return (
