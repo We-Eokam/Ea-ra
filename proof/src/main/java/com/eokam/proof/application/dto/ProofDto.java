@@ -3,6 +3,8 @@ package com.eokam.proof.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
 
@@ -25,5 +27,9 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 					.toList()
 			)
 			.build();
+	}
+
+	public static Page<ProofDto> toDtoPage(Page<Proof> page) {
+		return page.map(ProofDto::from);
 	}
 }
