@@ -5,6 +5,7 @@ import MainPage from "../pages/MainPage/MainPage";
 import NotiPage from "../pages/NotiPage/NotiPage";
 import FeedPage from "../pages/FeedPage/FeedPage";
 import ActPage from "../pages/ActPage/ActPage";
+import PostPage from "../pages/ActPage/PostPage";
 import NtzPage from "../pages/NtzPage/NtzPage";
 import MyPage from "../pages/MyPage/MyPage";
 
@@ -24,6 +25,7 @@ export default function Router() {
         <Route path="/notice" element={<NotiPage />}></Route>
         <Route path="/feed" element={<FeedPage />}></Route>
         <Route path="/act" element={<ActPage />}></Route>
+        <Route path="/act/post" element={<PostPage />}></Route>
         <Route path="/netzero" element={<NtzPage />}></Route>
         <Route path="/netzero/subsidy" element={<Subsidy />}></Route>
         <Route path="/netzero/map" element={<MapPage />}></Route>
