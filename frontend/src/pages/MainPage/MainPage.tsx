@@ -65,7 +65,7 @@ export default function MainPage() {
 
           <ButtonsFrame>
             <LeftButton>남은 빚 갚기</LeftButton>
-            <RightButton>월별 내역</RightButton>
+            <ShortButton>월별 내역</ShortButton>
           </ButtonsFrame>
         </HomeFrame>
       </MainFrame>
@@ -161,13 +161,7 @@ const ButtonsFrame = styled.div`
 `;
 
 const LeftButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
   background-color: var(--third);
   color: var(--primary);
 `;
 
-const RightButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
-`;

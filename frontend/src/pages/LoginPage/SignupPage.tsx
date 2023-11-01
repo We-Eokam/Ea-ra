@@ -232,7 +232,6 @@ const GenderButtonFrame = styled.div`
 `;
 
 const GenderButton = styled(ShortButton)<GenderButtonProps>`
-  width: 47.5%;
   border: ${(props) =>
     props.isSelected ? "1px solid transparent" : "1px solid var(--nav-gray)"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--nav-gray)")};

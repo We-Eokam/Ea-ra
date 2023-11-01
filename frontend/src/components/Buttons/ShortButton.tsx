@@ -2,7 +2,7 @@ import styled from "styled-components"
 
 export const ShortButton = styled.div`
   position: relative;
-  width: 100px;
+  width: 47.5%;
   height: 42px;
   background-color: var(--primary);
   color: var(--white);

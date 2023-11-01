@@ -63,14 +63,12 @@ export default function PostPage() {
           <InfoName>참여 기업 등록</InfoName>
           <ButtonsFrame>
             <Buton
-              style={{ width: "47.2%" }}
               onClick={() => handleRegist(false)}
               isSelected={isRegist === false}
             >
               아니요
             </Buton>
             <Buton
-              style={{ width: "47.2%" }}
               onClick={() => handleRegist(true)}
               isSelected={isRegist === true}
             >
@@ -84,6 +82,7 @@ export default function PostPage() {
             <ButtonsFrame>
               {companys.map((company, idx) => (
                 <Buton
+                  style={{ width: "30%" }}
                   onClick={() => setCompanyIdx(idx)}
                   isSelected={companyIdx === idx}
                 >
@@ -131,7 +130,6 @@ const ButtonsFrame = styled.div`
 `;
 
 const Buton = styled(ShortButton)<{ isSelected: boolean }>`
-  width: 30%;
   border: ${(props) =>
     props.isSelected ? "1px solid transparent" : "1px solid var(--nav-gray)"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--nav-gray)")};

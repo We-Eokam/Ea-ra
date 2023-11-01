@@ -3,10 +3,8 @@ import { Cropper, ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import "../../style/ImageCropper.css";
 import styled from "styled-components";
-import { ShortButton } from "../../components/Buttons/ShortButton";
+import { ShortButton } from "../Buttons/ShortButton";
 import { ReactComponent as RotateSvg } from "../../assets/icons/rotate-icon.svg";
-import { ReactComponent as CloseSvg } from "../../assets/icons/close-icon.svg";
-import { ReactComponent as CropSvg } from "../../assets/icons/crop-icon.svg";
 
 interface CropProps {
   onCrop: (image: string) => void;
@@ -74,10 +72,10 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
         <ModalFrame>
           <div className="backdrop" />
           <div className="modal">
-            <Topbar>
-              <ModalTitle>이미지 편집하기</ModalTitle>
+            <ModalTitle>이미지 편집하기</ModalTitle>
+            <IconFrame>
               <RotateSvg onClick={() => rotateImage(-90)} />
-            </Topbar>
+            </IconFrame>
             <div className="content-wrapper">
               <Cropper
                 ref={cropperRef}
@@ -101,13 +99,11 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
             />
             <div className="footer">
               <LeftButton onClick={handleCancleClick}>
-                <CloseCustom />
                 취소
               </LeftButton>
-              <RightButton onClick={getCropData}>
-                <CropSvg />
+              <ShortButton onClick={getCropData}>
                 적용하기
-              </RightButton>
+              </ShortButton>
             </div>
           </div>
         </ModalFrame>
@@ -130,14 +126,17 @@ const ModalFrame = styled.div`
   display: inline-block;
 `;
 
-const Topbar = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
 const ModalTitle = styled.div`
   font-size: 18px;
   font-weight: 550;
+  text-align: center;
+`;
+
+const IconFrame = styled.div`
+  position: absolute;
+  right: 10%;
+  display: flex;
+  gap: 8px;
 `;
 
 const Slider = styled.input`
@@ -148,19 +147,6 @@ const Slider = styled.input`
 `;
 
 const LeftButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
   background-color: var(--third);
   color: var(--primary);
-  gap: 4px;
-`;
-
-const RightButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
-  gap: 4px;
-`;
-
-const CloseCustom = styled(CloseSvg)`
-  stroke: var(--primary);
 `;
