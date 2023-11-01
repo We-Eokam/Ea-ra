@@ -13,12 +13,12 @@ public class DatabaseCleanUp {
 	private static final String[] tableNames = {"proof", "proof_image"};
 
 	private void truncate() {
-		entityManager.createNativeQuery(String.format("SET FOREIGN_KEY_CHECKS = %d", 0)).executeUpdate();
+		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
 		for (String tableName : tableNames) {
 			entityManager.createNativeQuery(String.format("TRUNCATE TABLE %s RESTART IDENTITY;", tableName))
 				.executeUpdate();
 		}
-		entityManager.createNativeQuery(String.format("SET FOREIGN_KEY_CHECKS = %d", 1)).executeUpdate();
+		entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
 	}
 
 	@Transactional
