@@ -14,9 +14,16 @@ java {
     sourceCompatibility = '17'
 }
 
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+
 jacocoTestReport {
     reports {
-        xml.required
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
 
@@ -70,4 +77,11 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "s09-final_S09P31A507_AYtgev079mQQ2y6cYJ3p"
+        property "sonar.projectName", "S09P31A507"
+    }
 }
