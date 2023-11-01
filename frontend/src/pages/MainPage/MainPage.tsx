@@ -155,7 +155,7 @@ const DayProgress = styled.div`
 const ButtonsFrame = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 32px;
   display: flex;
   justify-content: space-between;
 `;
