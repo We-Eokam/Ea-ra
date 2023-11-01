@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class Company extends BaseEntity {
 
 	@Column(nullable = false)
 	String name;
+
+	@Builder
+	public Company(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 }
