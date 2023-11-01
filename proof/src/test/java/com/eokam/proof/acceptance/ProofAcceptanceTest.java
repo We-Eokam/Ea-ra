@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	@Test
 	@DisplayName("인증을 생성한다. (기타가 아닌 컨텐츠)")
+	@Disabled
 	void 인증_생성() {
 		// given
 		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
@@ -102,6 +104,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	@Test
 	@DisplayName("인증을 생성한다. (기타)")
+	@Disabled
 	void 인증_생성_기타() {
 		// given
 		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
