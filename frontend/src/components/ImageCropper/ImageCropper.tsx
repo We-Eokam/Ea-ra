@@ -1,7 +1,12 @@
-import { useRef, useState } from 'react';
-import { Cropper, ReactCropperElement } from 'react-cropper';
-import 'cropperjs/dist/cropper.css';
-import styled from 'styled-components';
+import { useRef, useState } from "react";
+import { Cropper, ReactCropperElement } from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import "../../style/ImageCropper.css";
+import styled from "styled-components";
+import { ShortButton } from "../../components/Buttons/ShortButton";
+import { ReactComponent as RotateSvg } from "../../assets/icons/rotate-icon.svg";
+import { ReactComponent as CloseSvg } from "../../assets/icons/close-icon.svg";
+import { ReactComponent as CropSvg } from "../../assets/icons/crop-icon.svg";
 
 interface CropProps {
   onCrop: (image: string) => void;
@@ -12,7 +17,8 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const cropperRef = useRef<ReactCropperElement>(null);
   const [image, setImage] = useState<null | string>(null);
-        
+  const [rotation, setRotation] = useState(0);
+
   const handleChildrenClick = () => {
     if (inputRef.current) inputRef.current.click();
   };
@@ -26,57 +32,85 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
 
     const reader = new FileReader();
     reader.onload = () => {
-        setImage(reader.result as string);
+      setImage(reader.result as string);
     };
     reader.readAsDataURL(files[0]);
+  };
+
+  const handleCancleClick = () => {
+    setImage(null);
+    setRotation(0);
   };
 
   const getCropData = () => {
     if (typeof cropperRef.current?.cropper !== "undefined") {
       onCrop(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
       setImage(null);
+      setRotation(0);
+    }
+  };
+
+  const rotateImage = (degrees: number) => {
+    if (typeof cropperRef.current?.cropper !== "undefined") {
+      if (degrees >= 0) {
+        cropperRef.current?.cropper.rotate(degrees - rotation);
+        setRotation(degrees);
+      } else {
+        cropperRef.current?.cropper.rotate(degrees);
+      }
     }
   };
 
   return (
     <Container>
       <input
-          type="file"
-          ref={inputRef}
-          style={{ display: "none" }}
-          onChange={handleFileChange}
+        type="file"
+        ref={inputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
       />
       <span onClick={handleChildrenClick}>{children}</span>
       {image && (
-        <ModalContainer>
+        <ModalFrame>
           <div className="backdrop" />
           <div className="modal">
-            <h3>이미지 편집하기</h3>
+            <Topbar>
+              <ModalTitle>이미지 편집하기</ModalTitle>
+              <RotateSvg onClick={() => rotateImage(-90)} />
+            </Topbar>
             <div className="content-wrapper">
-              <div className="content">
-                <Cropper
-                  ref={cropperRef}
-                  aspectRatio={1}
-                  src={image}
-                  viewMode={1}
-                  width={800}
-                  height={500}
-                  background={false}
-                  responsive
-                  autoCropArea={1}
-                  checkOrientation={false}
-                  guides
-                />
-              </div>
+              <Cropper
+                ref={cropperRef}
+                aspectRatio={1}
+                src={image}
+                viewMode={1}
+                background={false}
+                responsive
+                autoCropArea={1}
+                checkOrientation={false}
+                guides
+              />
             </div>
+            Rotation: {rotation}°
+            <Slider
+              type="range"
+              min="0"
+              max="360"
+              value={rotation}
+              onChange={(e) => rotateImage(Number(e.target.value))}
+            />
             <div className="footer">
-              <button onClick={() => setImage(null)}>취소</button>
-              <button className="crop" onClick={getCropData}>
+              <LeftButton onClick={handleCancleClick}>
+                <CloseCustom />
+                취소
+              </LeftButton>
+              <RightButton onClick={getCropData}>
+                <CropSvg />
                 적용하기
-              </button>
+              </RightButton>
             </div>
           </div>
-        </ModalContainer>
+        </ModalFrame>
       )}
     </Container>
   );
@@ -85,82 +119,48 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
 export default ImageCropper;
 
 const Container = styled.div`
+  background-color: var(--background);
+  border: 1px solid var(--gray);
+  position: relative;
+  width: 100%;
 `;
 
-const ModalContainer = styled.div`
+const ModalFrame = styled.div`
   position: relative;
   display: inline-block;
-  cursor: pointer;
-
-  .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-  }
-
-  .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    z-index: 2;
-  }
-
-  h3 {
-    text-align: center;
-  }
-
-  .content-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-
-  .content {
-    width: 100%;
-    max-width: 800px;
-    height: 500px;
-  }
-
-  .footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-
-    button {
-      margin: 5px;
-      padding: 10px;
-    }
-  }
 `;
 
-const ProfileInput = styled.input`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-  z-index: 2;
-`;
-
-const InputLabel = styled.label`
-  position: absolute;
-  width: 100%;
-  height: 100%;
+const Topbar = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  &:hover {
-    cursor: pointer;
-  }
-  overflow: hidden;
-  z-index: 3;
+  justify-content: space-between;
+`;
+
+const ModalTitle = styled.div`
+  font-size: 18px;
+  font-weight: 550;
+`;
+
+const Slider = styled.input`
+  width: calc(100% - 4px);
+  background-color: transparent;
+  accent-color: var(--primary);
+  margin: 10px 0;
+`;
+
+const LeftButton = styled(ShortButton)`
+  position: relative;
+  width: 47.5%;
+  background-color: var(--third);
+  color: var(--primary);
+  gap: 4px;
+`;
+
+const RightButton = styled(ShortButton)`
+  position: relative;
+  width: 47.5%;
+  gap: 4px;
+`;
+
+const CloseCustom = styled(CloseSvg)`
+  stroke: var(--primary);
 `;
