@@ -1,0 +1,43 @@
+package com.eokam.cpoint.infra.common;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import com.eokam.cpoint.domain.Company;
+import com.eokam.cpoint.domain.Cpoint;
+import com.eokam.cpoint.infra.CompanyRepository;
+import com.eokam.cpoint.infra.CpointRepository;
+
+@DataJpaTest
+@SuppressWarnings("NonAsciiCharacters")
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+public abstract class CommonRepositoryTest {
+
+	@Autowired
+	protected CpointRepository cpointRepository;
+
+	@Autowired
+	protected CompanyRepository companyRepository;
+
+	protected Long 단일회사_저장(final Company company) {
+		return companyRepository.save(company).getId();
+	}
+
+	protected void 여러회사_저장(final Company... companies) {
+		var companiesToSave = List.of(companies);
+		companyRepository.saveAll(companiesToSave);
+	}
+
+	protected Long 단일탄소중립포인트적립내역_저장(final Cpoint cpoint) {
+		return cpointRepository.save(cpoint).getId();
+	}
+
+	protected void 여러탄소중립포인트적립내역_저장(final Cpoint... cpoints) {
+		var cpointsToSave = List.of(cpoints);
+		cpointRepository.saveAll(cpointsToSave);
+	}
+}
