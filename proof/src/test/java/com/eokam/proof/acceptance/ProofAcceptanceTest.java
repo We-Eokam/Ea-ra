@@ -13,6 +13,7 @@ import java.util.stream.LongStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import com.eokam.proof.common.AcceptanceTest;
@@ -21,6 +22,7 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -79,6 +81,58 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 		// then
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+	}
+
+	@Test
+	@DisplayName("인증을 생성한다. (기타가 아닌 컨텐츠)")
+	void 인증_생성() {
+		// given
+		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.build();
+
+		// when
+		ExtractableResponse<Response> response = 인증_생성_시도(생성_요청);
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
+	}
+
+	@Test
+	@DisplayName("인증을 생성한다. (기타)")
+	void 인증_생성_기타() {
+		// given
+		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
+			.activityType(ActivityType.ETC)
+			.content("플로깅을 했다!")
+			.build();
+
+		// when
+		ExtractableResponse<Response> response = 인증_생성_시도(생성_요청);
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
+	}
+
+	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) {
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		return RestAssured.given().log().all()
+			.when()
+			.cookie("access-token", testJwt)
+			.and()
+			.body(생성_요청)
+			.and()
+			.post(API_BASE_PATH)
+			.then().log().all()
+			.extract();
 	}
 
 	private static ExtractableResponse<Response> 내_인증_내역_조회(Long page, Long size) {
