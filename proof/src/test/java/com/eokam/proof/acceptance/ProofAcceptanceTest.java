@@ -58,10 +58,11 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(proofIdList.get(i).toString()).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getProofId().toString());
-			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getActivityType().toString());
-			assertThat(cCompanyIdList.get(i).toString()).isEqualTo(
-				EXPECTED_MY_PROOF_LIST.get(i).getCCompanyId().toString());
+			assertThat(Integer.toUnsignedLong(proofIdList.get(i))).isEqualTo(
+				EXPECTED_MY_PROOF_LIST.get(i).getProofId());
+			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
+				EXPECTED_MY_PROOF_LIST.get(i).getCCompanyId());
 			assertThat(createdAtList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i)
 				.getCreatedAt()
 				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
