@@ -5,6 +5,7 @@ import "../../style/ImageCropper.css";
 import styled from "styled-components";
 import { ShortButton } from "../Buttons/ShortButton";
 import { ReactComponent as RotateSvg } from "../../assets/icons/rotate-icon.svg";
+import { ReactComponent as ResetSvg } from "../../assets/icons/reset-icon.svg";
 
 interface CropProps {
   onCrop: (image: string) => void;
@@ -59,6 +60,13 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
     }
   };
 
+  const handleResetClick = () => {
+    if (cropperRef.current) {
+      cropperRef.current.cropper.reset();
+      setRotation(0);
+    }
+  };
+
   return (
     <Container>
       <input
@@ -75,6 +83,7 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
             <ModalTitle>이미지 편집하기</ModalTitle>
             <IconFrame>
               <RotateSvg onClick={() => rotateImage(-90)} />
+              <ResetSvg onClick={handleResetClick}/>
             </IconFrame>
             <div className="content-wrapper">
               <Cropper
