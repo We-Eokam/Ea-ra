@@ -46,6 +46,7 @@ public class AccusationServiceImpl implements AccusationService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<AccusationDto> getAccusationList(Long memberId) {
 		List<AccusationDto> accusationDtoList = new ArrayList<>();
 		List<Accusation> accusations = accusationRepository.findByMemberId(memberId);
