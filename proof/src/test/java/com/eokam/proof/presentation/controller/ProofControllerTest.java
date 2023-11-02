@@ -14,23 +14,30 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.dto.ProofImageDto;
 import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
+import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 
 import jakarta.servlet.http.Cookie;
 
@@ -55,11 +62,7 @@ class ProofControllerTest extends BaseControllerTest {
 	void getMyProofList_Success() throws Exception {
 		LongStream.range(1, 6).forEach(this::generateProof);
 
-		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
-		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = createJwt(1L);
 
 		PageRequest pageRequest = PageRequest.of(0, 5);
 
@@ -110,7 +113,7 @@ class ProofControllerTest extends BaseControllerTest {
 					.value("test1.jpg")
 			)
 			.andExpect(jsonPath("proof[0].content")
-				.doesNotExist()
+				.isEmpty()
 			)
 			.andExpect(jsonPath("proof[1].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(1).proofId())
@@ -139,7 +142,7 @@ class ProofControllerTest extends BaseControllerTest {
 					.value("test2.jpg")
 			)
 			.andExpect(jsonPath("proof[1].content")
-				.doesNotExist()
+				.isEmpty()
 			)
 			.andExpect(jsonPath("proof[2].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(2).proofId())
@@ -168,7 +171,7 @@ class ProofControllerTest extends BaseControllerTest {
 					.value("test3.jpg")
 			)
 			.andExpect(jsonPath("proof[2].content")
-				.doesNotExist()
+				.isEmpty()
 			)
 			.andExpect(jsonPath("proof[3].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(3).proofId())
@@ -197,7 +200,7 @@ class ProofControllerTest extends BaseControllerTest {
 					.value("test4.jpg")
 			)
 			.andExpect(jsonPath("proof[3].content")
-				.doesNotExist()
+				.isEmpty()
 			)
 			.andExpect(jsonPath("proof[4].proof_id")
 				.value(EXPECTED_MY_PROOF_LIST.get(4).proofId())
@@ -226,7 +229,7 @@ class ProofControllerTest extends BaseControllerTest {
 					.value("test5.jpg")
 			)
 			.andExpect(jsonPath("proof[4].content")
-				.doesNotExist()
+				.isEmpty()
 			);
 
 		verify(proofService).getMyProofList(testJwt, PageRequest.of(0, 5));
@@ -235,11 +238,7 @@ class ProofControllerTest extends BaseControllerTest {
 	@Test
 	@DisplayName("내 인증 목록 컨텐츠 없음")
 	void getMyProofList_NO_CONTENT() throws Exception {
-		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
-		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = createJwt(1L);
 
 		PageRequest pageRequest = PageRequest.of(0, 5);
 
@@ -262,19 +261,17 @@ class ProofControllerTest extends BaseControllerTest {
 			)
 			.andDo(print())
 			.andExpect(status().isNoContent());
+
+		verify(proofService).getMyProofList(testJwt, PageRequest.of(0, 5));
 	}
 
 	@ParameterizedTest
 	@CsvSource({"two, 1", "1, two"})
-	@DisplayName("올바르지 않은 Query Param 을 입력 시 에러")
-	void getMyProofList_Fail(String page, String size) throws Exception {
+	@DisplayName("올바르지 않은 Query Param 을 입력 시 400 에러")
+	void getMyProofList_400(String page, String size) throws Exception {
 		LongStream.range(1, 6).forEach(this::generateProof);
 
-		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
-		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = createJwt(1L);
 
 		// when & then
 		this.mockMvc.perform(get("/proof/me")
@@ -282,6 +279,259 @@ class ProofControllerTest extends BaseControllerTest {
 				.param("size", size)
 				.cookie(new Cookie("access-token", testJwt))
 			)
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+	}
+
+	@ParameterizedTest
+	@CsvSource({"ELECTRONIC_RECEIPT", "TUMBLER", "DISPOSABLE_CUP", "DISCARDED_PHONE", "ECO_FRIENDLY_PRODUCTS",
+		"EMISSION_FREE_CAR", "HIGH_QUALITY_RECYCLED_PRODUCTS", "MULTI_USE_CONTAINER", "REFILL_STATION"})
+	@DisplayName("인증 생성을 성공하는 테스트")
+	@Disabled
+	void postCreateProof_Success(ActivityType activityType) throws Exception {
+		final String testJwt = createJwt(1L);
+
+		final Long EXPECTED_PROOF_ID = 1L;
+		final Long EXPECTED_MEMBER_ID = 1L;
+		final Long EXPECTED_CCOMPANY_ID = 1L;
+		final ActivityType EXPECTED_ACTIVITY_TYPE = activityType;
+		final String EXPECTED_CONTENT = null;
+		final LocalDateTime EXPECTED_CREATED_AT = LocalDateTime.now();
+		final String EXPECTED_FILE_URL = "http://test.com";
+		final String EXPECTED_FILE_NAME = "test";
+		final String EXPECTED_ORIGINAL_NAME = "test.jpg";
+		final Long EXPECTED_IMAGE_ID = 1L;
+		final List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>() {{
+			ProofImageDto.builder()
+				.proofImageId(EXPECTED_IMAGE_ID)
+				.fileUrl(EXPECTED_FILE_URL)
+				.fileName(EXPECTED_FILE_NAME)
+				.build();
+		}};
+
+		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
+
+		final MockMultipartFile mockMultipartFile =
+			new MockMultipartFile(
+				EXPECTED_FILE_NAME,
+				EXPECTED_ORIGINAL_NAME,
+				MediaType.IMAGE_JPEG_VALUE,
+				resource.getContentAsByteArray()
+			);
+
+		final ProofCreateRequest proofCreateRequest = ProofCreateRequest.builder()
+			.activityType(EXPECTED_ACTIVITY_TYPE)
+			.cCompanyId(EXPECTED_CCOMPANY_ID)
+			.content(EXPECTED_CONTENT)
+			.build();
+
+		final ProofDto expectedProofDto = ProofDto.builder()
+			.proofId(EXPECTED_PROOF_ID)
+			.memberId(EXPECTED_MEMBER_ID)
+			.cCompanyId(EXPECTED_CCOMPANY_ID)
+			.activityType(EXPECTED_ACTIVITY_TYPE)
+			.createdAt(EXPECTED_CREATED_AT)
+			.proofImages(EXPECTED_PROOF_IMAGES)
+			.content(EXPECTED_CONTENT)
+			.build();
+
+		given(proofService.createProof(argThat(proofDto -> proofDto.activityType().equals(activityType)), anyList()))
+			.willReturn(expectedProofDto);
+
+		String requestDtoJson = String.valueOf(proofCreateRequest);
+		MockMultipartFile requestContent = new MockMultipartFile(
+			"content",
+			"content",
+			MediaType.APPLICATION_JSON_VALUE,
+			requestDtoJson.getBytes(StandardCharsets.UTF_8)
+		);
+
+		this.mockMvc.perform(multipart("/proof")
+				.file(mockMultipartFile)
+				.file(requestContent)
+				.cookie(new Cookie("access-token", testJwt)))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("proof_id")
+				.value(EXPECTED_PROOF_ID)
+			)
+			.andExpect(jsonPath("activity_type")
+				.value(EXPECTED_ACTIVITY_TYPE)
+			)
+			.andExpect(jsonPath("c_company_id")
+				.value(EXPECTED_CCOMPANY_ID)
+			)
+			.andExpect(jsonPath("created_at")
+				.value(EXPECTED_CREATED_AT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(jsonPath("picture")
+				.isArray()
+			)
+			.andExpect(jsonPath("picture[0].url")
+				.value(EXPECTED_FILE_URL)
+			)
+			.andExpect(jsonPath("picture[0].name")
+				.value(EXPECTED_FILE_URL)
+			)
+			.andExpect(jsonPath("content")
+				.isEmpty()
+			);
+
+		List<MultipartFile> multipartFileList = new ArrayList<>();
+		multipartFileList.add(mockMultipartFile);
+
+		verify(proofService).createProof(ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
+	}
+
+	@Test
+	@DisplayName("기타 인증 생성을 성공하는 테스트")
+	@Disabled
+	void postCreateEtcProof_Success() throws Exception {
+		final String testJwt = createJwt(1L);
+
+		final Long EXPECTED_PROOF_ID = 1L;
+		final Long EXPECTED_MEMBER_ID = 1L;
+		final Long EXPECTED_COMPANY_ID = null;
+		final ActivityType EXPECTED_ACTIVITY_TYPE = ActivityType.ETC;
+		final String EXPECTED_CONTENT = "플로깅을 했어요!";
+		final LocalDateTime EXPECTED_CREATED_AT = LocalDateTime.now();
+		final String EXPECTED_FILE_URL = "http://test.com";
+		final String EXPECTED_FILE_NAME = "test";
+		final String EXPECTED_ORIGINAL_NAME = "test.jpg";
+		final Long EXPECTED_IMAGE_ID = 1L;
+		final List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>() {{
+			ProofImageDto.builder()
+				.proofImageId(EXPECTED_IMAGE_ID)
+				.fileUrl(EXPECTED_FILE_URL)
+				.fileName(EXPECTED_FILE_NAME)
+				.build();
+		}};
+
+		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
+
+		final MockMultipartFile mockMultipartFile =
+			new MockMultipartFile(
+				EXPECTED_FILE_NAME,
+				EXPECTED_ORIGINAL_NAME,
+				MediaType.IMAGE_JPEG_VALUE,
+				resource.getContentAsByteArray()
+			);
+
+		final ProofCreateRequest proofCreateRequest = ProofCreateRequest.builder()
+			.activityType(EXPECTED_ACTIVITY_TYPE)
+			.cCompanyId(EXPECTED_COMPANY_ID)
+			.content(EXPECTED_CONTENT)
+			.build();
+
+		final ProofDto expectedProofDto = ProofDto.builder()
+			.proofId(EXPECTED_PROOF_ID)
+			.memberId(EXPECTED_MEMBER_ID)
+			.cCompanyId(EXPECTED_COMPANY_ID)
+			.activityType(EXPECTED_ACTIVITY_TYPE)
+			.createdAt(EXPECTED_CREATED_AT)
+			.proofImages(EXPECTED_PROOF_IMAGES)
+			.content(EXPECTED_CONTENT)
+			.build();
+
+		given(proofService.createProof(argThat(proofDto -> proofDto.content().equals(EXPECTED_CONTENT)), anyList()))
+			.willReturn(expectedProofDto);
+
+		String requestDtoJson = String.valueOf(proofCreateRequest);
+		MockMultipartFile requestContent = new MockMultipartFile(
+			"content",
+			"content",
+			MediaType.APPLICATION_JSON_VALUE,
+			requestDtoJson.getBytes(StandardCharsets.UTF_8)
+		);
+
+		this.mockMvc.perform(multipart("/proof")
+				.file(mockMultipartFile)
+				.file(requestContent)
+				.cookie(new Cookie("access-token", testJwt)))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("proof_id")
+				.value(EXPECTED_PROOF_ID)
+			)
+			.andExpect(jsonPath("activity_type")
+				.value(EXPECTED_ACTIVITY_TYPE)
+			)
+			.andExpect(jsonPath("c_company_id")
+				.isEmpty()
+			)
+			.andExpect(jsonPath("created_at")
+				.value(EXPECTED_CREATED_AT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(jsonPath("picture")
+				.isArray()
+			)
+			.andExpect(jsonPath("picture[0].url")
+				.value(EXPECTED_FILE_URL)
+			)
+			.andExpect(jsonPath("picture[0].name")
+				.value(EXPECTED_FILE_URL)
+			)
+			.andExpect(jsonPath("content")
+				.value(EXPECTED_CONTENT)
+			);
+
+		List<MultipartFile> multipartFileList = new ArrayList<>();
+		multipartFileList.add(mockMultipartFile);
+
+		verify(proofService).createProof(ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
+	}
+
+	@ParameterizedTest
+	@CsvSource({"ELECTRONIC_RECEIPT, 1, 내용", "ETC, 1, 내용", "ELECTRONIC_RECEIPT, , ", "ETC, , ",
+		"ELECTRONIC_RECEIPT, , 내용", "ETC, 1, "})
+	@DisplayName("올바르지 않은 Request 요청 시 400 에러")
+	@Disabled
+	void postCreateProof_400(ActivityType activityType, Long companyId, String content) throws Exception {
+		final String testJwt = createJwt(1L);
+
+		final Long EXPECTED_COMPANY_ID = companyId;
+		final ActivityType EXPECTED_ACTIVITY_TYPE = activityType;
+		final String EXPECTED_CONTENT = content;
+		final String EXPECTED_FILE_URL = "http://test.com";
+		final String EXPECTED_FILE_NAME = "test";
+		final String EXPECTED_ORIGINAL_NAME = "test.jpg";
+		final Long EXPECTED_IMAGE_ID = 1L;
+		final List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>() {{
+			ProofImageDto.builder()
+				.proofImageId(EXPECTED_IMAGE_ID)
+				.fileUrl(EXPECTED_FILE_URL)
+				.fileName(EXPECTED_FILE_NAME)
+				.build();
+		}};
+
+		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
+
+		final MockMultipartFile mockMultipartFile =
+			new MockMultipartFile(
+				EXPECTED_FILE_NAME,
+				EXPECTED_ORIGINAL_NAME,
+				MediaType.IMAGE_JPEG_VALUE,
+				resource.getContentAsByteArray()
+			);
+
+		final ProofCreateRequest proofCreateRequest = ProofCreateRequest.builder()
+			.activityType(EXPECTED_ACTIVITY_TYPE)
+			.cCompanyId(EXPECTED_COMPANY_ID)
+			.content(EXPECTED_CONTENT)
+			.build();
+
+		String requestDtoJson = String.valueOf(proofCreateRequest);
+		MockMultipartFile requestContent = new MockMultipartFile(
+			"content",
+			"content",
+			MediaType.APPLICATION_JSON_VALUE,
+			requestDtoJson.getBytes(StandardCharsets.UTF_8)
+		);
+
+		this.mockMvc.perform(multipart("/proof")
+				.file(mockMultipartFile)
+				.file(requestContent)
+				.cookie(new Cookie("access-token", testJwt)))
 			.andDo(print())
 			.andExpect(status().isBadRequest());
 	}
@@ -376,4 +626,9 @@ class ProofControllerTest extends BaseControllerTest {
 		}
 	}
 
+	private static String createJwt(Long memberId) {
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		return "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+	}
 }

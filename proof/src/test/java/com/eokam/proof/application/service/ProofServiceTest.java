@@ -61,7 +61,7 @@ class ProofServiceTest extends BaseServiceTest {
 		LongStream.range(1, 6).forEach(this::generateProof);
 
 		// given
-		String testJwt = createJwt();
+		String testJwt = createJwt(1L);
 
 		PageRequest pageRequest = PageRequest.of(0, 5);
 
@@ -215,8 +215,7 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.proofImages().get(0).fileUrl()).isEqualTo(EXPECTED_FILE_URL);
 	}
 
-	private String createJwt() {
-		long memberId = 1L;
+	private String createJwt(Long memberId) {
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
 
 		return "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
