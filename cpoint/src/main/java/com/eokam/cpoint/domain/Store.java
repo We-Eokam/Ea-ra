@@ -2,10 +2,14 @@ package com.eokam.cpoint.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +30,18 @@ public class Store extends BaseEntity {
 	Double Latitude;
 
 	@Column(nullable = false)
-	Double Longitude;
+	Double longitude;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "company_id")
+	Company company;
+
+	@Builder
+	public Store(Long id, String branch, Double latitude, Double longitude, Company company) {
+		this.id = id;
+		this.branch = branch;
+		this.Latitude = latitude;
+		this.longitude = longitude;
+		this.company = company;
+	}
 }
