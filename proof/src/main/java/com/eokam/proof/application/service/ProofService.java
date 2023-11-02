@@ -46,6 +46,6 @@ public class ProofService {
 
 		s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
 
-		return ProofDto.from(savedProof);
+		return ProofDto.of(savedProof, s3SavedList);
 	}
 }
