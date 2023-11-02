@@ -1,7 +1,10 @@
 package com.eokam.proof.infrastructure.external.s3.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,8 @@ public class S3Service {
 	}
 
 	public S3FileDetail save(MultipartFile multipartFile) {
-		String originalFileName = multipartFile.getOriginalFilename();
+		String originalFileName =
+			LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + UUID.randomUUID();
 
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(multipartFile.getSize());
