@@ -35,6 +35,8 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
+import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 
 class ProofServiceTest extends BaseServiceTest {
 
@@ -46,6 +48,9 @@ class ProofServiceTest extends BaseServiceTest {
 
 	@Mock
 	ProofImageRepository proofImageRepository;
+
+	@Mock
+	S3Service s3Service;
 
 	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 
@@ -123,7 +128,12 @@ class ProofServiceTest extends BaseServiceTest {
 			.createdAt(EXPECTED_CREATED_AT)
 			.build();
 
+		S3FileDetail s3FileDetail = S3FileDetail.of("test", "http://test.com");
+		List<S3FileDetail> s3FileDetailList = new ArrayList<>();
+		s3FileDetailList.add(s3FileDetail);
+
 		given(proofRepository.save(any(Proof.class))).willReturn(proof);
+		given(s3Service.saveList(anyList())).willReturn(s3FileDetailList);
 
 		// when
 		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);
@@ -175,7 +185,12 @@ class ProofServiceTest extends BaseServiceTest {
 			.contents(EXPECT_CONTENT)
 			.build();
 
+		S3FileDetail s3FileDetail = S3FileDetail.of("test", "http://test.com");
+		List<S3FileDetail> s3FileDetailList = new ArrayList<>();
+		s3FileDetailList.add(s3FileDetail);
+
 		given(proofRepository.save(any(Proof.class))).willReturn(proof);
+		given(s3Service.saveList(anyList())).willReturn(s3FileDetailList);
 
 		// when
 		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);

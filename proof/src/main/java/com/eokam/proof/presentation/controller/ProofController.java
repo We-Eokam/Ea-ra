@@ -1,5 +1,6 @@
 package com.eokam.proof.presentation.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.response.MyProofListResponse;
@@ -47,10 +49,13 @@ public class ProofController {
 	}
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> postCreateProof(@CookieValue("access-token") final String accessToken,
+	public ResponseEntity<ProofResponse> postCreateProof(@CookieValue("access-token") final String accessToken,
 		@RequestPart(value = "file", required = false) List<MultipartFile> images,
 		@RequestPart(value = "content") ProofCreateRequest request
 	) {
-		return null;
+		ProofResponse response = ProofResponse.from(
+			proofService.createProof(ProofCreateDto.of(accessToken, request), images));
+
+		return ResponseEntity.created(URI.create("/proof/" + response.proofId())).body(response);
 	}
 }

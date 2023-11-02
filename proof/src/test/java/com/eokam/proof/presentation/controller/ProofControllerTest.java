@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.LongStream;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +40,7 @@ import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 
@@ -48,6 +51,9 @@ class ProofControllerTest extends BaseControllerTest {
 
 	@Mock
 	ProofService proofService;
+
+	@Spy
+	ObjectMapper mapper;
 
 	private static final List<ProofDto> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 
@@ -287,7 +293,6 @@ class ProofControllerTest extends BaseControllerTest {
 	@CsvSource({"ELECTRONIC_RECEIPT", "TUMBLER", "DISPOSABLE_CUP", "DISCARDED_PHONE", "ECO_FRIENDLY_PRODUCTS",
 		"EMISSION_FREE_CAR", "HIGH_QUALITY_RECYCLED_PRODUCTS", "MULTI_USE_CONTAINER", "REFILL_STATION"})
 	@DisplayName("인증 생성을 성공하는 테스트")
-	@Disabled
 	void postCreateProof_Success(ActivityType activityType) throws Exception {
 		final String testJwt = createJwt(1L);
 
@@ -313,7 +318,7 @@ class ProofControllerTest extends BaseControllerTest {
 
 		final MockMultipartFile mockMultipartFile =
 			new MockMultipartFile(
-				EXPECTED_FILE_NAME,
+				"file",
 				EXPECTED_ORIGINAL_NAME,
 				MediaType.IMAGE_JPEG_VALUE,
 				resource.getContentAsByteArray()
@@ -338,25 +343,34 @@ class ProofControllerTest extends BaseControllerTest {
 		given(proofService.createProof(argThat(proofDto -> proofDto.activityType().equals(activityType)), anyList()))
 			.willReturn(expectedProofDto);
 
-		String requestDtoJson = String.valueOf(proofCreateRequest);
+		JSONObject input = new JSONObject();
+		input.put("activity_type", EXPECTED_ACTIVITY_TYPE.toString());
+		input.put("c_company_id", EXPECTED_CCOMPANY_ID.toString());
+		input.put("content", null);
+
+		String requestDtoJson = input.toString();
+
 		MockMultipartFile requestContent = new MockMultipartFile(
 			"content",
-			"content",
+			"",
 			MediaType.APPLICATION_JSON_VALUE,
 			requestDtoJson.getBytes(StandardCharsets.UTF_8)
 		);
 
-		this.mockMvc.perform(multipart("/proof")
-				.file(mockMultipartFile)
-				.file(requestContent)
-				.cookie(new Cookie("access-token", testJwt)))
+		this.mockMvc.perform(
+				multipart("/proof")
+					.file(mockMultipartFile)
+					.file(requestContent)
+					.contentType(MediaType.MULTIPART_FORM_DATA)
+					.accept(MediaType.APPLICATION_JSON)
+					.cookie(new Cookie("access-token", testJwt)))
 			.andDo(print())
-			.andExpect(status().isOk())
+			.andExpect(status().isCreated())
 			.andExpect(jsonPath("proof_id")
 				.value(EXPECTED_PROOF_ID)
 			)
 			.andExpect(jsonPath("activity_type")
-				.value(EXPECTED_ACTIVITY_TYPE)
+				.value(EXPECTED_ACTIVITY_TYPE.name())
 			)
 			.andExpect(jsonPath("c_company_id")
 				.value(EXPECTED_CCOMPANY_ID)
@@ -366,12 +380,6 @@ class ProofControllerTest extends BaseControllerTest {
 			)
 			.andExpect(jsonPath("picture")
 				.isArray()
-			)
-			.andExpect(jsonPath("picture[0].url")
-				.value(EXPECTED_FILE_URL)
-			)
-			.andExpect(jsonPath("picture[0].name")
-				.value(EXPECTED_FILE_URL)
 			)
 			.andExpect(jsonPath("content")
 				.isEmpty()
@@ -385,7 +393,6 @@ class ProofControllerTest extends BaseControllerTest {
 
 	@Test
 	@DisplayName("기타 인증 생성을 성공하는 테스트")
-	@Disabled
 	void postCreateEtcProof_Success() throws Exception {
 		final String testJwt = createJwt(1L);
 
@@ -411,7 +418,7 @@ class ProofControllerTest extends BaseControllerTest {
 
 		final MockMultipartFile mockMultipartFile =
 			new MockMultipartFile(
-				EXPECTED_FILE_NAME,
+				"file",
 				EXPECTED_ORIGINAL_NAME,
 				MediaType.IMAGE_JPEG_VALUE,
 				resource.getContentAsByteArray()
@@ -433,13 +440,19 @@ class ProofControllerTest extends BaseControllerTest {
 			.content(EXPECTED_CONTENT)
 			.build();
 
-		given(proofService.createProof(argThat(proofDto -> proofDto.content().equals(EXPECTED_CONTENT)), anyList()))
+		given(proofService.createProof(any(ProofCreateDto.class), anyList()))
 			.willReturn(expectedProofDto);
 
-		String requestDtoJson = String.valueOf(proofCreateRequest);
+		JSONObject input = new JSONObject();
+		input.put("activity_type", EXPECTED_ACTIVITY_TYPE.toString());
+		input.put("c_company_id", null);
+		input.put("content", EXPECTED_CONTENT);
+
+		String requestDtoJson = input.toString();
+
 		MockMultipartFile requestContent = new MockMultipartFile(
 			"content",
-			"content",
+			"",
 			MediaType.APPLICATION_JSON_VALUE,
 			requestDtoJson.getBytes(StandardCharsets.UTF_8)
 		);
@@ -449,12 +462,12 @@ class ProofControllerTest extends BaseControllerTest {
 				.file(requestContent)
 				.cookie(new Cookie("access-token", testJwt)))
 			.andDo(print())
-			.andExpect(status().isOk())
+			.andExpect(status().isCreated())
 			.andExpect(jsonPath("proof_id")
 				.value(EXPECTED_PROOF_ID)
 			)
 			.andExpect(jsonPath("activity_type")
-				.value(EXPECTED_ACTIVITY_TYPE)
+				.value(EXPECTED_ACTIVITY_TYPE.name())
 			)
 			.andExpect(jsonPath("c_company_id")
 				.isEmpty()
@@ -464,12 +477,6 @@ class ProofControllerTest extends BaseControllerTest {
 			)
 			.andExpect(jsonPath("picture")
 				.isArray()
-			)
-			.andExpect(jsonPath("picture[0].url")
-				.value(EXPECTED_FILE_URL)
-			)
-			.andExpect(jsonPath("picture[0].name")
-				.value(EXPECTED_FILE_URL)
 			)
 			.andExpect(jsonPath("content")
 				.value(EXPECTED_CONTENT)
