@@ -18,19 +18,19 @@ const NavBar = () => {
           <MainSvg/>
           <TabTitle>홈</TabTitle>
         </LinkTab>
-        <LinkTab to="/feed" active={location.pathname === '/feed'}>
+        <LinkTab to="/feed" active={location.pathname.includes('feed')}>
           <FeedSvg/>
           <TabTitle>피드</TabTitle>
         </LinkTab>
-        <LinkTab to="/act" active={location.pathname === '/act'}>
+        <LinkTab to="/act" active={location.pathname.includes('act')}>
           <ActSvg/>
           <TabTitle>활동</TabTitle>
         </LinkTab>
-        <LinkTab to="/netzero" active={location.pathname === '/netzero'}>
+        <LinkTab to="/netzero" active={location.pathname.includes('netzero')}>
           <NTZSvg/>
           <TabTitle>탄소중립</TabTitle>
         </LinkTab>
-        <LinkTab to="/mypage" active={location.pathname === '/mypage'}>
+        <LinkTab to="/mypage" active={location.pathname.includes('mypage')}>
           <MyPageSvg/>
           <TabTitle>계정</TabTitle>
         </LinkTab>

@@ -30,7 +30,7 @@ const Button = styled.div<{ followed?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 92px;
+  width: 100px;
   height: 32px;
   background-color: ${(props) =>
     props.followed ? "var(--gray)" : "var(--primary)"};
