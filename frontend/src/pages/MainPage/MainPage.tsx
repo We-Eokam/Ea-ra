@@ -6,8 +6,54 @@ import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
 
 export default function MainPage() {
+  const navigate = useNavigate();
+
+  const toMonthCal = () => {
+    navigate("/calendar");
+  };
+
+  function getCurrentWeek() {
+    const day = new Date();
+    const sunday = day.getTime() - 86400000 * day.getDay();
+
+    day.setTime(sunday);
+
+    const result = [day.toISOString().slice(0, 10)];
+
+    for (let i = 1; i < 7; i++) {
+      day.setTime(day.getTime() + 86400000);
+      result.push(day.toISOString().slice(0, 10));
+    }
+
+    return result;
+  }
+
+  const currentWeek = getCurrentWeek();
+
+  const onlyDay = currentWeek.map((date) => {
+    const lastTwoChars = date.slice(-2);
+    if (lastTwoChars.startsWith("0")) {
+      return lastTwoChars.substring(1);
+    }
+    return lastTwoChars;
+  });
+
   var progress = 100;
   var greenInit = 2400000;
+
+  const weekActCount = [4, 2, 0, 6, 8, 4, 0];
+
+  const getCountColor = (count: number): string => {
+    if (count === 0) {
+      return "var(--white)";
+    } else if (count <= 2) {
+      return "var(--third)";
+    } else if (count <= 4) {
+      return "var(--secondary)";
+    } else {
+      return "var(--primary)";
+    }
+  };
 
   return (
     <>
@@ -26,41 +72,21 @@ export default function MainPage() {
           <SummaryText>주간 활동 요약</SummaryText>
 
           <WeekdayFrame>
-            <OneDay>
-              <DayName>일</DayName>
-              <DayNumber>22</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>월</DayName>
-              <DayNumber>23</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>화</DayName>
-              <DayNumber>24</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>수</DayName>
-              <DayNumber>25</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>목</DayName>
-              <DayNumber>26</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>금</DayName>
-              <DayNumber>27</DayNumber>
-              <DayProgress />
-            </OneDay>
-            <OneDay>
-              <DayName>토</DayName>
-              <DayNumber>28</DayNumber>
-              <DayProgress />
-            </OneDay>
+            <WeekNameFrame>
+              <WeekName>일</WeekName>
+              <WeekName>월</WeekName>
+              <WeekName>화</WeekName>
+              <WeekName>수</WeekName>
+              <WeekName>목</WeekName>
+              <WeekName>금</WeekName>
+              <WeekName>토</WeekName>
+            </WeekNameFrame>
+            {onlyDay.map((day, index) => (
+              <OneDay>
+                <DayNumber>{day}</DayNumber>
+                <DayProgress count={getCountColor(weekActCount[index])} />
+              </OneDay>
+            ))}
           </WeekdayFrame>
 
           <ButtonsFrame>
@@ -78,7 +104,7 @@ export default function MainPage() {
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;
-  height: 56%;
+  max-height: 56%;
   font-weight: 400;
   overflow-y: scroll;
 `;
@@ -114,11 +140,28 @@ const WeekdayFrame = styled.div`
   position: relative;
   width: 105.56%;
   margin-left: -2.78%;
-  height: 96px;
+  height: 84px;
   margin-top: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+`;
+
+const WeekNameFrame = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 14px;
+  margin-bottom: 12px;
+`;
+
+const WeekName = styled.div`
+  position: relative;
+  width: calc(100% / 7);
+  text-align: center;
 `;
 
 const OneDay = styled.div`
@@ -131,13 +174,6 @@ const OneDay = styled.div`
   align-items: center;
 `;
 
-const DayName = styled.div`
-  position: relative;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-`;
-
 const DayNumber = styled.div`
   position: relative;
   width: 100%;
@@ -146,18 +182,19 @@ const DayNumber = styled.div`
   font-weight: 500;
 `;
 
-const DayProgress = styled.div`
+const DayProgress = styled.div<{ count: string }>`
   width: 8px;
   height: 8px;
   border-radius: 2px;
   margin-top: 4px;
-  background-color: var(--primary);
+  background-color: ${(props) => props.count};
 `;
 
 const ButtonsFrame = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 32px;
+  margin-top: 56px;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 24px;
 `;

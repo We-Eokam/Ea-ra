@@ -1,14 +1,34 @@
-import styled from "styled-components"
-import NavBar from "../../components/NavBar/NavBar"
-import MainFrame from "../../components/MainFrame/MainFrame"
-import { ReactComponent as PigCoin } from "../../assets/icons/pig-coin.svg"
-import { ShadowBox } from "../../components/ShadowBox/ShadowBox"
+import styled from "styled-components";
+import NavBar from "../../components/NavBar/NavBar";
+import MainFrame from "../../components/MainFrame/MainFrame";
+import { ReactComponent as PigCoin } from "../../assets/icons/pig-coin.svg";
+import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
+import { useNavigate } from "react-router-dom";
 
 export default function NtzPage() {
+  const navigate = useNavigate();
+
+  const navigateMap = () => {
+    navigate("/netzero/map");
+  };
+
+  const navigateSubsidy = () => {
+    navigate("/netzero/subsidy");
+  };
+
+  const navigateComapny = () => {
+    navigate("/netzero/company");
+  };
+
   return (
     <>
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
-      <MainFrame headbar="no" navbar="yes" bgcolor="background" marginsize="medium">
+      <MainFrame
+        headbar="no"
+        navbar="yes"
+        bgcolor="background"
+        marginsize="medium"
+      >
         <CPointContainer>
           <TextLine>
             <Bold>환경구해</Bold>님이
@@ -20,7 +40,7 @@ export default function NtzPage() {
             <Bold>12,610</Bold>원
           </CPoint>
           <PigCoinFrame>
-            <PigCoin/>
+            <PigCoin />
           </PigCoinFrame>
           <Notice>
             익월 <Bold>17-21일</Bold> 중 입금될 예정입니다
@@ -28,66 +48,48 @@ export default function NtzPage() {
         </CPointContainer>
 
         <InfoButtonsFrame>
-          <InfoButton>
-            <InfoButtonGray>
-              내가 놓친
-            </InfoButtonGray>
-            <InfoButtonBlack>
-              보조금 혜택
-            </InfoButtonBlack>
+          <InfoButton onClick={navigateSubsidy}>
+            <InfoButtonGray>내가 놓친</InfoButtonGray>
+            <InfoButtonBlack>보조금 혜택</InfoButtonBlack>
             <InfoImage src="/images/subsidy.png" />
           </InfoButton>
 
-          <InfoButton>
-          <InfoButtonGray>
-              내 주변
-            </InfoButtonGray>
-            <InfoButtonBlack>
-              참여가능 매장
-            </InfoButtonBlack>
+          <InfoButton onClick={navigateMap}>
+            <InfoButtonGray>내 주변</InfoButtonGray>
+            <InfoButtonBlack>참여가능 매장</InfoButtonBlack>
             <InfoImage src="/images/store.png" />
-
           </InfoButton>
 
-          <InfoButton>
-          <InfoButtonGray>
-              참여기업
-            </InfoButtonGray>
+          <InfoButton onClick={navigateComapny}>
+            <InfoButtonGray>참여기업</InfoButtonGray>
             <InfoButtonBlack>
               60<SmallText>개</SmallText>
             </InfoButtonBlack>
             <InfoImage src="/images/company.png" />
-
           </InfoButton>
 
-          <InfoButton style={{marginRight: '3.5px'}}>
-          <InfoButtonGray>
-              카카오톡으로
-            </InfoButtonGray>
-            <InfoButtonBlack>
-              친구초대
-            </InfoButtonBlack>
-          <InfoImage src="/images/invite.png" />
+          <InfoButton style={{ marginRight: "3.5px" }}>
+            <InfoButtonGray>카카오톡으로</InfoButtonGray>
+            <InfoButtonBlack>친구초대</InfoButtonBlack>
+            <InfoImage src="/images/invite.png" />
           </InfoButton>
         </InfoButtonsFrame>
 
-        <CPointContainer style={{marginTop:'8px', height:'288px'}}>
-
-            <TextLine>
-              <Bold>나의 활동 요약</Bold>
-            </TextLine>
-            <TextLine style={{fontSize:"14px", marginTop:'6px'}}>
-              텀블러 이용하기로 가장 많은 포인트를 얻었어요!
-            </TextLine>
-            <div style={{marginTop:'80px', marginLeft:'40px'}}>
-              여기에 차트
-            </div>
+        <CPointContainer style={{ marginTop: "8px", height: "288px" }}>
+          <TextLine>
+            <Bold>나의 활동 요약</Bold>
+          </TextLine>
+          <TextLine style={{ fontSize: "14px", marginTop: "6px" }}>
+            텀블러 이용하기로 가장 많은 포인트를 얻었어요!
+          </TextLine>
+          <div style={{ marginTop: "80px", marginLeft: "40px" }}>
+            여기에 차트
+          </div>
         </CPointContainer>
       </MainFrame>
       <NavBar />
     </>
-
-  )
+  );
 }
 
 const CPointContainer = styled(ShadowBox)`
@@ -96,21 +98,21 @@ const CPointContainer = styled(ShadowBox)`
   padding-top: 20px;
   font-size: 18px;
   font-weight: 400;
-`
+`;
 
 const TextLine = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 4px;
   margin-left: 20px;
-`
+`;
 
 const CPoint = styled.div`
   font-size: 28px;
   margin-top: 16px;
   margin-bottom: 28px;
   margin-left: 20px;
-`
+`;
 
 const PigCoinFrame = styled.div`
   position: relative;
@@ -118,7 +120,7 @@ const PigCoinFrame = styled.div`
   height: 116px;
   display: flex;
   justify-content: center;
-`
+`;
 
 const Notice = styled.div`
   position: relative;
@@ -127,15 +129,15 @@ const Notice = styled.div`
   color: var(--dark-gray);
   font-weight: 400;
   margin-left: 20px;
-`
+`;
 
 const Bold = styled.span`
   font-weight: 600;
-`
+`;
 
 const Green = styled(Bold)`
   color: var(--primary);
-`
+`;
 
 const InfoButtonsFrame = styled.div`
   position: relative;
@@ -147,16 +149,16 @@ const InfoButtonsFrame = styled.div`
   flex-direction: column;
   justify-content: center;
   overflow-x: auto;
-`
+`;
 
 const InfoButton = styled.div`
   width: 110px;
   height: 116px;
   background-color: var(--white);
   border-radius: 10px;
-  box-shadow: 2px 2px 6px rgba(0,0,0, 0.04);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.04);
   margin-right: 16px;
-`
+`;
 
 const InfoButtonGray = styled.div`
   position: relative;
@@ -165,7 +167,7 @@ const InfoButtonGray = styled.div`
   color: var(--dark-gray);
   font-size: 12px;
   font-weight: 400;
-`
+`;
 
 const InfoButtonBlack = styled.div`
   position: relative;
@@ -173,11 +175,11 @@ const InfoButtonBlack = styled.div`
   margin-left: 12px;
   font-size: 14px;
   font-weight: 600;
-`
+`;
 const SmallText = styled.span`
   font-size: 11px;
   font-weight: 400;
-`
+`;
 
 const InfoImage = styled.img`
   position: absolute;
@@ -185,4 +187,4 @@ const InfoImage = styled.img`
   height: auto;
   bottom: 13px;
   margin-left: 53.5px;
-`
+`;

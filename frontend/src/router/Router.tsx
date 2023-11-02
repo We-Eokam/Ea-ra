@@ -10,7 +10,7 @@ import ReportPage from "../pages/ActPage/ReportPage";
 import NtzPage from "../pages/NtzPage/NtzPage";
 import MyPage from "../pages/MyPage/MyPage";
 
-
+import CalendarPage from "../pages/MainPage/CalendarPage";
 import Subsidy from "../pages/NtzPage/Subsidy";
 import MapPage from "../pages/NtzPage/MapPage";
 import CompanyPage from "../pages/NtzPage/CompanyPage";
@@ -25,6 +25,7 @@ export default function Router() {
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/" element={<MainPage />}></Route>
+        <Route path="/calendar" element={<CalendarPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>
         <Route path="/feed" element={<FeedPage />}></Route>
         <Route path="/feed/detail" element={<FeedDetail />}></Route>
