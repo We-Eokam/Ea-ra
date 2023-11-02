@@ -29,6 +29,7 @@ public record AccusationDto(Long accusationId, Long witnessId, Long memberId, Ac
 			.activityType(accusation.getActivityType())
 			.activityDetail(accusation.getActivityDetail())
 			.imageList(fileUrls)
+			.createdAt(accusation.getCreatedAt())
 			.build();
 	}
 }
