@@ -82,7 +82,7 @@ public class AccusationAcceptanceTest {
 
 	public static ExtractableResponse<Response> 받은_고발장_목록_조회_요청() throws IOException {
 		return given().log().all()
-			.header("Authorization", MEMBER_ID)
+			.queryParam("memberId", MEMBER_ID)
 			.when().get("/accusation")
 			.then().log().all()
 			.extract();
