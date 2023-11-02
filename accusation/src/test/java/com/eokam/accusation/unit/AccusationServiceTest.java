@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.accusation.application.dto.AccusationDto;
@@ -25,6 +26,7 @@ import com.eokam.accusation.infrastructure.repository.AccusationImageRepository;
 import com.eokam.accusation.infrastructure.repository.AccusationRepository;
 import com.eokam.accusation.infrastructure.service.S3Service;
 
+@ActiveProfiles("test")
 public class AccusationServiceTest {
 
 	@InjectMocks

@@ -17,6 +17,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.eokam.accusation.global.constant.ActivityType;
 import com.eokam.accusation.presentation.dto.AccusationRequest;
@@ -31,6 +32,7 @@ import io.restassured.response.Response;
 
 @ExtendWith(DatabaseCleanupExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class AccusationAcceptanceTest {
 
 	private static final long WITNESS_ID = 1L;
