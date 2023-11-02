@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
+// import React from "react";
+import { ChangeEvent, useState } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
@@ -48,10 +49,18 @@ export default function SignupPage() {
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
         <ProfileNickname>
           <ProfileFrame>
-            <ProfileInput type="file" id="file" accept="image/*" onChange={handleImageUpload}/>
+            <ProfileInput
+              type="file"
+              id="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
             <InputLabel htmlFor="file"></InputLabel>
-            {selectedImage ? (<ProfileImage src={selectedImage} />) : (<NoProfile src="../src/assets/icons/upload-image-icon.png" />)}
-
+            {selectedImage ? (
+              <ProfileImage src={selectedImage} />
+            ) : (
+              <NoProfile src="../src/assets/icons/upload-image-icon.png" />
+            )}
           </ProfileFrame>
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
@@ -88,7 +97,9 @@ export default function SignupPage() {
                     onClick={onOptionClicked(index)}
                     style={{
                       color:
-                        index === selectedArea ? "var(--black)" : "var(--nav-gray)",
+                        index === selectedArea
+                          ? "var(--black)"
+                          : "var(--nav-gray)",
                     }}
                   >
                     {area}
@@ -170,7 +181,7 @@ const ProfileImage = styled.img`
   height: 100%;
   border-radius: 100px;
   /* border: 1px solid var(--nav-gray); */
-`
+`;
 
 const NoProfile = styled.img`
   position: absolute;
