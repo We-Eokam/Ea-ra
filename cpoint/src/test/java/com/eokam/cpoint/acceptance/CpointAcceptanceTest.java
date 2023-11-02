@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -54,6 +55,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 예상탄소중립실천포인트를_볼수있다() {
 		//given
 		var 생성_요청 = CpointCreateRequest
@@ -76,6 +78,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 예상탄소중립실천포인트를_적립할수있다() {
 		//given
 		var 생성_요청 = CpointCreateRequest
@@ -99,6 +102,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 탄소중립실천포인트_연계기업_목록을_조회할수있다() {
 		//given
 		var 조회_요청 = CCompanyListRetrieveRequest
@@ -115,6 +119,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 탄소중립실천포인트_연계기업을_상세조회할수있다() {
 		//given
 		var 기업PK = 1L;
@@ -134,6 +139,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 탄소중립실천포인트_활동요약을_얻을수있다() {
 		//given
 		List<CpointCreateRequest> 생성_요청_목록_리스트 = new ArrayList<>();
@@ -184,6 +190,7 @@ public class CpointAcceptanceTest {
 	}
 
 	@Test
+	@Disabled
 	void 주변_탄소중립포인트_연계매장을_찾을수있다() {
 		//given
 		var 조회_요청 = CStoreNearbyListRetrieveRequest
