@@ -20,6 +20,7 @@ export default function HeadBarCenter({ pagename, bgcolor, backbutton }: HeadBar
     <HeadBarFrame style={{ backgroundColor: `var(--${bgcolor})` }}>
       <HeadBarContext>
         {backbutton === "yes" ? <LeftArrow onClick={goBack} /> : null}
+        &nbsp;
         <CenterFrame>
           {pagename}
         </CenterFrame>
@@ -45,8 +46,6 @@ const HeadBarContext = styled.div`
   position: relative;
   margin-top: 60px;
   padding-left: 12px;
-  font-size: 21px;
-  font-weight: 650;
   display: flex;
   align-items: center;
 `
@@ -55,4 +54,6 @@ const CenterFrame = styled.div`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  font-size: 18px;
+  font-weight: 600;
 `;

@@ -127,8 +127,8 @@ export default function ActPage() {
               기타
               <SubText>지구를 보호했어요</SubText>
             </CustomShadowBox>
-            <CustomShadowBox>
-              목격담 제보하기
+            <CustomShadowBox onClick={() => navigate('/act/report')}>
+              경고장 보내기
               <SubText>환경파괴범을 목격했어요</SubText>
             </CustomShadowBox>
           </ActRowFrame>
