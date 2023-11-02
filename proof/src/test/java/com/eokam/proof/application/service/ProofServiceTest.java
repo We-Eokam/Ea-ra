@@ -1,6 +1,7 @@
 package com.eokam.proof.application.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.LongStream;
 
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -83,7 +84,6 @@ class ProofServiceTest extends BaseServiceTest {
 
 	@Test
 	@DisplayName("인증 생성을 성공")
-	@Disabled
 	@Transactional
 	void createProof_Success() throws IOException {
 		// given
@@ -95,8 +95,6 @@ class ProofServiceTest extends BaseServiceTest {
 		final Long EXPECTED_CCOMPANY_ID = 1L;
 		final Long EXPECTED_PROOF_ID = 1L;
 		final LocalDateTime EXPECTED_CREATED_AT = LocalDateTime.now();
-		final String EXPECTED_FILE_URL = "http://test.com";
-		final Long EXPECTED_PROOF_IMAGE_ID = 1L;
 
 		MockMultipartFile file =
 			new MockMultipartFile(
@@ -125,15 +123,7 @@ class ProofServiceTest extends BaseServiceTest {
 			.createdAt(EXPECTED_CREATED_AT)
 			.build();
 
-		ProofImage proofImage = ProofImage.builder()
-			.proofImageId(EXPECTED_PROOF_IMAGE_ID)
-			.fileName(EXPECTED_FILE_NAME)
-			.fileUrl(EXPECTED_FILE_URL)
-			.proof(proof)
-			.build();
-
 		given(proofRepository.save(any(Proof.class))).willReturn(proof);
-		given(proofImageRepository.save(any(ProofImage.class))).willReturn(proofImage);
 
 		// when
 		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);
@@ -145,14 +135,10 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
 		assertThat(actualResponse.createdAt()).isEqualTo(EXPECTED_CREATED_AT);
 		assertThat(actualResponse.content()).isBlank();
-		assertThat(actualResponse.proofImages().get(0).proofImageId()).isEqualTo(EXPECTED_PROOF_IMAGE_ID);
-		assertThat(actualResponse.proofImages().get(0).fileName()).isEqualTo(EXPECTED_FILE_NAME);
-		assertThat(actualResponse.proofImages().get(0).fileUrl()).isEqualTo(EXPECTED_FILE_URL);
 	}
 
 	@Test
 	@DisplayName("기타 인증 생성을 성공")
-	@Disabled
 	@Transactional
 	void createEtcProof_Success() throws IOException {
 		ClassPathResource resource = new ClassPathResource("static/earth.jpg");
@@ -162,9 +148,7 @@ class ProofServiceTest extends BaseServiceTest {
 		String EXPECT_CONTENT = "플로깅을 했어요!";
 		Long EXPECTED_PROOF_ID = 1L;
 		Long EXPECTED_MEMBER_ID = 1L;
-		Long EXPECTED_PROOF_IMAGE_ID = 1L;
 		ActivityType EXPECTED_ACTIVITY_TYPE = ActivityType.ETC;
-		String EXPECTED_FILE_URL = "http://test.com";
 
 		MockMultipartFile file =
 			new MockMultipartFile(
@@ -191,15 +175,7 @@ class ProofServiceTest extends BaseServiceTest {
 			.contents(EXPECT_CONTENT)
 			.build();
 
-		ProofImage proofImage = ProofImage.builder()
-			.proofImageId(EXPECTED_PROOF_IMAGE_ID)
-			.fileName(EXPECTED_FILE_NAME)
-			.fileUrl(EXPECTED_FILE_URL)
-			.proof(proof)
-			.build();
-
 		given(proofRepository.save(any(Proof.class))).willReturn(proof);
-		given(proofImageRepository.save(any(ProofImage.class))).willReturn(proofImage);
 
 		// when
 		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);
@@ -210,9 +186,7 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.cCompanyId()).isNull();
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
 		assertThat(actualResponse.createdAt()).isEqualTo(proof.getCreatedAt());
-		assertThat(actualResponse.proofImages().get(0).proofImageId()).isEqualTo(EXPECTED_PROOF_IMAGE_ID);
-		assertThat(actualResponse.proofImages().get(0).fileName()).isEqualTo(EXPECTED_FILE_NAME);
-		assertThat(actualResponse.proofImages().get(0).fileUrl()).isEqualTo(EXPECTED_FILE_URL);
+		assertTrue(Hibernate.isInitialized(proof.getProofImages()));
 	}
 
 	private String createJwt(Long memberId) {

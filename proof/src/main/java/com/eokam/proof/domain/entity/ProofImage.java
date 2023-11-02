@@ -1,5 +1,7 @@
 package com.eokam.proof.domain.entity;
 
+import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +25,7 @@ public class ProofImage {
 	@GeneratedValue
 	Long proofImageId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "proof_id", nullable = false)
 	Proof proof;
 
@@ -32,4 +34,12 @@ public class ProofImage {
 
 	@Column(nullable = false)
 	String fileUrl;
+
+	public static ProofImage of(S3FileDetail fileDetail, Proof proof) {
+		return ProofImage.builder()
+			.fileName(fileDetail.originalFileName())
+			.fileUrl(fileDetail.url())
+			.proof(proof)
+			.build();
+	}
 }
