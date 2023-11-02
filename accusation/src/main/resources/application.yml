@@ -26,7 +26,7 @@ spring:
 
 aws:
   s3:
-    access-key: ${S3-KEY}
-    secret-key: ${S3-SECRET}
-    bucket: ${S3-BUCKET}
+    access-key: ${S3_KEY}
+    secret-key: ${S3_SECRET}
+    bucket: ${S3_BUCKET}
 
