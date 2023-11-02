@@ -6,6 +6,7 @@ import MainFrame from "../../components/MainFrame/MainFrame"
 import SearchBar from "../../components/SearchBar/SearchBar"
 import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.svg"
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg"
+import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
 import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
 import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 
@@ -46,7 +47,7 @@ export default function FeedPage() {
     <>
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
       <SearchBar />
-      <MainFrame headbar="no" navbar="yes" bgcolor="var(--white)" marginsize="small">
+      <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
         {PostExample.map((post, index) => (
           <PostFrame key={index}>
             <WriterContainer>
@@ -60,12 +61,13 @@ export default function FeedPage() {
                   <RewardText>{post.gru} 그루 갚음</RewardText>
                 </RewardContainer>
               </TextBox>
+              <BallMenu />
             </WriterContainer>
             <ContentContainer>
               <ActImg src={post.img} />
               <ReactionContainer>
                 {isLiked ? <LeafFill onClick={toggleLeaf} /> : <LeafEmpty onClick={toggleLeaf} />}
-                <ReactText><Bold>{post.likedUser}</Bold>님 외 {post.liked}명이 좋아해요</ReactText>
+                <ReactionText><Bold>{post.likedUser}</Bold>님 외 {post.liked}명이 좋아해요</ReactionText>
               </ReactionContainer>
             </ContentContainer>
           </PostFrame>
@@ -85,7 +87,7 @@ const PostFrame = styled.div`
 
 const WriterContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 12px;
 `;
 
@@ -94,9 +96,11 @@ const ProfileImg = styled.img`
   height: 50px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
+  box-sizing: border-box;
 `;
 
 const TextBox = styled.div`
+  margin-top: 4px;
   margin-left: 4%;
   width: calc(100% - 50px);
   font-size: 14px;
@@ -134,9 +138,8 @@ const ReactionContainer = styled.div`
   align-items: center;
 `;
 
-const ReactText = styled.div`
+const ReactionText = styled.div`
   margin-left: 4px;
-  margin-right: 2.5%;
   font-size: 12px;
 `;
 
