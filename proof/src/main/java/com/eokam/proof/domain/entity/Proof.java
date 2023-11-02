@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.domain.constant.ActivityType;
 
 import jakarta.persistence.CascadeType;
@@ -55,4 +56,13 @@ public class Proof {
 	@Builder.Default
 	@OneToMany(mappedBy = "proof", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProofImage> proofImages = new ArrayList<>();
+
+	public static Proof from(ProofCreateDto proofCreateDto) {
+		return Proof.builder()
+			.memberId(proofCreateDto.memberId())
+			.activityType(proofCreateDto.activityType())
+			.cCompanyId(proofCreateDto.cCompanyId())
+			.contents(proofCreateDto.content())
+			.build();
+	}
 }
