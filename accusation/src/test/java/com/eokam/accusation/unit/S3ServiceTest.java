@@ -17,11 +17,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.eokam.accusation.infrastructure.service.S3Service;
 
+@ActiveProfiles("test")
 public class S3ServiceTest {
 
 	@Spy
