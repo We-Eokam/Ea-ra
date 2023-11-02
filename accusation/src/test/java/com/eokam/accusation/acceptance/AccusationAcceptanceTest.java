@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +60,7 @@ public class AccusationAcceptanceTest {
 	}
 
 	@Test
-	@Disabled
+	// @Disabled
 	@DisplayName("회원은 자신이 받은 고발장 목록을 조회할 수 있다.")
 	void getMyAccusations() throws IOException {
 		// given
@@ -127,10 +126,10 @@ public class AccusationAcceptanceTest {
 		List<ExtractableResponse<Response>> createdResponses) {
 
 		List<Long> expectedAccusationIds = createdResponses.stream()
-			.map(r -> Long.parseLong(r.header("Location").split("/")[2]))
+			.map(r -> Long.valueOf(r.header("Location").split("/")[2]))
 			.toList();
 
-		List<Long> resultAccusationIds = response.jsonPath().getList("accusation_list.accusation_id");
+		List<Long> resultAccusationIds = response.jsonPath().getList("accusation_list.accusation_id", Long.class);
 
 		Assertions.assertThat(resultAccusationIds).containsAll(expectedAccusationIds);
 	}
