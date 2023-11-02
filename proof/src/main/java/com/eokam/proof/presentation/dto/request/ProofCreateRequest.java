@@ -4,9 +4,11 @@ import com.eokam.proof.domain.constant.ActivityType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ProofCreateRequest(ActivityType activityType, Long cCompanyId, String content) {
+public record ProofCreateRequest(@NotNull ActivityType activityType, @Min(1) Long cCompanyId, String content) {
 }
