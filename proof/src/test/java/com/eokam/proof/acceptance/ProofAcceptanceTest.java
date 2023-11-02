@@ -2,6 +2,7 @@ package com.eokam.proof.acceptance;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -10,12 +11,15 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import org.junit.jupiter.api.Disabled;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import com.eokam.proof.common.AcceptanceTest;
 import com.eokam.proof.domain.constant.ActivityType;
@@ -26,6 +30,7 @@ import com.eokam.proof.domain.repository.ProofRepository;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
@@ -86,8 +91,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	@Test
 	@DisplayName("인증을 생성한다. (기타가 아닌 컨텐츠)")
-	@Disabled
-	void 인증_생성() {
+	void 인증_생성() throws JSONException, IOException {
 		// given
 		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
@@ -104,8 +108,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	@Test
 	@DisplayName("인증을 생성한다. (기타)")
-	@Disabled
-	void 인증_생성_기타() {
+	void 인증_생성_기타() throws JSONException, IOException {
 		// given
 		ProofCreateRequest 생성_요청 = ProofCreateRequest.builder()
 			.activityType(ActivityType.ETC)
@@ -120,19 +123,41 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
 	}
 
-	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) {
+	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) throws JSONException, IOException {
 		long memberId = 1L;
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
 
 		// given
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
-		return RestAssured.given().log().all()
-			.when()
+		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
+
+		JSONObject json = new JSONObject();
+		json.put("activity_type", 생성_요청.activityType().toString());
+		if (생성_요청.cCompanyId() != null) {
+			json.put("c_company_id", 생성_요청.cCompanyId().toString());
+		} else {
+			json.put("c_company_id", "");
+		}
+		if (생성_요청.content() != null) {
+			json.put("content", 생성_요청.content());
+		} else {
+			json.put("content", "");
+		}
+
+		return RestAssured.given()
+			.accept(MediaType.APPLICATION_JSON_VALUE)
 			.cookie("access-token", testJwt)
-			.and()
-			.body(생성_요청)
-			.and()
+			.multiPart("file", resource.getFile())
+			.multiPart(new MultiPartSpecBuilder(json.toString())
+				.fileName("content")
+				.controlName("content")
+				.mimeType("application/json")
+				.build()
+			)
+			.contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+			.log().all()
+			.when()
 			.post(API_BASE_PATH)
 			.then().log().all()
 			.extract();
