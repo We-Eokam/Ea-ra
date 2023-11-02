@@ -1,6 +1,7 @@
 package com.eokam.accusation.application.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -35,12 +36,25 @@ public class AccusationServiceImpl implements AccusationService {
 		}
 		return AccusationDto.of(accusation, fileUrls);
 	}
-	
+
 	public List<String> getFileUrls(List<MultipartFile> multipartFile) {
 		try {
 			return s3UploadService.uploadFile(multipartFile);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<AccusationDto> getAccusationList(Long memberId) {
+		List<AccusationDto> accusationDtoList = new ArrayList<>();
+		List<Accusation> accusations = accusationRepository.findByMemberId(memberId);
+		for (Accusation accusation : accusations) {
+			List<AccusationImage> accusationImages = accusationImageRepository.findByAccusation_AccusationId(
+				accusation.getAccusationId());
+			List<String> fileUrls = accusationImages.stream().map(AccusationImage::getFileUrl).toList();
+			accusationDtoList.add(AccusationDto.of(accusation, fileUrls));
+		}
+		return accusationDtoList;
 	}
 }
