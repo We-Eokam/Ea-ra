@@ -14,6 +14,12 @@ java {
     sourceCompatibility = '17'
 }
 
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
