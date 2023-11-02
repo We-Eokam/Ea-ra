@@ -41,6 +41,7 @@ public class AccusationResponse {
 			.activityType(accusationDto.activityType())
 			.activityDetail(accusationDto.activityDetail())
 			.imageList(makeImageList(accusationDto.imageList()))
+			.createdAt(accusationDto.createdAt())
 			.build();
 	}
 
