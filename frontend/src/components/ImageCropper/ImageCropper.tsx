@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import "../../style/ImageCropper.css";
 import styled from "styled-components";
+import AnimationModal from "../../components/Modal/AnimationModal";
 import { ShortButton } from "../../style";
 import { ReactComponent as RotateSvg } from "../../assets/icons/rotate-icon.svg";
 import { ReactComponent as ResetSvg } from "../../assets/icons/reset-icon.svg";
@@ -44,8 +45,7 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
   const getCropData = () => {
     if (typeof cropperRef.current?.cropper !== "undefined") {
       onCrop(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
-      setImage(null);
-      setRotation(0);
+      handleCancleClick();
     }
   };
 
@@ -77,47 +77,45 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
       />
       <span onClick={handleChildrenClick}>{children}</span>
       {image && (
-        <ModalFrame>
-          <div className="backdrop" />
-          <div className="modal">
-            <ModalTitle>이미지 편집하기</ModalTitle>
-            <IconFrame>
-              <RotateSvg onClick={() => rotateImage(-90)} />
-              <ResetSvg onClick={handleResetClick}/>
-            </IconFrame>
-            <div className="content-wrapper">
-              <Cropper
-                ref={cropperRef}
-                aspectRatio={1}
-                src={image}
-                viewMode={1}
-                background={false}
-                responsive
-                autoCropArea={1}
-                checkOrientation={false}
-                guides
-              />
-            </div>
-            Rotation: {rotation}°
-            <Slider
-              type="range"
-              min="0"
-              max="360"
-              value={rotation}
-              onChange={(e) => rotateImage(Number(e.target.value))}
+        <AnimationModal closeModal={handleCancleClick}>
+          <ModalTitle>이미지 편집하기</ModalTitle>
+          <IconFrame>
+            <RotateSvg onClick={() => rotateImage(-90)} />
+            <ResetSvg onClick={handleResetClick} />
+          </IconFrame>
+          <div className="content-wrapper">
+            <Cropper
+              ref={cropperRef}
+              aspectRatio={1}
+              src={image}
+              viewMode={1}
+              background={false}
+              responsive
+              autoCropArea={1}
+              checkOrientation={false}
+              guides
+              style={{ width: "100%" }}
             />
-            <div className="footer">
-              <ShortButton
-                background="var(--third)" color="var(--primary)" 
-                onClick={handleCancleClick}>
-                취소
-              </ShortButton>
-              <ShortButton onClick={getCropData}>
-                적용하기
-              </ShortButton>
-            </div>
           </div>
-        </ModalFrame>
+          <Text>Rotation: {rotation}°</Text>
+          <Slider
+            type="range"
+            min="0"
+            max="360"
+            value={rotation}
+            onChange={(e) => rotateImage(Number(e.target.value))}
+          />
+          <div className="footer">
+            <ShortButton
+              background="var(--third)"
+              color="var(--primary)"
+              onClick={handleCancleClick}
+            >
+              취소
+            </ShortButton>
+            <ShortButton onClick={getCropData}>적용하기</ShortButton>
+          </div>
+        </AnimationModal>
       )}
     </Container>
   );
@@ -132,20 +130,22 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const ModalFrame = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
 const ModalTitle = styled.div`
   font-size: 18px;
   font-weight: 550;
   text-align: center;
 `;
 
+const Text = styled.div`
+  font-size: 15px;
+  font-weight: 400;
+  width: 100%;
+`;
+
 const IconFrame = styled.div`
   position: absolute;
-  right: 10%;
+  top: 0;
+  right: 0;
   display: flex;
   gap: 8px;
 `;
@@ -156,4 +156,3 @@ const Slider = styled.input`
   accent-color: var(--primary);
   margin: 10px 0;
 `;
-

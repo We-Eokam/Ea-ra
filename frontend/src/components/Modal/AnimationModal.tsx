@@ -1,5 +1,5 @@
 // import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 
@@ -14,10 +14,12 @@ interface ModalProps {
 }
 
 export default function AnimationModal({
-  closeModal, closeBtn, children
+  closeModal,
+  closeBtn,
+  children,
 }: AnimationModalProps) {
   const [isclosing, setIsClosing] = useState(false);
-
+  
   const closeAndAnimate = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -34,9 +36,7 @@ export default function AnimationModal({
             <CloseIcon onClick={closeAndAnimate} />
           </CloseFrame>
         )}
-        <InnerContainer>
-          <span>{children}</span>
-        </InnerContainer>
+        <InnerContainer>{children}</InnerContainer>
       </ModalContainer>
     </>
   );
@@ -91,7 +91,7 @@ const Background = styled.div<ModalProps>`
 `;
 
 const ModalContainer = styled.div<ModalProps>`
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
