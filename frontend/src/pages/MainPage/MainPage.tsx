@@ -3,8 +3,7 @@ import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
-import { ShortButton } from "../../components/Buttons/ShortButton";
-import { useNavigate } from "react-router-dom";
+import { ShortButton } from "../../style";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -91,8 +90,10 @@ export default function MainPage() {
           </WeekdayFrame>
 
           <ButtonsFrame>
-            <LeftButton>남은 빚 갚기</LeftButton>
-            <RightButton onClick={toMonthCal}>월별 내역</RightButton>
+            <ShortButton background="var(--third)" color="var(--primary)" >
+              남은 빚 갚기
+            </ShortButton>
+            <ShortButton>월별 내역</ShortButton>
           </ButtonsFrame>
         </HomeFrame>
       </MainFrame>
@@ -196,16 +197,4 @@ const ButtonsFrame = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
-`;
-
-const LeftButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
-  background-color: var(--third);
-  color: var(--primary);
-`;
-
-const RightButton = styled(ShortButton)`
-  position: relative;
-  width: 47.5%;
 `;

@@ -4,7 +4,7 @@ import { ModalFrame } from "./ModalFrame";
 import styled, { keyframes } from "styled-components";
 import { ModalBackground } from "./ModalBackground";
 import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
-import { LongButton } from "../Buttons/LongButton";
+import { LongButton } from "../../style";
 
 interface CompanyInfoProps {
   id: number;

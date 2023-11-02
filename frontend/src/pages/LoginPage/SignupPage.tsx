@@ -3,8 +3,7 @@ import { ChangeEvent, useState } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
-import { ShortButton } from "../../components/Buttons/ShortButton";
-import { LongButton } from "../../components/Buttons/LongButton";
+import { ShortButton, LongButton } from "../../style";
 import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
 
 interface GenderButtonProps {
@@ -243,7 +242,6 @@ const GenderButtonFrame = styled.div`
 `;
 
 const GenderButton = styled(ShortButton)<GenderButtonProps>`
-  width: 47.5%;
   border: ${(props) =>
     props.isSelected ? "1px solid transparent" : "1px solid var(--nav-gray)"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--nav-gray)")};
