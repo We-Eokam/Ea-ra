@@ -133,17 +133,9 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
 
 		JSONObject json = new JSONObject();
-		json.put("activity_type", 생성_요청.activityType().toString());
-		if (생성_요청.cCompanyId() != null) {
-			json.put("c_company_id", 생성_요청.cCompanyId().toString());
-		} else {
-			json.put("c_company_id", "");
-		}
-		if (생성_요청.content() != null) {
-			json.put("content", 생성_요청.content());
-		} else {
-			json.put("content", "");
-		}
+		json.put("activity_type", 생성_요청.activityType());
+		json.put("c_company_id", 생성_요청.cCompanyId());
+		json.put("content", 생성_요청.content());
 
 		return RestAssured.given()
 			.accept(MediaType.APPLICATION_JSON_VALUE)
