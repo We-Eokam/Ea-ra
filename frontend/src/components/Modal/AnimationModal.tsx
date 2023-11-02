@@ -4,36 +4,44 @@ import styled, { keyframes } from "styled-components";
 import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 
 interface AnimationModalProps {
+  isOpen: boolean;
   closeModal: () => void;
   closeBtn?: boolean;
   children: React.ReactNode;
 }
 
 interface ModalProps {
-  isclosing: boolean;
+  isOpen: boolean;
 }
 
 export default function AnimationModal({
+  isOpen,
   closeModal,
   closeBtn,
   children,
 }: AnimationModalProps) {
-  const [isclosing, setIsClosing] = useState(false);
-  
-  const closeAndAnimate = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      closeModal();
-    }, 260);
-  };
+  const [visible, setVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isOpen === true) {
+      setVisible(true);
+    } else {
+      setTimeout(() => setVisible(false), 260);
+    }
+  }, [isOpen]);
+
+
+  if (visible === false) {
+    return null;
+  }
 
   return (
     <>
-      <Background isclosing={isclosing} onClick={closeAndAnimate} />
-      <ModalContainer isclosing={isclosing}>
+      <Background isOpen={isOpen} onClick={closeModal} />
+      <ModalContainer isOpen={isOpen}>
         {closeBtn && (
           <CloseFrame>
-            <CloseIcon onClick={closeAndAnimate} />
+            <CloseIcon onClick={closeModal} />
           </CloseFrame>
         )}
         <InnerContainer>{children}</InnerContainer>
@@ -86,8 +94,7 @@ const Background = styled.div<ModalProps>`
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 3;
-  animation: ${({ isclosing }) => (isclosing ? fadeOut : fadeIn)} 0.3s
-    ease-in-out;
+  animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.3s ease-in-out;
 `;
 
 const ModalContainer = styled.div<ModalProps>`
@@ -103,8 +110,7 @@ const ModalContainer = styled.div<ModalProps>`
   z-index: 4;
   width: 80%;
   padding: 10% 10% 12%;
-  animation: ${({ isclosing }) => (isclosing ? slideOut : slideIn)} 0.35s
-    ease-in-out;
+  animation: ${({ isOpen }) => (isOpen ? slideIn : slideOut)} 0.35s ease-in-out;
 `;
 
 const CloseFrame = styled.div`

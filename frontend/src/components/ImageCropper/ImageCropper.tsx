@@ -18,6 +18,13 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
   const cropperRef = useRef<ReactCropperElement>(null);
   const [image, setImage] = useState<null | string>(null);
   const [rotation, setRotation] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen === false) {
+      setTimeout(() => {setImage(null)}, 260);
+    }
+  }, [isOpen]);
 
   const handleChildrenClick = () => {
     if (inputRef.current) inputRef.current.click();
@@ -33,12 +40,13 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
     const reader = new FileReader();
     reader.onload = () => {
       setImage(reader.result as string);
+      setIsOpen(true);
     };
     reader.readAsDataURL(files[0]);
   };
 
   const handleCancleClick = () => {
-    setImage(null);
+    setIsOpen(false);
     setRotation(0);
   };
 
@@ -76,47 +84,45 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
         onChange={handleFileChange}
       />
       <span onClick={handleChildrenClick}>{children}</span>
-      {image && (
-        <AnimationModal closeModal={handleCancleClick}>
-          <ModalTitle>이미지 편집하기</ModalTitle>
-          <IconFrame>
-            <RotateSvg onClick={() => rotateImage(-90)} />
-            <ResetSvg onClick={handleResetClick} />
-          </IconFrame>
-          <div className="content-wrapper">
-            <Cropper
-              ref={cropperRef}
-              aspectRatio={1}
-              src={image}
-              viewMode={1}
-              background={false}
-              responsive
-              autoCropArea={1}
-              checkOrientation={false}
-              guides
-              style={{ width: "100%" }}
-            />
-          </div>
-          <Text>Rotation: {rotation}°</Text>
-          <Slider
-            type="range"
-            min="0"
-            max="360"
-            value={rotation}
-            onChange={(e) => rotateImage(Number(e.target.value))}
+      <AnimationModal isOpen={isOpen} closeModal={handleCancleClick}>
+        <ModalTitle>이미지 편집하기</ModalTitle>
+        <IconFrame>
+          <RotateSvg onClick={() => rotateImage(-90)} />
+          <ResetSvg onClick={handleResetClick} />
+        </IconFrame>
+        <div className="content-wrapper">
+          <Cropper
+            ref={cropperRef}
+            aspectRatio={1}
+            src={image ? image : ""}
+            viewMode={1}
+            background={false}
+            responsive
+            autoCropArea={1}
+            checkOrientation={false}
+            guides
+            style={{ width: "100%" }}
           />
-          <div className="footer">
-            <ShortButton
-              background="var(--third)"
-              color="var(--primary)"
-              onClick={handleCancleClick}
-            >
-              취소
-            </ShortButton>
-            <ShortButton onClick={getCropData}>적용하기</ShortButton>
-          </div>
-        </AnimationModal>
-      )}
+        </div>
+        <Text>Rotation: {rotation}°</Text>
+        <Slider
+          type="range"
+          min="0"
+          max="360"
+          value={rotation}
+          onChange={(e) => rotateImage(Number(e.target.value))}
+        />
+        <div className="footer">
+          <ShortButton
+            background="var(--third)"
+            color="var(--primary)"
+            onClick={handleCancleClick}
+          >
+            취소
+          </ShortButton>
+          <ShortButton onClick={getCropData}>적용하기</ShortButton>
+        </div>
+      </AnimationModal>
     </Container>
   );
 };
