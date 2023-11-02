@@ -9,4 +9,6 @@ import com.eokam.accusation.application.dto.AccusationDto;
 public interface AccusationService {
 
 	AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile);
+
+	List<AccusationDto> getAccusationList(Long memberId);
 }
