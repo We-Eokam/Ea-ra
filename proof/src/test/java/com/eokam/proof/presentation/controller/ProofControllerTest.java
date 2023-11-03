@@ -107,9 +107,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(0).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[0].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(0)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(0).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[0].picture")
@@ -136,9 +134,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(1).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[1].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(1)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(1).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[1].picture")
@@ -165,9 +161,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(2).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[2].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(2)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(2).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[2].picture")
@@ -194,9 +188,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(3).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[3].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(3)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(3).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[3].picture")
@@ -223,9 +215,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_MY_PROOF_LIST.get(4).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[4].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(4)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(4).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[4].picture")
@@ -338,9 +328,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[0].created_at")
-				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[0].picture")
@@ -370,9 +358,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[1].created_at")
-				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[1].picture")
@@ -402,9 +388,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[2].created_at")
-				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[2].picture")
@@ -434,9 +418,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_FRIENDS_PROOF_LIST.get(3).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[3].created_at")
-				.value(EXPECTED_MY_PROOF_LIST.get(3)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_MY_PROOF_LIST.get(3).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[3].picture")
@@ -466,9 +448,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).cCompanyId())
 			)
 			.andExpect(jsonPath("proof[4].created_at")
-				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4)
-					.createdAt()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).createdAt())
 			)
 			.andExpect(
 				jsonPath("proof[4].picture")
@@ -518,6 +498,36 @@ class ProofControllerTest extends BaseControllerTest {
 			.andExpect(status().isNoContent());
 
 		verify(proofService).getProofList(testJwt, 2L, PageRequest.of(0, 5));
+	}
+
+	@Test
+	@DisplayName("친구 아닌 사용자 인증 목록 조회 실패")
+	@Transactional
+	void getProofList_Fail() throws Exception {
+		LongStream.range(1, 6).forEach(this::generateProof);
+
+		String testJwt = createJwt(1L);
+
+		PageRequest pageRequest = PageRequest.of(0, 5);
+
+		int start = (int)pageRequest.getOffset();
+		int end = Math.min((start + pageRequest.getPageSize()), EXPECTED_FRIENDS_PROOF_LIST.size());
+
+		Page<ProofDto> proofPage = new PageImpl<>(EXPECTED_FRIENDS_PROOF_LIST.subList(start, end), pageRequest,
+			EXPECTED_FRIENDS_PROOF_LIST.size());
+
+		given(proofService.getProofList(anyString(), anyLong(), any(PageRequest.class)))
+			.willThrow(new ProofException(ErrorCode.PROOF_NOT_AUTORIZED));
+
+		// when & then
+		this.mockMvc.perform(get("/proof")
+				.param("memberId", "2")
+				.param("page", "0")
+				.param("size", "5")
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isUnauthorized());
 	}
 
 	@ParameterizedTest
@@ -585,7 +595,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.memberId(EXPECTED_MEMBER_ID)
 			.cCompanyId(EXPECTED_CCOMPANY_ID)
 			.activityType(EXPECTED_ACTIVITY_TYPE)
-			.createdAt(EXPECTED_CREATED_AT)
+			.createdAt(EXPECTED_CREATED_AT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.proofImages(EXPECTED_PROOF_IMAGES)
 			.content(EXPECTED_CONTENT)
 			.build();
@@ -687,7 +697,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.memberId(EXPECTED_MEMBER_ID)
 			.cCompanyId(EXPECTED_COMPANY_ID)
 			.activityType(EXPECTED_ACTIVITY_TYPE)
-			.createdAt(EXPECTED_CREATED_AT)
+			.createdAt(EXPECTED_CREATED_AT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.proofImages(EXPECTED_PROOF_IMAGES)
 			.content(EXPECTED_CONTENT)
 			.build();
@@ -802,7 +812,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.memberId(1L)
 			.cCompanyId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.proofImages(EXPECTED_PROOF_IMAGES)
 			.content(null)
 			.build();
@@ -825,7 +835,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_PROOF.cCompanyId())
 			)
 			.andExpect(jsonPath("created_at")
-				.value(EXPECTED_PROOF.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_PROOF.createdAt())
 			)
 			.andExpect(jsonPath("picture")
 				.isArray()
@@ -860,7 +870,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.memberId(2L)
 			.cCompanyId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.proofImages(EXPECTED_PROOF_IMAGES)
 			.content(null)
 			.build();
@@ -883,7 +893,7 @@ class ProofControllerTest extends BaseControllerTest {
 				.value(EXPECTED_PROOF.cCompanyId())
 			)
 			.andExpect(jsonPath("created_at")
-				.value(EXPECTED_PROOF.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+				.value(EXPECTED_PROOF.createdAt())
 			)
 			.andExpect(jsonPath("picture")
 				.isArray()
@@ -918,7 +928,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.memberId(2L)
 			.cCompanyId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.proofImages(EXPECTED_PROOF_IMAGES)
 			.content(null)
 			.build();
@@ -952,7 +962,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
 			.cCompanyId(1L)
 			.proofImages(proofImages1)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
 		List<ProofImageDto> proofImages2 = new ArrayList<>();
@@ -968,7 +978,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.activityType(ActivityType.DISPOSABLE_CUP)
 			.cCompanyId(2L)
 			.proofImages(proofImages2)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
 		List<ProofImageDto> proofImages3 = new ArrayList<>();
@@ -984,7 +994,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.activityType(ActivityType.MULTI_USE_CONTAINER)
 			.cCompanyId(3L)
 			.proofImages(proofImages3)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
 		List<ProofImageDto> proofImages4 = new ArrayList<>();
@@ -1000,7 +1010,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.activityType(ActivityType.TUMBLER)
 			.cCompanyId(4L)
 			.proofImages(proofImages4)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
 		List<ProofImageDto> proofImages5 = new ArrayList<>();
@@ -1016,7 +1026,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.activityType(ActivityType.EMISSION_FREE_CAR)
 			.cCompanyId(5L)
 			.proofImages(proofImages5)
-			.createdAt(LocalDateTime.now())
+			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
 		if (i == 1) {

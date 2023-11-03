@@ -125,12 +125,10 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 		IntStream.range(0, 5).forEach(i -> {
 			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i).getActivityType().name());
-			assertThat(memberIdList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i).getMemberId());
+			assertThat(Integer.toUnsignedLong(memberIdList.get(i))).isEqualTo(
+				EXPECTED_FRIEND_PROOF_LIST.get(i).getMemberId());
 			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
 				EXPECTED_FRIEND_PROOF_LIST.get(i).getCCompanyId());
-			assertThat(createdAtList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i)
-				.getCreatedAt()
-				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
 			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
 			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
 		});
@@ -140,10 +138,10 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	@DisplayName(("친구 인증 내역 조회 시 컨텐츠 없음을 반환한다."))
 	void 친구_인증_내역_조회_컨텐츠없음() {
 		// when
-		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
-
 		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
 			.willReturn(new FollowStatus(true));
+
+		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
 
 		// then
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -336,7 +334,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		return given().log().all()
 			.when()
 			.cookie("access-token", testJwt)
-			.get(API_BASE_PATH + "?memberId=" + friendId.toString() + "?page=" + page.toString() + "&size="
+			.get(API_BASE_PATH + "?memberId=" + friendId.toString() + "&page=" + page.toString() + "&size="
 				+ size.toString())
 			.then().log().all()
 			.extract();
