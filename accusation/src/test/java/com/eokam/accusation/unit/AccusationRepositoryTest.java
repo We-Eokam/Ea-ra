@@ -1,9 +1,11 @@
 package com.eokam.accusation.unit;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,10 @@ import com.eokam.accusation.global.constant.ActivityType;
 import com.eokam.accusation.infrastructure.repository.AccusationImageRepository;
 import com.eokam.accusation.infrastructure.repository.AccusationRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 public class AccusationRepositoryTest {
-	@PersistenceContext
-	EntityManager em;
 
 	@Autowired
 	private AccusationRepository accusationRepository;
@@ -47,12 +44,12 @@ public class AccusationRepositoryTest {
 		AccusationImage savedAccusationImage = accusationImageRepository.save(accusationImage);
 
 		// then
-		Assertions.assertThat(savedAccusation.getWitnessId()).isEqualTo(1L);
-		Assertions.assertThat(savedAccusation.getMemberId()).isEqualTo(2L);
-		Assertions.assertThat(savedAccusation.getActivityType()).isEqualTo(ActivityType.FOOD);
+		assertThat(savedAccusation.getWitnessId()).isEqualTo(1L);
+		assertThat(savedAccusation.getMemberId()).isEqualTo(2L);
+		assertThat(savedAccusation.getActivityType()).isEqualTo(ActivityType.FOOD);
 
-		Assertions.assertThat(savedAccusationImage.getAccusation()).isEqualTo(accusation);
-		Assertions.assertThat(savedAccusationImage.getFileUrl()).isEqualTo("fileURL");
+		assertThat(savedAccusationImage.getAccusation()).isEqualTo(accusation);
+		assertThat(savedAccusationImage.getFileUrl()).isEqualTo("fileURL");
 	}
 
 	@Test
@@ -72,13 +69,44 @@ public class AccusationRepositoryTest {
 		List<Accusation> accusationList = accusationRepository.findByMemberId(memberId);
 
 		// then
-		Assertions.assertThat(accusationList).hasSize(accusationNumber);
+		assertThat(accusationList).hasSize(accusationNumber);
 		for (Accusation accusation : accusationList) {
 			List<AccusationImage> findAccusationImage = accusationImageRepository.findByAccusation_AccusationId(
 				accusation.getAccusationId());
-			Assertions.assertThat(findAccusationImage).hasSize(1);
-			Assertions.assertThat(findAccusationImage.get(0).getFileUrl()).isEqualTo("fileURL");
+			assertThat(findAccusationImage).hasSize(1);
+			assertThat(findAccusationImage.get(0).getFileUrl()).isEqualTo("fileURL");
 		}
+	}
+
+	@Test
+	@DisplayName("특정 고발장의 상세 내용을 조회한다.")
+	void getAccusationDetail() {
+		// given
+		Accusation accusation = Accusation.builder().witnessId(1L).memberId(2L).activityType(ActivityType.FOOD).build();
+		AccusationImage accusationImage = AccusationImage.builder().accusation(accusation).fileUrl("fileURL").build();
+		AccusationImage accusationImage2 = AccusationImage.builder().accusation(accusation).fileUrl("fileURL2").build();
+		accusationRepository.save(accusation);
+		accusationImageRepository.save(accusationImage);
+		accusationImageRepository.save(accusationImage2);
+
+		// when
+		Optional<Accusation> findAccusation = accusationRepository.findByAccusationId(accusation.getAccusationId());
+		List<AccusationImage> findAccusationImages = accusationImageRepository.findByAccusation_AccusationId(
+			accusation.getAccusationId());
+
+		// then
+		assertThat(findAccusation).isPresent();
+		assertThat(findAccusation.get().getAccusationId()).isEqualTo(accusation.getAccusationId());
+		assertThat(findAccusation.get().getWitnessId()).isEqualTo(accusation.getWitnessId());
+		assertThat(findAccusation.get().getMemberId()).isEqualTo(accusation.getMemberId());
+		assertThat(findAccusation.get().getActivityType()).isEqualTo(ActivityType.FOOD);
+		assertThat(findAccusationImages).hasSize(2);
+		assertThat(findAccusationImages.get(0).getAccusation().getAccusationId())
+			.isEqualTo(findAccusation.get().getAccusationId());
+		assertThat(findAccusationImages.get(0).getFileUrl()).isEqualTo("fileURL");
+		assertThat(findAccusationImages.get(1).getAccusation().getAccusationId())
+			.isEqualTo(findAccusation.get().getAccusationId());
+		assertThat(findAccusationImages.get(1).getFileUrl()).isEqualTo("fileURL2");
 	}
 
 	public List<Accusation> number수만큼_memberId에게_고발장_보내기(Long memberId, int number) {
