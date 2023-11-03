@@ -20,7 +20,6 @@ import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 import com.eokam.proof.infrastructure.util.ParseJwtUtil;
 import com.eokam.proof.infrastructure.util.error.ErrorCode;
-import com.eokam.proof.infrastructure.util.error.exception.BusinessException;
 import com.eokam.proof.infrastructure.util.error.exception.ProofException;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +43,10 @@ public class ProofService {
 		return ProofDto.toDtoPage(proofPage);
 	}
 
+	public Page<ProofDto> getProofList(String jwt, Long memberId, PageRequest pageRequest) {
+		return null;
+	}
+
 	@Transactional
 	public ProofDto createProof(ProofCreateDto proofCreateDto, List<MultipartFile> multipartFiles) {
 
@@ -61,7 +64,7 @@ public class ProofService {
 			ErrorCode.PROOF_NOT_EXIST));
 
 		if (!isMeOrFriend(jwt, proof)) {
-			throw new BusinessException(ErrorCode.PROOF_NOT_AUTORIZED);
+			throw new ProofException(ErrorCode.PROOF_NOT_AUTORIZED);
 		}
 
 		return ProofDto.from(proof);
@@ -77,4 +80,5 @@ public class ProofService {
 
 		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollowed();
 	}
+
 }

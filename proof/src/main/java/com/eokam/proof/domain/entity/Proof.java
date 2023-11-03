@@ -50,7 +50,7 @@ public class Proof {
 	@CreatedDate
 	private LocalDateTime createdAt;
 
-	@Column(length = 100)
+	@Column(length = 20)
 	private String contents;
 
 	@Builder.Default
