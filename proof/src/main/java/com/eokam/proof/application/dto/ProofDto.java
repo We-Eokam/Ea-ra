@@ -1,6 +1,6 @@
 package com.eokam.proof.application.dto;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -12,7 +12,7 @@ import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import lombok.Builder;
 
 @Builder
-public record ProofDto(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId, LocalDateTime createdAt,
+public record ProofDto(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId, String createdAt,
 					   String content, List<ProofImageDto> proofImages) {
 	public static ProofDto from(Proof proof) {
 		return ProofDto.builder()
@@ -20,7 +20,7 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 			.memberId(proof.getMemberId())
 			.activityType(proof.getActivityType())
 			.cCompanyId(proof.getCCompanyId())
-			.createdAt(proof.getCreatedAt())
+			.createdAt(proof.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.content(proof.getContents())
 			.proofImages(
 				proof.getProofImages().stream()
@@ -36,7 +36,7 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 			.memberId(proof.getMemberId())
 			.activityType(proof.getActivityType())
 			.cCompanyId(proof.getCCompanyId())
-			.createdAt(proof.getCreatedAt())
+			.createdAt(proof.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.content(proof.getContents())
 			.proofImages(
 				s3FileList.stream()

@@ -24,5 +24,8 @@ public class ProofCreateRequestValidator {
 			&& StringUtils.isBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.REQUIRE_CONTENT_ID);
 		}
+		if (StringUtils.isNotBlank(proofCreateRequest.content()) && proofCreateRequest.content().length() > 20) {
+			throw new ProofException(ErrorCode.CONTENT_TOO_LONG);
+		}
 	}
 }

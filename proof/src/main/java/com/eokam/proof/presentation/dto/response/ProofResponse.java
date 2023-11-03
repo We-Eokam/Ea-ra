@@ -1,12 +1,10 @@
 package com.eokam.proof.presentation.dto.response;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.dto.ProofImageDto;
 import com.eokam.proof.domain.constant.ActivityType;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -15,8 +13,7 @@ import lombok.Builder;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ProofResponse(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId,
-							@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul") LocalDateTime createdAt,
-							List<Picture> picture, String content) {
+							String createdAt, List<Picture> picture, String content) {
 
 	@Builder
 	private record Picture(String url, String name) {
