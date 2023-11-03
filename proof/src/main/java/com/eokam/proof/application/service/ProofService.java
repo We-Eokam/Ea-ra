@@ -69,7 +69,7 @@ public class ProofService {
 
 	private boolean isMeOrFriend(String jwt, Proof proof) {
 		Long myId = ParseJwtUtil.parseMemberId(jwt);
-		Long otherId = proof.getProofId();
+		Long otherId = proof.getMemberId();
 
 		if (myId.equals(otherId)) {
 			return true;
