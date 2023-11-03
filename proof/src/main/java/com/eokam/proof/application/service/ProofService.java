@@ -14,9 +14,14 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
+import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 import com.eokam.proof.infrastructure.util.ParseJwtUtil;
+import com.eokam.proof.infrastructure.util.error.ErrorCode;
+import com.eokam.proof.infrastructure.util.error.exception.BusinessException;
+import com.eokam.proof.infrastructure.util.error.exception.ProofException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +33,8 @@ public class ProofService {
 	private final ProofImageRepository proofImageRepository;
 
 	private final S3Service s3Service;
+
+	private final FollowServiceFeign followServiceFeign;
 
 	public Page<ProofDto> getMyProofList(String jwt, PageRequest pageRequest) {
 		Long memberId = ParseJwtUtil.parseMemberId(jwt);
@@ -47,5 +54,27 @@ public class ProofService {
 		s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
 
 		return ProofDto.of(savedProof, s3SavedList);
+	}
+
+	public ProofDto getProofDetail(String jwt, Long proofId) {
+		Proof proof = proofRepository.findByProofId(proofId).orElseThrow(() -> new ProofException(
+			ErrorCode.PROOF_NOT_EXIST));
+
+		if (!isMeOrFriend(jwt, proof)) {
+			throw new BusinessException(ErrorCode.PROOF_NOT_AUTORIZED);
+		}
+
+		return ProofDto.from(proof);
+	}
+
+	private boolean isMeOrFriend(String jwt, Proof proof) {
+		Long myId = ParseJwtUtil.parseMemberId(jwt);
+		Long otherId = proof.getProofId();
+
+		if (myId.equals(otherId)) {
+			return true;
+		}
+
+		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollowed();
 	}
 }
