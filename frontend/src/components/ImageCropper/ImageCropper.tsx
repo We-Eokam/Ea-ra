@@ -79,6 +79,7 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
     <Container>
       <input
         type="file"
+        accept="image/*"
         ref={inputRef}
         style={{ display: "none" }}
         onChange={handleFileChange}
