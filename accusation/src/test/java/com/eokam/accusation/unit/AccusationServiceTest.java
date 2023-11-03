@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,6 +113,42 @@ public class AccusationServiceTest {
 		for (AccusationDto accusationDto : accusationDtoList) {
 			Assertions.assertThat(accusationDto.imageList()).hasSize(1);
 		}
+	}
+
+	@Test
+	@DisplayName("특정 고발장의 상세 내용을 조회한다.")
+	void getAccusationDetail() {
+		// given
+		Accusation accusation = Accusation.builder()
+			.accusationId(1L)
+			.witnessId(2L)
+			.memberId(3L)
+			.activityType(ActivityType.FOOD)
+			.build();
+		AccusationImage accusationImage1 = AccusationImage.builder()
+			.accusation(accusation)
+			.fileUrl("fileURL1")
+			.build();
+		AccusationImage accusationImage2 = AccusationImage.builder()
+			.accusation(accusation)
+			.fileUrl("fileURL2")
+			.build();
+		List<AccusationImage> accusationImageList = new ArrayList<>();
+		accusationImageList.add(accusationImage1);
+		accusationImageList.add(accusationImage2);
+
+		BDDMockito.given(accusationRepository.findByAccusationId(1L)).willReturn(Optional.of(accusation));
+		BDDMockito.given(accusationImageRepository.findByAccusation_AccusationId(1L)).willReturn(accusationImageList);
+
+		// when
+		AccusationDto accusationDto = accusationService.getAccusationDetail(1L);
+
+		// then
+		BDDMockito.verify(accusationRepository).findByAccusationId(1L);
+		BDDMockito.verify(accusationImageRepository).findByAccusation_AccusationId(1L);
+		Assertions.assertThat(accusationDto.imageList()).hasSize(2);
+		Assertions.assertThat(accusationDto.imageList().get(0)).isEqualTo("fileURL1");
+		Assertions.assertThat(accusationDto.imageList().get(1)).isEqualTo("fileURL2");
 	}
 
 	public List<Accusation> number수만큼_memberId에게_고발장_보내기(Long memberId, int number) {
