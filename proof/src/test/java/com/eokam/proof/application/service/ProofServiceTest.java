@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.LongStream;
 
 import org.hibernate.Hibernate;
@@ -35,6 +36,9 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
+import com.eokam.proof.infrastructure.external.member.FollowStatus;
+import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 
@@ -42,12 +46,12 @@ class ProofServiceTest extends BaseServiceTest {
 
 	@InjectMocks
 	ProofService proofService;
-
 	@Mock
 	ProofRepository proofRepository;
-
 	@Mock
 	ProofImageRepository proofImageRepository;
+	@Mock
+	FollowServiceFeign followServiceFeign;
 
 	@Mock
 	S3Service s3Service;
@@ -202,6 +206,55 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
 		assertThat(actualResponse.createdAt()).isEqualTo(proof.getCreatedAt());
 		assertTrue(Hibernate.isInitialized(proof.getProofImages()));
+	}
+
+	@Test
+	@DisplayName("내 인증 상세 조회를 성공")
+	@Transactional
+	void getMyProofDetail_Success() {
+		// given
+		String testJwt = createJwt(1L);
+
+		Proof proof = Proof.builder()
+			.proofId(1L)
+			.memberId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.createdAt(LocalDateTime.now())
+			.build();
+
+		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
+
+		// when
+		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
+
+		// then
+		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
+	}
+
+	@Test
+	@DisplayName("친구 인증 상세 조회를 성공")
+	@Transactional
+	void getOthersProofDetail_Success() {
+		// given
+		String testJwt = createJwt(1L);
+
+		Proof proof = Proof.builder()
+			.proofId(1L)
+			.memberId(2L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.createdAt(LocalDateTime.now())
+			.build();
+
+		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
+		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class))).willReturn(new FollowStatus(true));
+
+		// when
+		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
+
+		// then
+		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
 	}
 
 	private String createJwt(Long memberId) {

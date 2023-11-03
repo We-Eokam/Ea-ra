@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.proof.application.dto.ProofCreateDto;
+import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.response.MyProofListResponse;
@@ -62,5 +64,14 @@ public class ProofController {
 			proofService.createProof(ProofCreateDto.of(accessToken, request), images));
 
 		return ResponseEntity.created(URI.create("/proof/" + response.proofId())).body(response);
+	}
+
+	@GetMapping("/{proofId}")
+	public ResponseEntity<ProofResponse> getProofDetail(
+		@CookieValue("access-token") final String accessToken,
+		@PathVariable Long proofId) {
+		ProofDto response = proofService.getProofDetail(accessToken, proofId);
+
+		return ResponseEntity.ok().body(ProofResponse.from(response));
 	}
 }
