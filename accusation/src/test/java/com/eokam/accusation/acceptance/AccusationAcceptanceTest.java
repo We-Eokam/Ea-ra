@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +27,7 @@ public class AccusationAcceptanceTest {
 
 	private static final String FILE_NAME1 = "fileName1.png";
 	private static final String FILE_NAME2 = "fileName2.png";
-	
+
 	@LocalServerPort
 	int port;
 
@@ -63,7 +62,6 @@ public class AccusationAcceptanceTest {
 	}
 
 	@Test
-	@Disabled
 	@DisplayName("회원은 자신이 받은 고발장 하나를 상세 조회할 수 있다.")
 	void getMyAccusationDetail() throws IOException {
 		// given
