@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,5 +42,11 @@ public class AccusationController {
 	public ResponseEntity<?> getAccusationList(@RequestParam Long memberId) {
 		List<AccusationDto> accusationDtoList = accusationService.getAccusationList(memberId);
 		return ResponseEntity.ok(AccusationListResponse.from(accusationDtoList));
+	}
+
+	@GetMapping("/{accusationId}")
+	public ResponseEntity<AccusationResponse> getAccusationDetail(@PathVariable Long accusationId) {
+		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId);
+		return ResponseEntity.ok(AccusationResponse.from(accusationDto));
 	}
 }

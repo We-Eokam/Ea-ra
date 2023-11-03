@@ -1,17 +1,18 @@
 package com.eokam.accusation.unit;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -68,21 +69,21 @@ public class AccusationServiceTest {
 		Accusation accusation = Accusation.from(accusationDto);
 		AccusationImage accusationImage = AccusationImage.builder().accusation(accusation).fileUrl("FileURL").build();
 
-		BDDMockito.given(s3Service.uploadFile(multipartFile)).willReturn(fileUrls);
-		BDDMockito.given(
-				accusationRepository.save(argThat(a -> a.getActivityDetail().equals("Test Detail"))))
+		given(s3Service.uploadFile(multipartFile)).willReturn(fileUrls);
+		given(
+			accusationRepository.save(argThat(a -> a.getActivityDetail().equals("Test Detail"))))
 			.willReturn(accusation);
-		BDDMockito.given(
-				accusationImageRepository.save(argThat(aI -> aI.getFileUrl().equals("FileURL"))))
+		given(
+			accusationImageRepository.save(argThat(aI -> aI.getFileUrl().equals("FileURL"))))
 			.willReturn(accusationImage);
 
 		// when
 		accusationService.createAccusation(accusationDto, multipartFile);
 
 		// then
-		BDDMockito.verify(accusationRepository)
+		verify(accusationRepository)
 			.save(argThat(a -> a.getActivityDetail().equals("Test Detail")));
-		BDDMockito.verify(accusationImageRepository)
+		verify(accusationImageRepository)
 			.save((argThat(aI -> aI.getFileUrl().equals("FileURL"))));
 	}
 
@@ -92,9 +93,9 @@ public class AccusationServiceTest {
 		// given
 		List<Accusation> accusations = number수만큼_memberId에게_고발장_보내기(1L, 10);
 		List<AccusationImage> accusationImages = 보낸_고발장에_사진_한개씩_추가(accusations);
-		BDDMockito.given(accusationRepository.findByMemberId(1L)).willReturn(accusations);
+		given(accusationRepository.findByMemberId(1L)).willReturn(accusations);
 		for (int i = 1; i <= 10; i++) {
-			BDDMockito.given(accusationImageRepository.findByAccusation_AccusationId((long)i)).willReturn(
+			given(accusationImageRepository.findByAccusation_AccusationId((long)i)).willReturn(
 				Collections.singletonList(accusationImages.get(i - 1)));
 		}
 
@@ -102,16 +103,52 @@ public class AccusationServiceTest {
 		List<AccusationDto> accusationDtoList = accusationService.getAccusationList(1L);
 
 		// then
-		BDDMockito.verify(accusationRepository).findByMemberId(1L);
+		verify(accusationRepository).findByMemberId(1L);
 		for (int i = 1; i <= 10; i++) {
-			BDDMockito.verify(accusationImageRepository).findByAccusation_AccusationId((long)i);
+			verify(accusationImageRepository).findByAccusation_AccusationId((long)i);
 		}
-		BDDMockito.verify(accusationImageRepository, Mockito.times(10))
+		verify(accusationImageRepository, Mockito.times(10))
 			.findByAccusation_AccusationId(any());
-		Assertions.assertThat(accusationDtoList).hasSize(10);
+		assertThat(accusationDtoList).hasSize(10);
 		for (AccusationDto accusationDto : accusationDtoList) {
-			Assertions.assertThat(accusationDto.imageList()).hasSize(1);
+			assertThat(accusationDto.imageList()).hasSize(1);
 		}
+	}
+
+	@Test
+	@DisplayName("특정 고발장의 상세 내용을 조회한다.")
+	void getAccusationDetail() {
+		// given
+		Accusation accusation = Accusation.builder()
+			.accusationId(1L)
+			.witnessId(2L)
+			.memberId(3L)
+			.activityType(ActivityType.FOOD)
+			.build();
+		AccusationImage accusationImage1 = AccusationImage.builder()
+			.accusation(accusation)
+			.fileUrl("fileURL1")
+			.build();
+		AccusationImage accusationImage2 = AccusationImage.builder()
+			.accusation(accusation)
+			.fileUrl("fileURL2")
+			.build();
+		List<AccusationImage> accusationImageList = new ArrayList<>();
+		accusationImageList.add(accusationImage1);
+		accusationImageList.add(accusationImage2);
+
+		given(accusationRepository.findByAccusationId(1L)).willReturn(Optional.of(accusation));
+		given(accusationImageRepository.findByAccusation_AccusationId(1L)).willReturn(accusationImageList);
+
+		// when
+		AccusationDto accusationDto = accusationService.getAccusationDetail(1L);
+
+		// then
+		verify(accusationRepository).findByAccusationId(1L);
+		verify(accusationImageRepository).findByAccusation_AccusationId(1L);
+		assertThat(accusationDto.imageList()).hasSize(2);
+		assertThat(accusationDto.imageList().get(0)).isEqualTo("fileURL1");
+		assertThat(accusationDto.imageList().get(1)).isEqualTo("fileURL2");
 	}
 
 	public List<Accusation> number수만큼_memberId에게_고발장_보내기(Long memberId, int number) {
