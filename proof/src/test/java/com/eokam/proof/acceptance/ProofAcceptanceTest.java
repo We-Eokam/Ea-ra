@@ -123,6 +123,99 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.header(HttpHeaders.LOCATION)).isNotBlank();
 	}
 
+	@Test
+	@DisplayName("내 인증을 상세 조회 한다.")
+	void 내_인증_상세_조회() {
+		// given
+		Proof proof = proofRepository.save(Proof.builder()
+			.memberId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.build());
+
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.proof(proof)
+			.build());
+
+		// when
+		ExtractableResponse<Response> response = 인증_조회(proof.getProofId());
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+		Long proofId = response.body().jsonPath().getLong("proof_id");
+		ActivityType activityType = response.body().jsonPath().getObject("activity_type", ActivityType.class);
+		Long cCompanyId = response.body().jsonPath().getLong("c_company_id");
+		String createdAt = response.body().jsonPath().getString("created_at");
+		List<String> urlList = response.body().jsonPath().getList("picture.url");
+		List<String> nameList = response.body().jsonPath().getList("picture.name");
+
+		assertThat(proofId).isEqualTo(proof.getProofId());
+		assertThat(activityType).isEqualTo(proof.getActivityType());
+		assertThat(cCompanyId).isEqualTo(proof.getCCompanyId());
+		assertThat(createdAt).isEqualTo(
+			proof.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+		assertThat(urlList.get(0)).isEqualTo("http://test.com");
+		assertThat(nameList.get(0)).isEqualTo("test.jpg");
+		assertThat(proof.getContents()).isBlank();
+	}
+
+	@Test
+	@DisplayName("친구 인증을 상세 조회 한다.")
+	void 친구_인증_상세_조회() {
+		// given
+		Proof proof = proofRepository.save(Proof.builder()
+			.memberId(2L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.build());
+
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.proof(proof)
+			.build());
+
+		// when
+		ExtractableResponse<Response> response = 인증_조회(proof.getProofId());
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+		Long proofId = response.body().jsonPath().getLong("proof_id");
+		ActivityType activityType = response.body().jsonPath().getObject("activity_type", ActivityType.class);
+		Long cCompanyId = response.body().jsonPath().getLong("c_company_id");
+		String createdAt = response.body().jsonPath().getString("created_at");
+		List<String> urlList = response.body().jsonPath().getList("picture.url");
+		List<String> nameList = response.body().jsonPath().getList("picture.name");
+
+		assertThat(proofId).isEqualTo(proof.getProofId());
+		assertThat(activityType).isEqualTo(proof.getActivityType());
+		assertThat(cCompanyId).isEqualTo(proof.getCCompanyId());
+		assertThat(createdAt).isEqualTo(
+			proof.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+		assertThat(urlList.get(0)).isEqualTo("http://test.com");
+		assertThat(nameList.get(0)).isEqualTo("test.jpg");
+		assertThat(proof.getContents()).isBlank();
+	}
+
+	private ExtractableResponse<Response> 인증_조회(long l) {
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		return RestAssured.given().log().all()
+			.when()
+			.cookie("access-token", testJwt)
+			.get(API_BASE_PATH + "/" + l)
+			.then().log().all()
+			.extract();
+	}
+
 	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) throws JSONException, IOException {
 		long memberId = 1L;
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
