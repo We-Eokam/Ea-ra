@@ -20,7 +20,7 @@ import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
-import com.eokam.proof.presentation.dto.response.MyProofListResponse;
+import com.eokam.proof.presentation.dto.response.ProofListResponse;
 import com.eokam.proof.presentation.dto.response.ProofResponse;
 import com.eokam.proof.presentation.dto.validator.ProofCreateRequestValidator;
 
@@ -37,11 +37,11 @@ public class ProofController {
 	private final ProofCreateRequestValidator proofCreateRequestValidator;
 
 	@GetMapping("/me")
-	public ResponseEntity<MyProofListResponse> getMyProofList(
+	public ResponseEntity<ProofListResponse> getMyProofList(
 		@CookieValue("access-token") final String accessToken,
 		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
 		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
-		MyProofListResponse response = MyProofListResponse.from(
+		ProofListResponse response = ProofListResponse.from(
 			proofService.getMyProofList(accessToken, PageRequest.of(page, size))
 				.map(ProofResponse::from)
 				.toList());

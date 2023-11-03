@@ -14,7 +14,7 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ProofResponse(Long proofId, ActivityType activityType, Long cCompanyId,
+public record ProofResponse(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId,
 							@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul") LocalDateTime createdAt,
 							List<Picture> picture, String content) {
 
@@ -31,6 +31,7 @@ public record ProofResponse(Long proofId, ActivityType activityType, Long cCompa
 	public static ProofResponse from(ProofDto proofDto) {
 		return ProofResponse.builder()
 			.proofId(proofDto.proofId())
+			.memberId(proofDto.memberId())
 			.activityType(proofDto.activityType())
 			.cCompanyId(proofDto.cCompanyId())
 			.createdAt(proofDto.createdAt())

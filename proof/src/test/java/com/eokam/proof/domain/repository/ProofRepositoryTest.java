@@ -27,7 +27,7 @@ class ProofRepositoryTest extends BaseRepositoryTest {
 	private ProofImageRepository proofImageRepository;
 
 	@Test
-	@DisplayName("나의 인증 내역 조회 테스트")
+	@DisplayName("인증 내역 조회 테스트")
 	void findAllByMemberId() {
 		// given
 		LongStream.range(1, 6).forEach(i -> {

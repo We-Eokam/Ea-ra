@@ -9,9 +9,9 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record MyProofListResponse(List<ProofResponse> proof) {
-	public static MyProofListResponse from(List<ProofResponse> proofResponses) {
-		return MyProofListResponse.builder()
+public record ProofListResponse(List<ProofResponse> proof) {
+	public static ProofListResponse from(List<ProofResponse> proofResponses) {
+		return ProofListResponse.builder()
 			.proof(proofResponses.stream().toList())
 			.build();
 	}

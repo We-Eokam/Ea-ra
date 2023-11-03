@@ -57,6 +57,7 @@ class ProofServiceTest extends BaseServiceTest {
 	S3Service s3Service;
 
 	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
+	private static final List<Proof> EXPECTED_FRIENDS_PROOF_LIST = new ArrayList<>();
 
 	@BeforeEach
 	void resetRepository() {
@@ -86,6 +87,35 @@ class ProofServiceTest extends BaseServiceTest {
 
 		// when
 		Page<ProofDto> actualResponse = proofService.getMyProofList(testJwt, pageRequest);
+
+		// then
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
+	}
+
+	@Test
+	@DisplayName("친구 인증 내역 조회를 성공")
+	@Transactional
+	void getFriendsProofList_Success() {
+		LongStream.range(1, 6).forEach(this::generateProof);
+
+		// given
+		String testJwt = createJwt(1L);
+
+		PageRequest pageRequest = PageRequest.of(0, 5);
+
+		int start = (int)pageRequest.getOffset();
+		int end = Math.min((start + pageRequest.getPageSize()), EXPECTED_FRIENDS_PROOF_LIST.size());
+
+		Page<Proof> proofPage = new PageImpl<>(EXPECTED_FRIENDS_PROOF_LIST.subList(start, end), pageRequest,
+			EXPECTED_FRIENDS_PROOF_LIST.size());
+
+		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
+			.willReturn(new FollowStatus(true));
+		given(proofRepository.findAllByMemberId(anyLong(), any(PageRequest.class)))
+			.willReturn(proofPage);
+
+		// when
+		Page<ProofDto> actualResponse = proofService.getProofList(testJwt, 2L, pageRequest);
 
 		// then
 		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
@@ -345,6 +375,14 @@ class ProofServiceTest extends BaseServiceTest {
 			EXPECTED_MY_PROOF_LIST.add(proof3);
 			EXPECTED_MY_PROOF_LIST.add(proof4);
 			EXPECTED_MY_PROOF_LIST.add(proof5);
+		}
+
+		if (i == 2) {
+			EXPECTED_FRIENDS_PROOF_LIST.add(proof1);
+			EXPECTED_FRIENDS_PROOF_LIST.add(proof2);
+			EXPECTED_FRIENDS_PROOF_LIST.add(proof3);
+			EXPECTED_FRIENDS_PROOF_LIST.add(proof4);
+			EXPECTED_FRIENDS_PROOF_LIST.add(proof5);
 		}
 
 	}
