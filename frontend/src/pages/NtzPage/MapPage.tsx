@@ -1,11 +1,18 @@
 // import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
+import "../../style/kakaomapOverlay.css"
 
 interface CategoryProps {
   isSelected: boolean;
+}
+
+declare global {
+  interface Window {
+    kakao: any;
+  }
 }
 
 export default function MapPage() {
@@ -22,42 +29,8 @@ export default function MapPage() {
     "폐휴대폰",
   ];
 
-  const TumblerExample = [
-    {
-      company: "스타벅스",
-      name: "스타벅스 GS타워점",
-      type: "2",
-      address: "주소",
-      distance: "12m",
-      time: "도보 1분",
-    },
-    {
-      company: "스타벅스",
-      name: "스타벅스 역삼대로점",
-      type: "1",
-      address: "주소",
-      distance: "120m",
-      time: "도보 3분",
-    },
-    {
-      company: "스타벅스",
-      name: "스타벅스 큰길타워점",
-      type: "2",
-      address: "주소",
-      distance: "240m",
-      time: "도보 6분",
-    },
-    {
-      company: "스타벅스",
-      name: "스타벅스 역삼대로점",
-      type: "1",
-      address: "주소",
-      distance: "120m",
-      time: "도보 3분",
-    },
-  ];
-
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
+  
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -68,6 +41,123 @@ export default function MapPage() {
       setSelectedCategoryIndex(0);
     }
   };
+
+  const places = [
+    {
+      category: "텀블러",
+      name: "스타벅스 학동역점",
+      lat: 37.5146173,
+      lng: 127.0307978,
+      distance: "더미m",
+      time: "더미분",
+      type: 2,
+    },
+    {
+      category: "텀블러",
+      name: "스타벅스 논현힐탑점",
+      lat: 37.5114981,
+      lng: 127.0321654,
+      distance: "더미m",
+      time: "도보 더미분",
+      type: 2
+    },
+    {
+      category: "전자영수증",
+      name: "KB국민은행 학동역",
+      lat: 37.5135422,
+      lng: 127.0305215,
+      distance: "더미m",
+      time: "더미초",
+      type: 2,
+    }
+  ];
+
+
+  
+  useEffect(() => {
+    let container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
+    let options = {
+      //지도를 생성할 때 필요한 기본 옵션
+      center: new window.kakao.maps.LatLng(37.5013068, 127.0396597), //지도의 중심좌표.
+      level: 4, //지도의 레벨(확대, 축소 정도)
+    };
+
+    let map = new window.kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+
+    
+    const displayMarkers = () => {
+      // 지도 영역을 얻어옵니다.
+      let bounds = map.getBounds();
+      let swLatLng = bounds.getSouthWest(); // 남서쪽 좌표를 얻어옵니다.
+      let neLatLng = bounds.getNorthEast(); // 북동쪽 좌표를 얻어옵니다.
+      
+      const selectedCategory = categoryList[selectedCategoryIndex];
+
+      places.forEach((place) => {
+        if (selectedCategory === "전체보기" || place.category === selectedCategory) {
+          let position = new window.kakao.maps.LatLng(place.lat, place.lng);
+          
+          // 현재 지도 영역 내에 있는지 확인합니다.
+          if (bounds.contain(position)) {
+            // 마커를 생성하고 지도에 표시합니다.
+            let marker = new window.kakao.maps.Marker({
+              map: map,
+              position: position,
+            });
+
+            var customContent = `<div class="custom-overlay">${place.name}</div>`
+            
+            var customOverlay = new window.kakao.maps.CustomOverlay({
+              map: map,
+              position: position,
+              content: customContent,
+              yAnchor: 2.6,
+            })
+
+            // let infowindow = new window.kakao.maps.InfoWindow({
+            //   map: map,
+            //   position: position,
+            //   content: place.name,
+            // })
+
+            // infowindow.open(map, marker)
+
+            
+          }
+        }
+      });
+    };
+
+    // 지도 이동 시 이벤트 리스너를 등록합니다.
+    window.kakao.maps.event.addListener(map, "idle", displayMarkers);
+
+    if (navigator.geolocation) {
+      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var lat = position.coords.latitude, // 위도
+          lon = position.coords.longitude; // 경도
+
+        console.log(lat, lon);
+
+        var locPosition = new window.kakao.maps.LatLng(lat, lon);
+        map.setCenter(locPosition);
+
+        // 마커와 인포윈도우를 표시합니다
+      });
+    }
+
+    window.kakao.maps.event.addListener(map, "dragend", function () {
+      // 지도의 중심 좌표를 얻어옵니다
+      var center = map.getCenter();
+      console.log(
+        `드래그가 끝난 후 중앙 좌표: 위도(${center.getLat()}), 경도(${center.getLng()})`
+      );
+    });
+    window.kakao.maps.event.addListener(map, "idle", displayMarkers);
+
+    // 처음에 마커를 표시합니다.
+    displayMarkers();
+  }, [selectedCategoryIndex]);
 
   return (
     <>
@@ -85,14 +175,21 @@ export default function MapPage() {
         ))}
       </Categories>
       <MapAndModal>
-        <MapFrame></MapFrame>
+        <MapFrame>
+          <Map id="map"></Map>
+        </MapFrame>
         <MapModal>
           <CurrencyInfoFrame>
             <CurrencyInfo>탄소중립포인트&nbsp;&nbsp;&nbsp;그린</CurrencyInfo>
           </CurrencyInfoFrame>
 
           <StoreScroll>
-            {TumblerExample.map((Store, index) => (
+          {places
+            .filter((Store) => 
+              selectedCategoryIndex === 0 ||
+              Store.category === categoryList[selectedCategoryIndex]
+            )
+            .map((Store, index) => (
               <StoreFrame key={index}>
                 <LogoFrame>로고</LogoFrame>
                 <StoreInfoFrame>
@@ -138,7 +235,8 @@ const Category = styled.div<CategoryProps>`
   height: 32px;
   width: auto;
   border-radius: 20px;
-  border: ${(props) => (props.isSelected ? "1px solid transparent" : "1px solid var(--gray)")};
+  border: ${(props) =>
+    props.isSelected ? "1px solid transparent" : "1px solid var(--gray)"};
   background-color: ${(props) =>
     props.isSelected ? "var(--primary)" : "var(--white)"};
   color: ${(props) => (props.isSelected ? "var(--white)" : "var(--dark-gray)")};
@@ -162,15 +260,22 @@ const MapAndModal = styled.div`
 const MapFrame = styled.div`
   position: relative;
   width: 100%;
-  height: 53%;
+  height: 57%;
   background-color: var(--white);
+`;
+
+const Map = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
 `;
 
 const MapModal = styled(ModalFrame)`
   position: absolute;
   bottom: 0;
-  height: 52.6%;
+  height: 48.6%;
   overflow-y: hidden;
+  z-index: 3;
 `;
 
 const CurrencyInfoFrame = styled.div`
