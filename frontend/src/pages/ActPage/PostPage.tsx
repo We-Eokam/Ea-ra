@@ -1,6 +1,6 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
-import HeadBarCenter from "../../components/HeadBar/HeadBarCenter";
+import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
@@ -43,7 +43,7 @@ export default function PostPage() {
 
   return (
     <>
-      <HeadBarCenter pagename="활동 인증" bgcolor="white" backbutton="yes" />
+      <HeadBar pagename="활동 인증" bgcolor="white" backbutton="yes" center={true}/>
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
         <div style={{ marginTop: "20px" }}>
           <ImageCropper onCrop={handleImageCrop}>
