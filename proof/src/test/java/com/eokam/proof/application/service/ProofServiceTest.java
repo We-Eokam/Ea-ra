@@ -36,6 +36,9 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
+import com.eokam.proof.infrastructure.external.member.FollowStatus;
+import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 
@@ -43,12 +46,12 @@ class ProofServiceTest extends BaseServiceTest {
 
 	@InjectMocks
 	ProofService proofService;
-
 	@Mock
 	ProofRepository proofRepository;
-
 	@Mock
 	ProofImageRepository proofImageRepository;
+	@Mock
+	FollowServiceFeign followServiceFeign;
 
 	@Mock
 	S3Service s3Service;
@@ -245,6 +248,7 @@ class ProofServiceTest extends BaseServiceTest {
 			.build();
 
 		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
+		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class))).willReturn(new FollowStatus(true));
 
 		// when
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
