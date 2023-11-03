@@ -4,6 +4,7 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
+import { useNavigate } from "react-router-dom";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ export default function MainPage() {
   const toMonthCal = () => {
     navigate("/calendar");
   };
+
+  const toAct = () => {
+    navigate("/act")
+  }
 
   function getCurrentWeek() {
     const day = new Date();
@@ -90,10 +95,10 @@ export default function MainPage() {
           </WeekdayFrame>
 
           <ButtonsFrame>
-            <ShortButton background="var(--third)" color="var(--primary)" >
+            <ShortButton background="var(--third)" color="var(--primary)" onClick={toAct} >
               남은 빚 갚기
             </ShortButton>
-            <ShortButton>월별 내역</ShortButton>
+            <ShortButton onClick={toMonthCal}>월별 내역</ShortButton>
           </ButtonsFrame>
         </HomeFrame>
       </MainFrame>
@@ -104,7 +109,7 @@ export default function MainPage() {
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;
-  max-height: 56%;
+  max-height: 56.4%;
   font-weight: 400;
   overflow-y: scroll;
 `;
