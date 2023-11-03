@@ -1,6 +1,8 @@
 package com.eokam.proof.acceptance;
 
+import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,10 +15,11 @@ import java.util.stream.LongStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,14 +31,15 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
+import com.eokam.proof.infrastructure.external.member.FollowStatus;
+import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 
-import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
-@Disabled
 class ProofAcceptanceTest extends AcceptanceTest {
 	private static final String API_BASE_PATH = "/proof";
 
@@ -45,7 +49,11 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	@Autowired
 	private ProofImageRepository proofImageRepository;
 
+	@MockBean
+	private FollowServiceFeign followServiceFeign;
+
 	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
+	private static final List<Proof> EXPECTED_FRIEND_PROOF_LIST = new ArrayList<>();
 
 	@Test
 	@DisplayName("내 인증 내역 조회를 성공한다.")
@@ -86,6 +94,56 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	void 내_인증_내역_조회_컨텐츠없음() {
 		// when
 		ExtractableResponse<Response> response = 내_인증_내역_조회(0L, 5L);
+
+		// then
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+	}
+
+	@Test
+	@DisplayName("친구 인증 내역 조회를 성공한다.")
+	void 친구_인증_내역_조회_성공() {
+		// given
+		LongStream.range(1, 6).forEach(this::인증_더미_데이터_생성);
+
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
+			.willReturn(new FollowStatus(true));
+
+		// when
+		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
+
+		// then
+		assertThat(response.body().jsonPath().getList("proof")).hasSize(5);
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+		List<Integer> proofIdList = response.body().jsonPath().getList("proof.proof_id");
+		List<String> activityTypeList = response.body().jsonPath().getList("proof.activity_type");
+		List<Integer> memberIdList = response.body().jsonPath().getList("proof.member_id");
+		List<Integer> cCompanyIdList = response.body().jsonPath().getList("proof.c_company_id");
+		List<String> createdAtList = response.body().jsonPath().getList("proof.created_at");
+		List<List<String>> pictureUrlList = response.body().jsonPath().getList("proof.picture.url");
+		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
+
+		IntStream.range(0, 5).forEach(i -> {
+			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(memberIdList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i).getMemberId());
+			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
+				EXPECTED_FRIEND_PROOF_LIST.get(i).getCCompanyId());
+			assertThat(createdAtList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i)
+				.getCreatedAt()
+				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
+			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
+		});
+	}
+
+	@Test
+	@DisplayName(("친구 인증 내역 조회 시 컨텐츠 없음을 반환한다."))
+	void 친구_인증_내역_조회_컨텐츠없음() {
+		// when
+		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
+
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
+			.willReturn(new FollowStatus(true));
 
 		// then
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -148,7 +206,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
 		Long proofId = response.body().jsonPath().getLong("proof_id");
-		ActivityType activityType = response.body().jsonPath().getObject("activity_type", ActivityType.class);
+		ActivityType activityType = ActivityType.valueOf(response.body().jsonPath().getString("activity_type"));
 		Long cCompanyId = response.body().jsonPath().getLong("c_company_id");
 		String createdAt = response.body().jsonPath().getString("created_at");
 		List<String> urlList = response.body().jsonPath().getList("picture.url");
@@ -180,6 +238,9 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.proof(proof)
 			.build());
 
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
+			.willReturn(new FollowStatus(true));
+
 		// when
 		ExtractableResponse<Response> response = 인증_조회(proof.getProofId());
 
@@ -187,7 +248,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
 		Long proofId = response.body().jsonPath().getLong("proof_id");
-		ActivityType activityType = response.body().jsonPath().getObject("activity_type", ActivityType.class);
+		ActivityType activityType = ActivityType.valueOf(response.body().jsonPath().getString("activity_type"));
 		Long cCompanyId = response.body().jsonPath().getLong("c_company_id");
 		String createdAt = response.body().jsonPath().getString("created_at");
 		List<String> urlList = response.body().jsonPath().getList("picture.url");
@@ -210,7 +271,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		// given
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
-		return RestAssured.given().log().all()
+		return given().log().all()
 			.when()
 			.cookie("access-token", testJwt)
 			.get(API_BASE_PATH + "/" + l)
@@ -232,7 +293,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		json.put("c_company_id", 생성_요청.cCompanyId());
 		json.put("content", 생성_요청.content());
 
-		return RestAssured.given()
+		return given()
 			.accept(MediaType.APPLICATION_JSON_VALUE)
 			.cookie("access-token", testJwt)
 			.multiPart("file", resource.getFile())
@@ -257,10 +318,26 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		// given
 		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
 
-		return RestAssured.given().log().all()
+		return given().log().all()
 			.when()
 			.cookie("access-token", testJwt)
 			.get(API_BASE_PATH + "/me?page=" + page.toString() + "&size=" + size.toString())
+			.then().log().all()
+			.extract();
+	}
+
+	private static ExtractableResponse<Response> 친구_인증_내역_조회(Long friendId, Long page, Long size) {
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		return given().log().all()
+			.when()
+			.cookie("access-token", testJwt)
+			.get(API_BASE_PATH + "?memberId=" + friendId.toString() + "?page=" + page.toString() + "&size="
+				+ size.toString())
 			.then().log().all()
 			.extract();
 	}
@@ -332,6 +409,14 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			EXPECTED_MY_PROOF_LIST.add(proof3);
 			EXPECTED_MY_PROOF_LIST.add(proof4);
 			EXPECTED_MY_PROOF_LIST.add(proof5);
+		}
+
+		if (i == 2) {
+			EXPECTED_FRIEND_PROOF_LIST.add(proof1);
+			EXPECTED_FRIEND_PROOF_LIST.add(proof2);
+			EXPECTED_FRIEND_PROOF_LIST.add(proof3);
+			EXPECTED_FRIEND_PROOF_LIST.add(proof4);
+			EXPECTED_FRIEND_PROOF_LIST.add(proof5);
 		}
 	}
 
