@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.LongStream;
 
 import org.hibernate.Hibernate;
@@ -202,6 +203,54 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
 		assertThat(actualResponse.createdAt()).isEqualTo(proof.getCreatedAt());
 		assertTrue(Hibernate.isInitialized(proof.getProofImages()));
+	}
+
+	@Test
+	@DisplayName("내 인증 상세 조회를 성공")
+	@Transactional
+	void getMyProofDetail_Success() {
+		// given
+		String testJwt = createJwt(1L);
+
+		Proof proof = Proof.builder()
+			.proofId(1L)
+			.memberId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.createdAt(LocalDateTime.now())
+			.build();
+
+		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
+
+		// when
+		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
+
+		// then
+		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
+	}
+
+	@Test
+	@DisplayName("친구 인증 상세 조회를 성공")
+	@Transactional
+	void getOthersProofDetail_Success() {
+		// given
+		String testJwt = createJwt(1L);
+
+		Proof proof = Proof.builder()
+			.proofId(1L)
+			.memberId(2L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.createdAt(LocalDateTime.now())
+			.build();
+
+		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
+
+		// when
+		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
+
+		// then
+		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
 	}
 
 	private String createJwt(Long memberId) {

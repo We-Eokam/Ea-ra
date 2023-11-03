@@ -17,6 +17,8 @@ import com.eokam.proof.common.BaseRepositoryTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
+import com.eokam.proof.infrastructure.util.error.ErrorCode;
+import com.eokam.proof.infrastructure.util.error.exception.ProofException;
 
 class ProofRepositoryTest extends BaseRepositoryTest {
 	@Autowired
@@ -136,5 +138,30 @@ class ProofRepositoryTest extends BaseRepositoryTest {
 		assertThat(savedProofImage.getFileName()).isEqualTo(proofImage.getFileName());
 		assertThat(savedProofImage.getFileUrl()).isEqualTo(proofImage.getFileUrl());
 		assertThat(savedProofImage.getProof()).isEqualTo(proofImage.getProof());
+	}
+
+	@Test
+	@DisplayName("인증 상세 조회")
+	void findByProofId() {
+		Proof proof = proofRepository.save(Proof.builder()
+			.memberId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.cCompanyId(1L)
+			.build());
+
+		proofImageRepository.save(ProofImage.builder()
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.proof(proof)
+			.build());
+
+		Proof savedProof = proofRepository.findByProofId(proof.getProofId())
+			.orElseThrow(() -> new ProofException(ErrorCode.PROOF_NOT_EXIST));
+
+		assertThat(savedProof.getMemberId()).isEqualTo(1L);
+		assertThat(savedProof.getCCompanyId()).isEqualTo(1L);
+		assertTrue(Hibernate.isInitialized(savedProof.getProofImages()));
+		assertThat(savedProof.getContents()).isBlank();
+		assertThat(savedProof.getActivityType()).isEqualTo(ActivityType.ELECTRONIC_RECEIPT);
 	}
 }

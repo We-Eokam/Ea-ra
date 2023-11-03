@@ -497,18 +497,8 @@ class ProofControllerTest extends BaseControllerTest {
 		final Long EXPECTED_COMPANY_ID = companyId;
 		final ActivityType EXPECTED_ACTIVITY_TYPE = activityType;
 		final String EXPECTED_CONTENT = content;
-		final String EXPECTED_FILE_URL = "http://test.com";
 		final String EXPECTED_FILE_NAME = "test";
 		final String EXPECTED_ORIGINAL_NAME = "test.jpg";
-		final Long EXPECTED_IMAGE_ID = 1L;
-		final List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>() {{
-			ProofImageDto.builder()
-				.proofImageId(EXPECTED_IMAGE_ID)
-				.fileUrl(EXPECTED_FILE_URL)
-				.fileName(EXPECTED_FILE_NAME)
-				.build();
-		}};
-
 		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
 
 		final MockMultipartFile mockMultipartFile =
@@ -539,6 +529,122 @@ class ProofControllerTest extends BaseControllerTest {
 				.cookie(new Cookie("access-token", testJwt)))
 			.andDo(print())
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("내 인증 상세 조회를 성공")
+	void getMyProofDetail_Success() throws Exception {
+		final String testJwt = createJwt(1L);
+
+		List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>();
+		EXPECTED_PROOF_IMAGES.add(ProofImageDto.builder()
+			.proofImageId(1L)
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.build());
+
+		final ProofDto EXPECTED_PROOF = ProofDto.builder()
+			.proofId(1L)
+			.memberId(1L)
+			.cCompanyId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.createdAt(LocalDateTime.now())
+			.proofImages(EXPECTED_PROOF_IMAGES)
+			.content(null)
+			.build();
+
+		given(proofService.getProofDetail(anyString(), anyLong())).willReturn(EXPECTED_PROOF);
+
+		// when & then
+		this.mockMvc.perform(get("/proof/" + 2)
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("proof_id")
+				.value(EXPECTED_PROOF.proofId())
+			)
+			.andExpect(jsonPath("activity_type")
+				.value(EXPECTED_PROOF.activityType().name())
+			)
+			.andExpect(jsonPath("c_company_id")
+				.value(EXPECTED_PROOF.cCompanyId())
+			)
+			.andExpect(jsonPath("created_at")
+				.value(EXPECTED_PROOF.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(jsonPath("picture")
+				.isArray()
+			)
+			.andExpect(jsonPath("picture[0].url")
+				.value("http://test.com")
+			)
+			.andExpect(jsonPath("picture[0].name")
+				.value("test.jpg")
+			)
+			.andExpect(jsonPath("content")
+				.isEmpty()
+			);
+
+		verify(proofService).getProofDetail(testJwt, 1L);
+	}
+
+	@Test
+	@DisplayName("친구 인증 상세 조회를 성공")
+	void getFriendProofDetail_Success() throws Exception {
+		final String testJwt = createJwt(1L);
+
+		List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>();
+		EXPECTED_PROOF_IMAGES.add(ProofImageDto.builder()
+			.proofImageId(1L)
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.build());
+
+		final ProofDto EXPECTED_PROOF = ProofDto.builder()
+			.proofId(1L)
+			.memberId(2L)
+			.cCompanyId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.createdAt(LocalDateTime.now())
+			.proofImages(EXPECTED_PROOF_IMAGES)
+			.content(null)
+			.build();
+
+		given(proofService.getProofDetail(anyString(), anyLong())).willReturn(EXPECTED_PROOF);
+
+		// when & then
+		this.mockMvc.perform(get("/proof/" + 1)
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("proof_id")
+				.value(EXPECTED_PROOF.proofId())
+			)
+			.andExpect(jsonPath("activity_type")
+				.value(EXPECTED_PROOF.activityType().name())
+			)
+			.andExpect(jsonPath("c_company_id")
+				.value(EXPECTED_PROOF.cCompanyId())
+			)
+			.andExpect(jsonPath("created_at")
+				.value(EXPECTED_PROOF.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+			)
+			.andExpect(jsonPath("picture")
+				.isArray()
+			)
+			.andExpect(jsonPath("picture[0].url")
+				.value("http://test.com")
+			)
+			.andExpect(jsonPath("picture[0].name")
+				.value("test.jpg")
+			)
+			.andExpect(jsonPath("content")
+				.isEmpty()
+			);
+
+		verify(proofService).getProofDetail(testJwt, 1L);
 	}
 
 	private void generateProof(Long i) {
