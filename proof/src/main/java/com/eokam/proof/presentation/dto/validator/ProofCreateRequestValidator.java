@@ -1,5 +1,6 @@
 package com.eokam.proof.presentation.dto.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.eokam.proof.domain.constant.ActivityType;
@@ -13,7 +14,7 @@ public class ProofCreateRequestValidator {
 		if (proofCreateRequest.cCompanyId() == null && proofCreateRequest.content().isBlank()) {
 			throw new ProofException(ErrorCode.CREATE_PROOF_MANY_ARG);
 		}
-		if (proofCreateRequest.cCompanyId() != null && !proofCreateRequest.content().isBlank()) {
+		if (proofCreateRequest.cCompanyId() != null && !StringUtils.isNotBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.CREATE_PROOF_REQUIRE_ARG);
 		}
 		if (!proofCreateRequest.activityType().equals(ActivityType.ETC) && proofCreateRequest.cCompanyId() == null) {

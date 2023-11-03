@@ -39,7 +39,7 @@ import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.eokam.proof.presentation.dto.validator.ProofCreateRequestValidator;
 
 import jakarta.servlet.http.Cookie;
 
@@ -50,9 +50,8 @@ class ProofControllerTest extends BaseControllerTest {
 
 	@Mock
 	ProofService proofService;
-
 	@Spy
-	ObjectMapper mapper;
+	ProofCreateRequestValidator proofCreateRequestValidator;
 
 	private static final List<ProofDto> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 
@@ -356,6 +355,8 @@ class ProofControllerTest extends BaseControllerTest {
 			requestDtoJson.getBytes(StandardCharsets.UTF_8)
 		);
 
+		doNothing().when(proofCreateRequestValidator).validate(any(ProofCreateRequest.class));
+
 		this.mockMvc.perform(
 				multipart("/proof")
 					.file(mockMultipartFile)
@@ -556,7 +557,7 @@ class ProofControllerTest extends BaseControllerTest {
 		given(proofService.getProofDetail(anyString(), anyLong())).willReturn(EXPECTED_PROOF);
 
 		// when & then
-		this.mockMvc.perform(get("/proof/" + 2)
+		this.mockMvc.perform(get("/proof/" + 1)
 				.cookie(new Cookie("access-token", testJwt))
 			)
 			.andDo(print())
