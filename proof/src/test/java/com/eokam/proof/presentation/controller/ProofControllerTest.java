@@ -1,5 +1,6 @@
 package com.eokam.proof.presentation.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -38,6 +39,9 @@ import com.eokam.proof.application.dto.ProofImageDto;
 import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
+import com.eokam.proof.infrastructure.util.error.ErrorCode;
+import com.eokam.proof.infrastructure.util.error.GlobalExceptionHandler;
+import com.eokam.proof.infrastructure.util.error.exception.ProofException;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.validator.ProofCreateRequestValidator;
 
@@ -57,7 +61,9 @@ class ProofControllerTest extends BaseControllerTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		mockMvc = MockMvcBuilders.standaloneSetup(proofController).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(proofController)
+			.setControllerAdvice(GlobalExceptionHandler.class)
+			.build();
 	}
 
 	@Test
@@ -495,7 +501,7 @@ class ProofControllerTest extends BaseControllerTest {
 	void postCreateProof_400(ActivityType activityType, Long companyId, String content) throws Exception {
 		final String testJwt = createJwt(1L);
 
-		final Long EXPECTED_COMPANY_ID = companyId;
+		final Long EXPECTED_CCOMPANY_ID = companyId;
 		final ActivityType EXPECTED_ACTIVITY_TYPE = activityType;
 		final String EXPECTED_CONTENT = content;
 		final String EXPECTED_FILE_NAME = "test";
@@ -510,16 +516,16 @@ class ProofControllerTest extends BaseControllerTest {
 				resource.getContentAsByteArray()
 			);
 
-		final ProofCreateRequest proofCreateRequest = ProofCreateRequest.builder()
-			.activityType(EXPECTED_ACTIVITY_TYPE)
-			.cCompanyId(EXPECTED_COMPANY_ID)
-			.content(EXPECTED_CONTENT)
-			.build();
+		JSONObject input = new JSONObject();
+		input.put("activity_type", EXPECTED_ACTIVITY_TYPE.toString());
+		input.put("c_company_id", EXPECTED_CCOMPANY_ID);
+		input.put("content", EXPECTED_CONTENT);
 
-		String requestDtoJson = String.valueOf(proofCreateRequest);
+		String requestDtoJson = input.toString();
+
 		MockMultipartFile requestContent = new MockMultipartFile(
 			"content",
-			"content",
+			"",
 			MediaType.APPLICATION_JSON_VALUE,
 			requestDtoJson.getBytes(StandardCharsets.UTF_8)
 		);
@@ -529,7 +535,8 @@ class ProofControllerTest extends BaseControllerTest {
 				.file(requestContent)
 				.cookie(new Cookie("access-token", testJwt)))
 			.andDo(print())
-			.andExpect(status().isBadRequest());
+			.andExpect(result -> assertTrue(result.getResolvedException() instanceof ProofException))
+			.andReturn();
 	}
 
 	@Test
@@ -644,6 +651,43 @@ class ProofControllerTest extends BaseControllerTest {
 			.andExpect(jsonPath("content")
 				.isEmpty()
 			);
+
+		verify(proofService).getProofDetail(testJwt, 1L);
+	}
+
+	@Test
+	@DisplayName("친구가 아닌 사용자의 인증 상세 조회를 실패")
+	void getProofDetail_Fail() throws Exception {
+		final String testJwt = createJwt(1L);
+
+		List<ProofImageDto> EXPECTED_PROOF_IMAGES = new ArrayList<>();
+		EXPECTED_PROOF_IMAGES.add(ProofImageDto.builder()
+			.proofImageId(1L)
+			.fileName("test.jpg")
+			.fileUrl("http://test.com")
+			.build());
+
+		final ProofDto EXPECTED_PROOF = ProofDto.builder()
+			.proofId(1L)
+			.memberId(2L)
+			.cCompanyId(1L)
+			.activityType(ActivityType.ELECTRONIC_RECEIPT)
+			.createdAt(LocalDateTime.now())
+			.proofImages(EXPECTED_PROOF_IMAGES)
+			.content(null)
+			.build();
+
+		given(proofService.getProofDetail(anyString(), anyLong())).willThrow(
+			new ProofException(ErrorCode.PROOF_NOT_AUTORIZED));
+
+		// when & then
+		this.mockMvc.perform(get("/proof/" + 1)
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isUnauthorized())
+			.andExpect(result -> assertTrue(result.getResolvedException() instanceof ProofException))
+			.andReturn();
 
 		verify(proofService).getProofDetail(testJwt, 1L);
 	}

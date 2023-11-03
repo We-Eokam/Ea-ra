@@ -11,16 +11,17 @@ import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 @Component
 public class ProofCreateRequestValidator {
 	public void validate(ProofCreateRequest proofCreateRequest) {
-		if (proofCreateRequest.cCompanyId() == null && proofCreateRequest.content().isBlank()) {
-			throw new ProofException(ErrorCode.CREATE_PROOF_MANY_ARG);
-		}
-		if (proofCreateRequest.cCompanyId() != null && !StringUtils.isNotBlank(proofCreateRequest.content())) {
+		if (proofCreateRequest.cCompanyId() == null && StringUtils.isBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.CREATE_PROOF_REQUIRE_ARG);
+		}
+		if (proofCreateRequest.cCompanyId() != null && StringUtils.isNotBlank(proofCreateRequest.content())) {
+			throw new ProofException(ErrorCode.CREATE_PROOF_MANY_ARG);
 		}
 		if (!proofCreateRequest.activityType().equals(ActivityType.ETC) && proofCreateRequest.cCompanyId() == null) {
 			throw new ProofException(ErrorCode.REQUIRE_CCOMPANY_ID);
 		}
-		if (proofCreateRequest.activityType().equals(ActivityType.ETC) && proofCreateRequest.content().isBlank()) {
+		if (proofCreateRequest.activityType().equals(ActivityType.ETC)
+			&& StringUtils.isBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.REQUIRE_CONTENT_ID);
 		}
 	}
