@@ -7,9 +7,10 @@ interface HeadBarProps {
   pagename: string;
   bgcolor: string;
   backbutton: string;
+  center?: boolean;
 }
 
-export default function HeadBar({ pagename, bgcolor, backbutton }: HeadBarProps) {
+export default function HeadBar({ pagename, bgcolor, backbutton, center }: HeadBarProps) {
   const navigate = useNavigate();
 
   const goBack = () => {
@@ -20,7 +21,13 @@ export default function HeadBar({ pagename, bgcolor, backbutton }: HeadBarProps)
     <HeadBarFrame style={{backgroundColor: `var(--${bgcolor})`}}>
       <HeadBarContext>
         {backbutton === "yes" ? <LeftArrow onClick={goBack}/> : null}
-        &nbsp;{pagename}
+        {center ? (
+          <CenterFrame>
+            {pagename}
+          </CenterFrame>
+        ) : (
+          <>&nbsp;{pagename}</>
+        )}
       </HeadBarContext>
     </HeadBarFrame>
   )
@@ -48,3 +55,11 @@ const HeadBarContext = styled.div`
   display: flex;
   align-items: center;
 `
+
+const CenterFrame = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  font-weight: 600;
+`;

@@ -4,8 +4,7 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
-import { ShortButton } from "../../style";
-import { LongButton } from "../../style";
+import { ShortButton, LongButton, ButtonFrame } from "../../style";
 
 export default function PostPage() {
   const [type, setType] = useState(0);
@@ -44,7 +43,7 @@ export default function PostPage() {
 
   return (
     <>
-      <HeadBar pagename="" bgcolor="white" backbutton="yes" />
+      <HeadBar pagename="활동 인증" bgcolor="white" backbutton="yes" center={true}/>
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
         <div style={{ marginTop: "20px" }}>
           <ImageCropper onCrop={handleImageCrop}>
@@ -92,7 +91,10 @@ export default function PostPage() {
             </ButtonsFrame>
           </InfoFrame>
         )}
-        <LongButton>인증하기</LongButton>
+        <Margin />
+        <ButtonFrame>
+          <LongButton>인증하기</LongButton>
+        </ButtonFrame>
       </MainFrame>
     </>
   );
@@ -137,4 +139,8 @@ const Button = styled(ShortButton)<{ isSelected: boolean }>`
     props.isSelected ? "var(--primary)" : "var(--white)"};
   height: 34px;
   margin-top: 8px;
+`;
+
+const Margin = styled.div`
+  margin: 88px
 `;
