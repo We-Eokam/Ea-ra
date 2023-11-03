@@ -15,7 +15,6 @@ import java.util.stream.LongStream;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -492,7 +491,6 @@ class ProofControllerTest extends BaseControllerTest {
 	@CsvSource({"ELECTRONIC_RECEIPT, 1, 내용", "ETC, 1, 내용", "ELECTRONIC_RECEIPT, , ", "ETC, , ",
 		"ELECTRONIC_RECEIPT, , 내용", "ETC, 1, "})
 	@DisplayName("올바르지 않은 Request 요청 시 400 에러")
-	@Disabled
 	void postCreateProof_400(ActivityType activityType, Long companyId, String content) throws Exception {
 		final String testJwt = createJwt(1L);
 

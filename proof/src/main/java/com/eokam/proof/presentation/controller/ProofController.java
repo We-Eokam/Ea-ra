@@ -20,7 +20,9 @@ import com.eokam.proof.application.service.ProofService;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.response.MyProofListResponse;
 import com.eokam.proof.presentation.dto.response.ProofResponse;
+import com.eokam.proof.presentation.dto.validator.ProofCreateRequestValidator;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class ProofController {
 
 	private final ProofService proofService;
+	private final ProofCreateRequestValidator proofCreateRequestValidator;
 
 	@GetMapping("/me")
 	public ResponseEntity<MyProofListResponse> getMyProofList(
@@ -51,8 +54,10 @@ public class ProofController {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ProofResponse> postCreateProof(@CookieValue("access-token") final String accessToken,
 		@RequestPart(value = "file", required = false) List<MultipartFile> images,
-		@RequestPart(value = "content") ProofCreateRequest request
+		@RequestPart(value = "content") @Valid ProofCreateRequest request
 	) {
+		proofCreateRequestValidator.validate(request);
+
 		ProofResponse response = ProofResponse.from(
 			proofService.createProof(ProofCreateDto.of(accessToken, request), images));
 
