@@ -45,7 +45,7 @@ public class AccusationController {
 	}
 
 	@GetMapping("/{accusationId}")
-	public ResponseEntity<?> getAccusationDetail(@PathVariable Long accusationId) {
+	public ResponseEntity<AccusationResponse> getAccusationDetail(@PathVariable Long accusationId) {
 		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId);
 		return ResponseEntity.ok(AccusationResponse.from(accusationDto));
 	}
