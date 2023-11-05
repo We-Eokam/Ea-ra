@@ -40,9 +40,10 @@ const HeadBarFrame = styled.div`
   height: 96px;
   top: 0;
   left: 0;
-  border-bottom: 1px solid var(--gray);;
+  border-bottom: 1px solid var(--gray);
+  top: env(safe-area-inset-top);
   /* border: 1px black solid; */
-
+  
   z-index: 2;
 `
 
