@@ -105,6 +105,10 @@
     font-size: 14.5px;
   }
 
+  .react-calendar__month-view__days abbr {
+    color: var(--black);
+  }
+
   .react-calendar__month-view__days__day--weekend {
     color: var(--black);
   }
@@ -181,5 +185,9 @@
 
   .react-calendar__navigation__next2-button {
     display: none;
+  }
+
+  .react-calendar__navigation button {
+    color: var(--black);
   }
 }

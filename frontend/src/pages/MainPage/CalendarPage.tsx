@@ -11,6 +11,15 @@ import moment from "moment";
 
 export default function CalendarPage() {
   const [value, onChange] = useState<any>(new Date());
+  const monthOfActiveDate = moment(value).format('YYYY-MM');
+  const [activeMonth, setActiveMonth] = useState(monthOfActiveDate);
+
+  const getActiveMonth = (activeStartDate: moment.MomentInput) => {
+    const newActiveMonth = moment(activeStartDate).format('YYYY-MM');
+    setActiveMonth(newActiveMonth);
+  };
+
+  
   const testData = [
     ["2023-11-02", 1200, 600],
     ["2023-11-04", 300, 0],
@@ -28,7 +37,6 @@ export default function CalendarPage() {
 
   const onlyAct = testData.filter((data) => data[1] !== 0);
   const actSum = testData.reduce((total, data) => total + Number(data[1]), 0);
-
   const onlyReport = testData.filter((data) => data[2] !== 0);
   const reportSum = testData.reduce(
     (total, data) => total + Number(data[2]),
@@ -52,6 +60,9 @@ export default function CalendarPage() {
           minDetail="month"
           showNeighboringMonth={false}
           showNavigation={true}
+          onActiveStartDateChange={({ activeStartDate }) =>
+              getActiveMonth(activeStartDate)
+            }
           // @ts-ignore
           formatDay={(locale, date) =>
             new Date(date).toLocaleDateString("en-us", { day: "2-digit" })
@@ -76,7 +87,8 @@ export default function CalendarPage() {
           }}
         />
         <MonthSumText>
-          {moment(value).format("YYYY-MM-DD").slice(5, 7)}월 종합내역
+          
+          {Number(moment(activeMonth).format("YYYY-MM").slice(5,7))}월 종합내역
         </MonthSumText>
         <MonthActFrame>
           <MonthActText>전체 활동</MonthActText>

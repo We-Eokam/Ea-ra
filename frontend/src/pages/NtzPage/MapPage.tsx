@@ -88,7 +88,9 @@ export default function MapPage() {
     const displayMarkers = () => {
       // 지도 영역을 얻어옵니다.
       let bounds = map.getBounds();
+      // @ts-ignore
       let swLatLng = bounds.getSouthWest(); // 남서쪽 좌표를 얻어옵니다.
+      // @ts-ignore
       let neLatLng = bounds.getNorthEast(); // 북동쪽 좌표를 얻어옵니다.
       
       const selectedCategory = categoryList[selectedCategoryIndex];
@@ -100,6 +102,7 @@ export default function MapPage() {
           // 현재 지도 영역 내에 있는지 확인합니다.
           if (bounds.contain(position)) {
             // 마커를 생성하고 지도에 표시합니다.
+            // @ts-ignore
             let marker = new window.kakao.maps.Marker({
               map: map,
               position: position,
@@ -107,6 +110,7 @@ export default function MapPage() {
 
             var customContent = `<div class="custom-overlay">${place.name}</div>`
             
+            // @ts-ignore
             var customOverlay = new window.kakao.maps.CustomOverlay({
               map: map,
               position: position,

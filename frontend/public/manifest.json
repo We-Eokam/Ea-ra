@@ -1,7 +1,7 @@
 {
   "name": "어라",
   "short_name": "어라",
-  "start_url": "/",
+  "start_url": "/?fullscreen=true",
   "display": "fullscreen",
   "background_color": "#FDFDFD",
   "theme_color": "#56B984",
