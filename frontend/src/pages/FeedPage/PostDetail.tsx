@@ -10,7 +10,7 @@ import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
 import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
 
-export default function FeedDetail() {
+export default function PostDetail() {
   const post = {
     writerProfileImg: "",
     writerNickname: "지구구해",
@@ -87,6 +87,7 @@ const WriterContainer = styled.div`
 const ProfileImg = styled.img`
   width: 50px;
   height: 50px;
+  aspect-ratio: 1/1;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;
@@ -110,8 +111,11 @@ const SubText = styled.div`
 `;
 
 const ActImg = styled.img`
-  width: calc(100% + 32px);
-  margin: 0 -16px;
+  width: 100vw;
+  max-width: calc(100% + 2 * 5.56%);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const ReactionContainer = styled.div`

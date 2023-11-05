@@ -1,9 +1,7 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
-import FollowBtn from "../../components/Buttons/FollowButton";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as Add } from "../../assets/icons/add-icon.svg";
