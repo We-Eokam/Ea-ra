@@ -44,7 +44,13 @@ public class ProofService {
 	}
 
 	public Page<ProofDto> getProofList(String jwt, Long memberId, PageRequest pageRequest) {
-		return null;
+		if (!isFriend(jwt, memberId)) {
+			throw new ProofException(ErrorCode.PROOF_NOT_AUTORIZED);
+		}
+
+		Page<Proof> proofPage = proofRepository.findAllByMemberId(memberId, pageRequest);
+
+		return ProofDto.toDtoPage(proofPage);
 	}
 
 	@Transactional
@@ -81,4 +87,7 @@ public class ProofService {
 		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollowed();
 	}
 
+	private boolean isFriend(String jwt, Long memberId) {
+		return followServiceFeign.isFollow(jwt, new IsFollowRequest(memberId)).isFollowed();
+	}
 }

@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -177,7 +178,8 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.memberId()).isEqualTo(EXPECTED_MEMBER_ID);
 		assertThat(actualResponse.cCompanyId()).isEqualTo(EXPECTED_CCOMPANY_ID);
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
-		assertThat(actualResponse.createdAt()).isEqualTo(EXPECTED_CREATED_AT);
+		assertThat(actualResponse.createdAt()).isEqualTo(
+			EXPECTED_CREATED_AT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
 		assertThat(actualResponse.content()).isBlank();
 	}
 
@@ -234,7 +236,8 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse.memberId()).isEqualTo(EXPECTED_MEMBER_ID);
 		assertThat(actualResponse.cCompanyId()).isNull();
 		assertThat(actualResponse.activityType()).isEqualTo(EXPECTED_ACTIVITY_TYPE);
-		assertThat(actualResponse.createdAt()).isEqualTo(proof.getCreatedAt());
+		assertThat(actualResponse.createdAt()).isEqualTo(
+			proof.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
 		assertTrue(Hibernate.isInitialized(proof.getProofImages()));
 	}
 
