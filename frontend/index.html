@@ -1,13 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <!-- https://dev.to/oncode/display-your-pwa-website-fullscreen-4776 -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 viewport-fit=cover" user-scalable="no" content="notranslate" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+      content="notranslate"
+    />
     <meta name="theme-color" content="#FDFDFD" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
 
     <link rel="icon" href="icons/favicon.ico" />
     <link
@@ -27,7 +34,10 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=490abc9a009d52794e0e0b603d3cfdd3"></script>
+    <script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=490abc9a009d52794e0e0b603d3cfdd3"
+    ></script>
     <script>
       if ("serviceWorker" in navigator) {
         // Register a service worker hosted at the root of the

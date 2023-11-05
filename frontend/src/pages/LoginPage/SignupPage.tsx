@@ -1,5 +1,5 @@
 // import React from "react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
@@ -19,6 +19,18 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<string>("male");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
+  const [nickname, setNickname] = useState<string>('');
+  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(false);
+
+  useEffect(() => {
+    // 닉네임이 두 글자 이상인 경우에만 유효하다고 설정
+    setIsNicknameValid(nickname.length >= 2);
+  }, [nickname]); // 닉네임 값이 바뀔 때마다 이 effect를 실행합니다.
+
+  const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
+  };
+
   const areasList = ["강남구", "강동구", "강북구", "강서구", "영등포구"];
   const onToggle = () => setIsOpen(!isOpen);
 
@@ -63,7 +75,10 @@ export default function SignupPage() {
           </ProfileFrame>
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
-            <NicknameInput type="text" />
+            <NicknameCheck>
+              <NicknameInput type="text" maxLength={8} />
+              <CheckButton>중복확인</CheckButton>
+            </NicknameCheck>
           </NicknameFrame>
         </ProfileNickname>
 
@@ -207,12 +222,21 @@ const InfoName = styled.div`
   color: var(--dark-gray);
 `;
 
+const NicknameCheck = styled.div`
+  position: relative;
+  height: 32px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`
+
 const NicknameInput = styled.input`
   position: relative;
-  width: calc(100% - 4px);
+  width: calc(100% - 62px);
   position: relative;
   margin-top: 6px;
-  height: 32px;
+  height: 100%;
   border: none;
   background-color: var(--white);
   border-bottom: 1.5px solid var(--nav-gray);
@@ -231,6 +255,14 @@ const NicknameInput = styled.input`
     margin: 0;
   }
 `;
+
+const CheckButton = styled.div`
+  margin-bottom: 4px;
+  color: var(--dark-gray);
+  color: var(--primary);
+  font-size: 14.5px;
+  font-weight: 500;
+`
 
 const GenderButtonFrame = styled.div`
   position: relative;
