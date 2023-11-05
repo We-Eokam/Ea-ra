@@ -1,6 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import SignupPage from "../pages/LoginPage/SignupPage";
+import StartPage from "../pages/TestPage/StartPage";
+import TestPage from "../pages/TestPage";
+import ResultPage from "../pages/TestPage/ResultPage";
 import MainPage from "../pages/MainPage/MainPage";
 import NotiPage from "../pages/MainPage/NotiPage";
 import FeedPage from "../pages/FeedPage/FeedPage";
@@ -24,6 +27,9 @@ export default function Router() {
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
+        <Route path="/welcome" element={<StartPage/>}/>
+        <Route path="/test" element={<TestPage/>}/>
+        <Route path="/result" element={<ResultPage/>}/>
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/calendar" element={<CalendarPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>
