@@ -1,7 +1,7 @@
 // import React from 'react'
 import { useState } from "react";
 import styled from "styled-components";
-import HeadBarCenter from "../../components/HeadBar/HeadBarCenter";
+import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.svg"
@@ -32,7 +32,7 @@ export default function FeedDetail() {
 
   return (
     <>
-      <HeadBarCenter pagename="환경 활동" bgcolor="white" backbutton="yes" />
+      <HeadBar pagename="환경 활동" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <PostFrame>
           <WriterContainer>
