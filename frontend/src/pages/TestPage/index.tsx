@@ -9,14 +9,14 @@ import { LongButton } from "../../style";
 
 interface AnswerProps {
   type: string;
-  content1: string;
-  content2: string;
+  thoughts: string;
+  action: string;
 }
 
 interface DataProps {
   id: number;
-  question1: string;
-  question2: string;
+  situation: string;
+  question: string;
   answers: AnswerProps[];
 }
 
@@ -30,7 +30,7 @@ export default function TestPage() {
   useEffect(() => {
     setQuestion(data[id]);
 
-    if (id === 5) {
+    if (id === 6) {
       setResults(JSON.parse(localStorage.getItem("results") || '{}'));
       navigate("/result");
     };
@@ -49,8 +49,8 @@ export default function TestPage() {
       <MainFrame headbar="yes" navbar="yes" marginsize="large" bgcolor="">
         {/* 진행상황 바 */}
         <QuestionFrame>
-          <Situation dangerouslySetInnerHTML={{__html: question.question1}} />
-          <div>{question.question2}</div>
+          <Situation dangerouslySetInnerHTML={{__html: question.situation}} />
+          <div>{question.question}</div>
         </QuestionFrame>
         <MarginFrame/>
       </MainFrame>
@@ -58,8 +58,8 @@ export default function TestPage() {
         {question.answers.map((ans) => {
           return (
             <Button onClick={() => hadleAnswerClick(ans.type)}>
-              {ans.content1}
-              <Action>{ans.content2}</Action>
+              {ans.thoughts}
+              <Action>{ans.action}</Action>
             </Button>
           )
         })}

@@ -16,11 +16,11 @@ export default function StartPage() {
     <>
       <MainFrame headbar="yes" navbar="no" marginsize="large" bgcolor="">
         <Title><Red>고소장</Red>이 도착했어요 !!</Title>
-        <ImgBox src="../src/assets/images/test-img.png"/>
+        <ImgBox src="../src/assets/images/plaint.png"/>
         <Text>
           <Highlight>환경오염의 주범</Highlight>으로 지구에게 고소당했습니다<br/>
           <Bold>{nickname}</Bold>님에게 <Bold><Red>벌금형</Red></Bold>이 가해지며,<br/>
-          진술서를 바탕으로 벌금이 정해집니다.<br/><br/>
+          진술서를 바탕으로 벌금이 정해집니다<br/><br/>
           평소 생각이나 사실관계를 <Highlight>솔직하게 진술</Highlight>해주세요<br/>
         </Text>
         <MarginFrame />
@@ -33,12 +33,16 @@ export default function StartPage() {
 }
 
 const bounce = keyframes`
-	0% {margin-top: 0px;}
+	/* 0% {margin-top: 0px;}
 	20% {margin-top: 12px;}
 	40% {margin-top: 0px;}
 	60% {margin-top: 12px;}
 	80% {margin-top: 0px;}
-	100% {margin-top: 0px;}
+	100% {margin-top: 0px;} */
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
 `;
 
 const scale = keyframes`
@@ -60,7 +64,8 @@ const Title = styled.div`
   top: 12px;
   font-size: 22.5px;
   font-weight: 600;
-  animation: ${bounce} 1s linear 0s 2;
+  /* animation: ${bounce} 1s linear 0s 2; */
+  animation: ${bounce} 0.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
 `;
 
 const Red = styled.span`
