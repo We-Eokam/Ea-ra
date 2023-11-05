@@ -77,9 +77,9 @@ export default function ReportPage() {
     const nowInput = e.target.value;
     if (nowInput.length < 21) {
       setActivityDetail(nowInput);
-      setDetailLen(false);
+      // setDetailLen(false);
     } else {
-      setDetailLen(true);
+      // setDetailLen(true);
     }
   }
 
