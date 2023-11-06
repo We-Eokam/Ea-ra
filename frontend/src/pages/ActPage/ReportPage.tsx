@@ -77,9 +77,9 @@ export default function ReportPage() {
     const nowInput = e.target.value;
     if (nowInput.length < 21) {
       setActivityDetail(nowInput);
-      setDetailLen(false);
+      // setDetailLen(false);
     } else {
-      setDetailLen(true);
+      // setDetailLen(true);
     }
   }
 
@@ -115,7 +115,7 @@ export default function ReportPage() {
         </InfoFrame>
         {activityType.type === "OTHER" && (
           <InfoFrame>
-            <InfoName onClick={handleImgSelector}>
+            <InfoName>
               기타 사유 입력
               <Text className="gray">{activityDetail.length}/20</Text>
             </InfoName>

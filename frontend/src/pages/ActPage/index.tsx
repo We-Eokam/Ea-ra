@@ -79,19 +79,19 @@ export default function ActPage() {
 
         <ActsContainer>
           <ActRowFrame style={{ height: '25.7%', fontSize: "2.3vh" }}>
-            <CustomShadowBox style={{ paddingTop: "4%" }} onClick={() => navigate('/act/post?type=0')}>
+            <CustomShadowBox style={{ paddingTop: "4%" }} onClick={() => navigate('/act/post?type=1')}>
               전자영수증
               <SubText style={{ marginTop: "8px" }}>종이 영수증 대신<br/>전자영수증을<br/>발급받았어요</SubText>
               <ImgBox style={{ height: "60%" }} src='src/assets/images/e-receipt.png' />
             </CustomShadowBox>
-            <CustomShadowBox style={{ paddingTop: "4%" }} onClick={() => navigate('/act/post?type=1')}>
+            <CustomShadowBox style={{ paddingTop: "4%" }} onClick={() => navigate('/act/post?type=2')}>
               텀블러•다회용컵
               <SubText style={{ marginTop: "8px" }}>카페 갈 때<br/>텀블러를 지참했어요</SubText>
             </CustomShadowBox>
           </ActRowFrame>
 
           <ActRowFrame>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=2')}>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=3')}>
               일회용컵 반환
               <SubText>사용한 일회용품을 반납했어요</SubText>
               <ImgBox src='src/assets/images/tumbler.png' />
@@ -99,31 +99,31 @@ export default function ActPage() {
           </ActRowFrame>
 
           <ActRowFrame style={{ height: '14.6%' }}>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=3')}>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=4')}>
               리필스테이션
               <SubText>리필스테이션을<br/>이용했어요</SubText>
               <ImgBox src='src/assets/images/station.png' />
             </CustomShadowBox>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=4')}>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=5')}>
               다회용기
               <SubText>다회용기에<br/>음식을 포장했어요</SubText>
             </CustomShadowBox>
           </ActRowFrame>
 
           <ActRowFrame>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=5')}>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=6')}>
               고품질 재활용품
               <SubText>이건 왜 환경에 도움이 되는걸까? 왜일까??</SubText>
             </CustomShadowBox>
           </ActRowFrame>
           <ActRowFrame style={{ height: '11.8%', fontSize: "1.9vh" }}>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=6')}>친환경제품</CustomShadowBox>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=7')}>무공해차</CustomShadowBox>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=8')}>폐휴대폰</CustomShadowBox>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=7')}>친환경제품</CustomShadowBox>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=8')}>무공해차</CustomShadowBox>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=9')}>폐휴대폰</CustomShadowBox>
           </ActRowFrame>
 
           <ActRowFrame>
-            <CustomShadowBox onClick={() => navigate('/act/post?type=9')}>
+            <CustomShadowBox onClick={() => navigate('/act/post?type=10')}>
               기타
               <SubText>지구를 보호했어요</SubText>
             </CustomShadowBox>
