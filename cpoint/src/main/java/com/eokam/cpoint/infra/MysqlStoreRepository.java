@@ -12,9 +12,7 @@ import com.eokam.cpoint.domain.ActivityType;
 public interface MysqlStoreRepository extends StoreRepository {
 	@Override
 	@Query(value = "SELECT company_id,branch,"
-		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(longitude, latitude)) AS distance,"
-		+ " latitude,"
-		+ " longitude"
+		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(longitude, latitude)) AS distance"
 		+ " FROM Store "
 		+ " WHERE ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(longitude, latitude)) <= :radius"
 		+ " ORDER BY distance", nativeQuery = true)
@@ -23,9 +21,7 @@ public interface MysqlStoreRepository extends StoreRepository {
 
 	@Override
 	@Query(value = "SELECT s.company_id AS companyId,s.branch AS branch,"
-		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(s.longitude, s.latitude)) AS distance,"
-		+ " s.latitude as latitude,"
-		+ " s.longitude as longitude"
+		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(s.longitude, s.latitude)) AS distance"
 		+ " FROM Store as s"
 		+ " INNER JOIN Company_Policy as cp"
 		+ " ON cp.company_id = s.company_id"
