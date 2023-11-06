@@ -115,7 +115,7 @@ export default function ReportPage() {
         </InfoFrame>
         {activityType.type === "OTHER" && (
           <InfoFrame>
-            <InfoName onClick={handleImgSelector}>
+            <InfoName>
               기타 사유 입력
               <Text className="gray">{activityDetail.length}/20</Text>
             </InfoName>
