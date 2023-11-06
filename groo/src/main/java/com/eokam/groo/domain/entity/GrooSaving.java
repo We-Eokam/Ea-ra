@@ -8,6 +8,8 @@ import com.eokam.groo.global.constant.SavingType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,9 +38,11 @@ public class GrooSaving {
 	private Long remainGroo;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private SavingType savingType;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private ActivityType activityType;
 
 	@Column(nullable = false)
