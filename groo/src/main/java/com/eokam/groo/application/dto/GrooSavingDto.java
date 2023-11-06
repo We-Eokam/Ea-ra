@@ -26,7 +26,6 @@ public record GrooSavingDto(Long savingId, Long memberId, Long amount, Long rema
 	}
 
 	public static GrooSavingDto of(GrooSavingRequest request, Long memberId) {
-		System.out.println(request.getActivityType());
 		return GrooSavingDto.builder()
 			.memberId(memberId)
 			.savingType(request.getSavingType())
