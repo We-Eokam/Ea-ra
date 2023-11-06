@@ -2,6 +2,8 @@ package com.eokam.cpoint.domain;
 
 import java.time.LocalDateTime;
 
+import com.eokam.cpoint.application.dto.CpointDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -52,7 +54,18 @@ public class Cpoint extends BaseEntity {
 		this.createdAt = createdAt;
 	}
 
+	public static Cpoint of(CpointDto cpointDto, Company company) {
+		return Cpoint.builder()
+			.memberId(cpointDto.getMember().getMemberId())
+			.activityType(cpointDto.getActivityType())
+			.company(company)
+			.point(cpointDto.getPoint())
+			.build();
+
+	}
+
 	public void minusMonthsCreatedAtForTest(Long months) {
 		this.createdAt = this.createdAt.minusMonths(months);
 	}
+
 }
