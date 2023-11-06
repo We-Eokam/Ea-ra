@@ -37,9 +37,12 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowList;
+import com.eokam.proof.infrastructure.external.member.FollowMember;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowStatus;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
+import com.eokam.proof.infrastructure.external.member.MemberProfile;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 
@@ -112,7 +115,7 @@ class ProofServiceTest extends BaseServiceTest {
 			EXPECTED_FRIENDS_PROOF_LIST.size());
 
 		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(true));
+			.willReturn(new FollowStatus(2L, true));
 		given(proofRepository.findAllByMemberId(anyLong(), any(PageRequest.class)))
 			.willReturn(proofPage);
 
@@ -282,7 +285,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.build();
 
 		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
-		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class))).willReturn(new FollowStatus(true));
+		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class))).willReturn(
+			new FollowStatus(2L, true));
 
 		// when
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
@@ -305,11 +309,28 @@ class ProofServiceTest extends BaseServiceTest {
 		int start = (int)pageRequest.getOffset();
 		int end = Math.min((start + pageRequest.getPageSize()), EXPECTED_ALL_PROOF_LIST.size());
 
+		FollowList expectFList = new FollowList(new ArrayList<FollowMember>() {
+			{
+				new FollowMember(
+					new MemberProfile(2L, "http://profile2.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(3L, "http://profile3.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(4L, "http://profile4.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(5L, "http://profile5.com"), 1000L
+				);
+			}
+		});
+
 		Page<Proof> proofPage = new PageImpl<>(EXPECTED_ALL_PROOF_LIST.subList(start, end), pageRequest,
 			EXPECTED_ALL_PROOF_LIST.size());
 
-		given(followServiceFeign.getFriends(anyString(), any(IsFollowRequest.class)))
-			.willReturn(anyList());
+		given(followServiceFeign.getFriends(anyString()))
+			.willReturn(expectFList);
 		given(proofRepository.findAllByMemberList(anyList(), any(PageRequest.class)))
 			.willReturn(proofPage);
 

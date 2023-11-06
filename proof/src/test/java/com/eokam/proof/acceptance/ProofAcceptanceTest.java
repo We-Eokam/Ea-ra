@@ -31,9 +31,12 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowList;
+import com.eokam.proof.infrastructure.external.member.FollowMember;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowStatus;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
+import com.eokam.proof.infrastructure.external.member.MemberProfile;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -102,7 +105,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		LongStream.range(1, 6).forEach(this::인증_더미_데이터_생성);
 
 		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(true));
+			.willReturn(new FollowStatus(2L, true));
 
 		// when
 		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
@@ -135,7 +138,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	void 친구_인증_내역_조회_컨텐츠없음() {
 		// when
 		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(true));
+			.willReturn(new FollowStatus(2L, true));
 
 		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
 
@@ -233,7 +236,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.build());
 
 		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(true));
+			.willReturn(new FollowStatus(2L, true));
 
 		// when
 		ExtractableResponse<Response> response = 인증_조회(proof.getProofId());
@@ -263,8 +266,25 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	void 천체_목록_조회() {
 		LongStream.range(1, 6).forEach(this::인증_더미_데이터_생성);
 
-		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(true));
+		FollowList expectFList = new FollowList(new ArrayList<FollowMember>() {
+			{
+				new FollowMember(
+					new MemberProfile(2L, "http://profile2.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(3L, "http://profile3.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(4L, "http://profile4.com"), 1000L
+				);
+				new FollowMember(
+					new MemberProfile(5L, "http://profile5.com"), 1000L
+				);
+			}
+		});
+
+		BDDMockito.given(followServiceFeign.getFriends(anyString()))
+			.willReturn(expectFList);
 
 		// when
 		ExtractableResponse<Response> response = 전체_인증_내역_조회(0L, 5L);
@@ -300,7 +320,7 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		return given().log().all()
 			.when()
 			.cookie("access-token", testJwt)
-			.get(API_BASE_PATH + "?page=" + page.toString() + "&size=" + size.toString())
+			.get(API_BASE_PATH + "/feed?page=" + page.toString() + "&size=" + size.toString())
 			.then().log().all()
 			.extract();
 	}
