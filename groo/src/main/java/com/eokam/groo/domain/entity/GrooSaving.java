@@ -2,6 +2,7 @@ package com.eokam.groo.domain.entity;
 
 import java.time.LocalDateTime;
 
+import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.global.constant.ActivityType;
 import com.eokam.groo.global.constant.SavingType;
 
@@ -32,7 +33,6 @@ public class GrooSaving {
 	@Column(nullable = false)
 	private Long amount;
 
-	@Column(nullable = false)
 	private Long remainGroo;
 
 	@Column(nullable = false)
@@ -42,5 +42,20 @@ public class GrooSaving {
 	private ActivityType activityType;
 
 	@Column(nullable = false)
+	private Long proofAccusationId;
+
+	@Column(nullable = false)
 	private LocalDateTime savedAt;
+
+	public static GrooSaving from(GrooSavingDto grooSavingDto) {
+		return GrooSaving.builder()
+			.memberId(grooSavingDto.memberId())
+			.amount(grooSavingDto.activityType().getSavingAmount())
+			.proofAccusationId(grooSavingDto.proofAccusationId())
+			.savingType(grooSavingDto.savingType())
+			.activityType(grooSavingDto.activityType())
+			.savedAt(grooSavingDto.savedAt())
+			.build();
+
+	}
 }
