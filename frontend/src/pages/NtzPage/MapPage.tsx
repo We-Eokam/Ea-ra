@@ -4,6 +4,7 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
 import "../../style/kakaomapOverlay.css"
+// import CompanyList from "../../common/act.json"
 
 interface CategoryProps {
   isSelected: boolean;
@@ -20,10 +21,10 @@ export default function MapPage() {
     "전체보기",
     "전자영수증",
     "텀블러",
-    "컵반환",
+    "일회용컵 반환",
     "리필스테이션",
     "다회용기",
-    "재활용품",
+    "고품질 재활용품",
     "친환경제품",
     "무공해차",
     "폐휴대폰",
@@ -45,6 +46,7 @@ export default function MapPage() {
   const places = [
     {
       category: "텀블러",
+      company: "스타벅스",
       name: "스타벅스 학동역점",
       lat: 37.5146173,
       lng: 127.0307978,
@@ -54,6 +56,7 @@ export default function MapPage() {
     },
     {
       category: "텀블러",
+      company: "스타벅스",
       name: "스타벅스 논현힐탑점",
       lat: 37.5114981,
       lng: 127.0321654,
@@ -63,6 +66,7 @@ export default function MapPage() {
     },
     {
       category: "전자영수증",
+      company: "KB국민은행",
       name: "KB국민은행 학동역",
       lat: 37.5135422,
       lng: 127.0305215,
@@ -71,7 +75,6 @@ export default function MapPage() {
       type: 2,
     }
   ];
-
 
   
   useEffect(() => {

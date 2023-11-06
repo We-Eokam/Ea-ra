@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
 import { ReactComponent as Connected } from "../../assets/icons/connected-icon.svg"
 import CompanyDetail from "../../components/Modal/CompanyDetail";
+import CompanyList from "../../common/act.json"
 
 
 interface CategoryProps {
@@ -30,46 +31,14 @@ export default function CompanyPage() {
   const categoryList = [
     "전자영수증",
     "텀블러",
-    "컵반환",
+    "일회용컵 반환",
     "리필스테이션",
     "다회용기",
-    "재활용품",
+    "고품질 재활용품",
     "친환경제품",
     "무공해차",
     "폐휴대폰",
   ];
-
-  const companyList = [
-    {
-      id: 1,
-      name: "스타벅스",
-      logo: "스타벅스로고",
-      points: "[텀블러/다회용컵 이용] 전국 지점",
-      connected: true
-    },
-    {
-      id: 2,
-      name: "폴 바셋",
-      logo: "폴바셋로고",
-      points: "[텀블러/다회용컵 이용] 역삼 지점",
-      connected: false
-    },
-    {
-      id: 3,
-      name: "메가MGC커피",
-      logo: "메가커피로고",
-      points: "[텀블러/다회용컵 이용] 강남 지점",
-      connected: false
-    },
-    {
-      id: 4,
-      name: "더벤티",
-      logo: "더벤티로고",
-      points: "[텀블러/다회용컵 이용] 영등포 지점",
-      connected: true
-    },
-  ]
-
 
   const handleCategoryClick = (index: number) => {
     if (selectedCategoryIndex === index) {
@@ -77,6 +46,10 @@ export default function CompanyPage() {
       setSelectedCategoryIndex(index);
     }
   };
+
+  const filteredCompanies = CompanyList.find(
+    (category) => category.name === categoryList[selectedCategoryIndex]
+  )?.companies || [];
 
   return (
     <>
@@ -102,13 +75,11 @@ export default function CompanyPage() {
         </ConnectedFrame>
 
         <CompaniesFrame>
-        {companyList.map((company, index) => (
+        {filteredCompanies.map((company, index) => (
           <CompanyFrame onClick={() => {showModal(index);}}>
-            {company.connected && <CompanyConnected />}
+            <CompanyConnected />
             <LogoImgFrame>
-              <LogoImg>
-              {company.logo}
-              </LogoImg>
+              <LogoImg src={company.logo}/>
             </LogoImgFrame>
             <Companyname>
               {company.name}
@@ -120,7 +91,7 @@ export default function CompanyPage() {
       </MainFrame>
       
       {modalOpen ? (
-        <CompanyDetail closeModal={closeModal} companyInfo={companyList[selectedCompany]} />
+        <CompanyDetail closeModal={closeModal} companyInfo={filteredCompanies[selectedCompany]} />
       ) : null}
       <NavBar />
     </>
@@ -220,10 +191,10 @@ const LogoImgFrame = styled.div`
 `
 
 // img로 바꾸기
-const LogoImg = styled.div`
+const LogoImg = styled.img`
   height: 100%;
-  width: 84px;
-  background-color: var(--gray);
+  max-width: 72%;
+  background-color: var(--white);
 `
 
 
