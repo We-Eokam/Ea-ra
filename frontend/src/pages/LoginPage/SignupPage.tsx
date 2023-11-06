@@ -1,5 +1,5 @@
 // import React from "react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
@@ -19,6 +19,8 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<string>("male");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
+  const [nickname, setNickname] = useState("");
+
   const areasList = ["강남구", "강동구", "강북구", "강서구", "영등포구"];
   const onToggle = () => setIsOpen(!isOpen);
 
@@ -29,6 +31,10 @@ export default function SignupPage() {
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(imageURL);
     }
+  };
+
+  const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
   };
 
   const onOptionClicked = (index: number) => () => {
@@ -63,7 +69,10 @@ export default function SignupPage() {
           </ProfileFrame>
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
-            <NicknameInput type="text" />
+            <NicknameCheck>
+              <NicknameInput type="text" maxLength={8} value={nickname} onChange={handleNicknameChange} />
+              <CheckButton isNicknameValid={nickname.length >= 2}>중복확인</CheckButton>
+            </NicknameCheck>
           </NicknameFrame>
         </ProfileNickname>
 
@@ -111,6 +120,10 @@ export default function SignupPage() {
         <InitialGreen>
           {green?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
           그린
+        </InitialGreen>
+        <InfoName>추천인</InfoName>
+        <InitialGreen>
+          QKF4FDL
         </InitialGreen>
         <SignupFrame>
           <SignupButton>가입하기</SignupButton>
@@ -207,12 +220,21 @@ const InfoName = styled.div`
   color: var(--dark-gray);
 `;
 
+const NicknameCheck = styled.div`
+  position: relative;
+  height: 32px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`
+
 const NicknameInput = styled.input`
   position: relative;
-  width: calc(100% - 4px);
+  width: calc(100% - 62px);
   position: relative;
   margin-top: 6px;
-  height: 32px;
+  height: 100%;
   border: none;
   background-color: var(--white);
   border-bottom: 1.5px solid var(--nav-gray);
@@ -231,6 +253,15 @@ const NicknameInput = styled.input`
     margin: 0;
   }
 `;
+
+const CheckButton = styled.div<{ isNicknameValid: boolean }>`
+  margin-bottom: 4px;
+  color: var(--dark-gray);
+  color: ${({ isNicknameValid }) => isNicknameValid ? "var(--primary)" : "var(--dark-gray)"};
+  transition: color 0.3 ease-in-out ;
+  font-size: 14.5px;
+  font-weight: 500;
+`
 
 const GenderButtonFrame = styled.div`
   position: relative;
@@ -312,6 +343,7 @@ const BigGray = styled.div`
 
 const InitialGreen = styled(BigGray)`
   margin-top: 8px;
+  margin-bottom: 40px;
 `;
 
 const SignupFrame = styled.div`

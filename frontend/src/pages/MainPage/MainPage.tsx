@@ -6,8 +6,15 @@ import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
 import { useNavigate } from "react-router-dom";
 
+import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
+
+
 export default function MainPage() {
   const navigate = useNavigate();
+
+  const toNotification = () => {
+    navigate("/notice")
+  }
 
   const toMonthCal = () => {
     navigate("/calendar");
@@ -63,6 +70,7 @@ export default function MainPage() {
   return (
     <>
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
+        <NotificationIcon onClick={toNotification} />
         <HomeFrame>
           <ShowDate>10월 23일 기준</ShowDate>
           <NicknameLine>
@@ -106,6 +114,14 @@ export default function MainPage() {
     </>
   );
 }
+
+const NotificationIcon = styled(Notification)`
+  position: absolute;
+  right: 5.56%;
+  top: calc(env(safe-area-inset-top) + 40px);
+  filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.12))
+
+`
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;
