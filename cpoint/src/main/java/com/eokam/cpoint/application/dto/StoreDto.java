@@ -7,4 +7,8 @@ public interface StoreDto {
 	String getBranch();
 
 	Double getDistance();
+
+	Double getLatitude();
+
+	Double getLongitude();
 }

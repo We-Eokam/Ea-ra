@@ -27,7 +27,7 @@ public class Store extends BaseEntity {
 	String branch;
 
 	@Column(nullable = false)
-	Double Latitude;
+	Double latitude;
 
 	@Column(nullable = false)
 	Double longitude;
@@ -40,7 +40,7 @@ public class Store extends BaseEntity {
 	public Store(Long id, String branch, Double latitude, Double longitude, Company company) {
 		this.id = id;
 		this.branch = branch;
-		this.Latitude = latitude;
+		this.latitude = latitude;
 		this.longitude = longitude;
 		this.company = company;
 	}
