@@ -55,6 +55,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 	private static final List<Proof> EXPECTED_FRIEND_PROOF_LIST = new ArrayList<>();
 
+	private static final List<Proof> EXPECTED_ALL_PROOF_LIST = new ArrayList<>();
+
 	@Test
 	@DisplayName("내 인증 내역 조회를 성공한다.")
 	void 내_인증_내역_조회_성공() {
@@ -68,7 +70,6 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(response.body().jsonPath().getList("proof")).hasSize(5);
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-		List<Integer> proofIdList = response.body().jsonPath().getList("proof.proof_id");
 		List<String> activityTypeList = response.body().jsonPath().getList("proof.activity_type");
 		List<Integer> cCompanyIdList = response.body().jsonPath().getList("proof.c_company_id");
 		List<String> createdAtList = response.body().jsonPath().getList("proof.created_at");
@@ -76,14 +77,9 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(Integer.toUnsignedLong(proofIdList.get(i))).isEqualTo(
-				EXPECTED_MY_PROOF_LIST.get(i).getProofId());
 			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getActivityType().name());
 			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
 				EXPECTED_MY_PROOF_LIST.get(i).getCCompanyId());
-			assertThat(createdAtList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i)
-				.getCreatedAt()
-				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
 			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
 			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
 		});
@@ -262,6 +258,53 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		assertThat(proof.getContents()).isBlank();
 	}
 
+	@Test
+	@DisplayName("피드 목록을 조회한다.")
+	void 천체_목록_조회() {
+		LongStream.range(1, 6).forEach(this::인증_더미_데이터_생성);
+
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
+			.willReturn(new FollowStatus(true));
+
+		// when
+		ExtractableResponse<Response> response = 전체_인증_내역_조회(0L, 5L);
+
+		// then
+		assertThat(response.body().jsonPath().getList("proof")).hasSize(5);
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+		List<String> activityTypeList = response.body().jsonPath().getList("proof.activity_type");
+		List<Integer> memberIdList = response.body().jsonPath().getList("proof.member_id");
+		List<Integer> cCompanyIdList = response.body().jsonPath().getList("proof.c_company_id");
+		List<List<String>> pictureUrlList = response.body().jsonPath().getList("proof.picture.url");
+		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
+
+		IntStream.range(0, 5).forEach(i -> {
+			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_ALL_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(Integer.toUnsignedLong(memberIdList.get(i))).isEqualTo(
+				EXPECTED_ALL_PROOF_LIST.get(i).getMemberId());
+			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
+				EXPECTED_ALL_PROOF_LIST.get(i).getCCompanyId());
+			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
+			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
+		});
+	}
+
+	private ExtractableResponse<Response> 전체_인증_내역_조회(Long page, Long size) {
+		long memberId = 1L;
+		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
+
+		// given
+		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+
+		return given().log().all()
+			.when()
+			.cookie("access-token", testJwt)
+			.get(API_BASE_PATH + "?page=" + page.toString() + "&size=" + size.toString())
+			.then().log().all()
+			.extract();
+	}
+
 	private ExtractableResponse<Response> 인증_조회(long l) {
 		long memberId = 1L;
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
@@ -353,6 +396,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.proof(proof1)
 			.build());
 
+		EXPECTED_ALL_PROOF_LIST.add(proof1);
+
 		Proof proof2 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.DISPOSABLE_CUP)
@@ -364,6 +409,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.fileUrl("http://test2.com")
 			.proof(proof2)
 			.build());
+
+		EXPECTED_ALL_PROOF_LIST.add(proof2);
 
 		Proof proof3 = proofRepository.save(Proof.builder()
 			.memberId(i)
@@ -377,6 +424,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.proof(proof3)
 			.build());
 
+		EXPECTED_ALL_PROOF_LIST.add(proof3);
+
 		Proof proof4 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.TUMBLER)
@@ -389,6 +438,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.proof(proof4)
 			.build());
 
+		EXPECTED_ALL_PROOF_LIST.add(proof4);
+
 		Proof proof5 = proofRepository.save(Proof.builder()
 			.memberId(i)
 			.activityType(ActivityType.EMISSION_FREE_CAR)
@@ -400,6 +451,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.fileUrl("http://test5.com")
 			.proof(proof5)
 			.build());
+
+		EXPECTED_ALL_PROOF_LIST.add(proof5);
 
 		if (i == 1) {
 			EXPECTED_MY_PROOF_LIST.add(proof1);
