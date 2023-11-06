@@ -3,6 +3,8 @@ package com.eokam.proof.domain.repository;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -163,5 +165,97 @@ class ProofRepositoryTest extends BaseRepositoryTest {
 		assertTrue(Hibernate.isInitialized(savedProof.getProofImages()));
 		assertThat(savedProof.getContents()).isBlank();
 		assertThat(savedProof.getActivityType()).isEqualTo(ActivityType.ELECTRONIC_RECEIPT);
+	}
+
+	@Test
+	@DisplayName("인증 전체 조회")
+	void getFeed() {
+		// given
+		LongStream.range(2, 6).forEach(i -> {
+			Proof proof1 = proofRepository.save(Proof.builder()
+				.memberId(i)
+				.activityType(ActivityType.ELECTRONIC_RECEIPT)
+				.cCompanyId(1L)
+				.build());
+
+			proofImageRepository.save(ProofImage.builder()
+				.fileName("test1.jpg")
+				.fileUrl("http://test1.com")
+				.proof(proof1)
+				.build());
+
+			Proof proof2 = proofRepository.save(Proof.builder()
+				.memberId(i)
+				.activityType(ActivityType.DISPOSABLE_CUP)
+				.cCompanyId(2L)
+				.build());
+
+			proofImageRepository.save(ProofImage.builder()
+				.fileName("test2.jpg")
+				.fileUrl("http://test2.com")
+				.proof(proof2)
+				.build());
+
+			Proof proof3 = proofRepository.save(Proof.builder()
+				.memberId(i)
+				.activityType(ActivityType.MULTI_USE_CONTAINER)
+				.cCompanyId(3L)
+				.build());
+
+			proofImageRepository.save(ProofImage.builder()
+				.fileName("test3.jpg")
+				.fileUrl("http://test3.com")
+				.proof(proof3)
+				.build());
+
+			Proof proof4 = proofRepository.save(Proof.builder()
+				.memberId(i)
+				.activityType(ActivityType.TUMBLER)
+				.cCompanyId(4L)
+				.build());
+
+			proofImageRepository.save(ProofImage.builder()
+				.fileName("test4.jpg")
+				.fileUrl("http://test4.com")
+				.proof(proof4)
+				.build());
+
+			Proof proof5 = proofRepository.save(Proof.builder()
+				.memberId(i)
+				.activityType(ActivityType.EMISSION_FREE_CAR)
+				.cCompanyId(5L)
+				.build());
+
+			proofImageRepository.save(ProofImage.builder()
+				.fileName("test5.jpg")
+				.fileUrl("http://test5.com")
+				.proof(proof5)
+				.build());
+		});
+
+		List<Long> friendList = new ArrayList<>();
+		LongStream.range(1, 6).forEach(friendList::add);
+
+		Page<Proof> proofPage = proofRepository.findAllByMemberList(friendList, PageRequest.of(0, 8));
+
+		assertThat(proofPage.getSize()).isEqualTo(8);
+		IntStream.range(0, 5).forEach(i -> {
+			assertThat(proofPage.getContent().get(i).getMemberId()).isEqualTo(2L);
+			assertThat(proofPage.getContent().get(i).getCCompanyId()).isEqualTo(i + 1);
+			assertTrue(Hibernate.isInitialized(proofPage.getContent().get(i).getProofImages()));
+			assertThat(proofPage.getContent().get(i).getContents()).isNullOrEmpty();
+		});
+		assertThat(proofPage.getContent().get(0).getActivityType()).isEqualTo(ActivityType.ELECTRONIC_RECEIPT);
+		assertThat(proofPage.getContent().get(1).getActivityType()).isEqualTo(ActivityType.DISPOSABLE_CUP);
+		assertThat(proofPage.getContent().get(2).getActivityType()).isEqualTo(ActivityType.MULTI_USE_CONTAINER);
+		assertThat(proofPage.getContent().get(3).getActivityType()).isEqualTo(ActivityType.TUMBLER);
+		assertThat(proofPage.getContent().get(4).getActivityType()).isEqualTo(ActivityType.EMISSION_FREE_CAR);
+
+		IntStream.range(0, 3).forEach(i -> {
+			assertThat(proofPage.getContent().get(i + 5).getMemberId()).isEqualTo(3L);
+			assertThat(proofPage.getContent().get(i + 5).getCCompanyId()).isEqualTo(i + 1);
+			assertTrue(Hibernate.isInitialized(proofPage.getContent().get(i + 5).getProofImages()));
+			assertThat(proofPage.getContent().get(i + 5).getContents()).isNullOrEmpty();
+		});
 	}
 }
