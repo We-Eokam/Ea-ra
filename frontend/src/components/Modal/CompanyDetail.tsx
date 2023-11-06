@@ -7,11 +7,9 @@ import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 import { LongButton } from "../../style";
 
 interface CompanyInfoProps {
-  id: number;
   name: string;
   logo: string;
-  points: string;
-  connected: boolean;
+  detail: string;
 }
 
 interface CompanyDetailProps {
@@ -49,14 +47,10 @@ export default function CompanyDetail({
         </CloseFrame>
         <InnerContainer>
           {/* 이미지로 바꾸기 */}
-          <Logo>{companyInfo?.logo}</Logo>
+          <Logo src={companyInfo?.logo} />
           <CompanyName>{companyInfo?.name}</CompanyName>
-          <CompanyPoints>{companyInfo?.points}</CompanyPoints>
-          {companyInfo.connected === true ? (
-            <ConnectedButton>연동했어요</ConnectedButton>
-          ) : (
+          <CompanyPoints>{companyInfo?.detail}</CompanyPoints>
             <ConnectButton>연동하기</ConnectButton>
-          )}
         </InnerContainer>
       </CompanyDetailModal>
     </>
@@ -135,11 +129,10 @@ const InnerContainer = styled.div`
 `;
 
 // img로 바꾸기
-const Logo = styled.div`
+const Logo = styled.img`
   margin-top: 30px;
   height: 92px;
-  width: 92px;
-  background-color: var(--gray);
+  max-width: 92%;
 `;
 
 const CompanyName = styled.span`
@@ -161,7 +154,7 @@ const ConnectButton = styled(LongButton)`
   font-size: 14px;
 `;
 
-const ConnectedButton = styled(ConnectButton)`
-  background-color: var(--gray);
-  color: var(--black);
-`;
+// const ConnectedButton = styled(ConnectButton)`
+//   background-color: var(--gray);
+//   color: var(--black);
+// `;
