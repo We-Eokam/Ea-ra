@@ -1,6 +1,7 @@
 package com.eokam.proof.application.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.member.FollowList;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
@@ -82,7 +84,18 @@ public class ProofServiceImpl implements ProofService {
 
 	@Override
 	public Page<ProofDto> getFeed(String jwt, PageRequest pageRequest) {
-		return null;
+		FollowList followList = getFriends(jwt);
+
+		List<Long> followIds = followList.followMemberList()
+			.stream()
+			.map(followMember -> followMember.memberProfile().memberId())
+			.collect(Collectors.toList());
+
+		followIds.add(ParseJwtUtil.parseMemberId(jwt));
+
+		Page<Proof> proofPage = proofRepository.findAllByMemberList(followIds, pageRequest);
+
+		return ProofDto.toDtoPage(proofPage);
 	}
 
 	private boolean isMeOrFriend(String jwt, Proof proof) {
@@ -93,10 +106,14 @@ public class ProofServiceImpl implements ProofService {
 			return true;
 		}
 
-		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollowed();
+		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollow();
 	}
 
 	private boolean isFriend(String jwt, Long memberId) {
-		return followServiceFeign.isFollow(jwt, new IsFollowRequest(memberId)).isFollowed();
+		return followServiceFeign.isFollow(jwt, new IsFollowRequest(memberId)).isFollow();
+	}
+
+	private FollowList getFriends(String jwt) {
+		return followServiceFeign.getFriends(jwt);
 	}
 }

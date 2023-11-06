@@ -76,13 +76,30 @@ public class ProofController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ProofListResponse> getProofList(
+	public ResponseEntity<ProofListResponse> getFriendsProofList(
 		@CookieValue("access-token") final String accessToken,
 		@RequestParam final Long memberId,
 		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
 		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
 		ProofListResponse response = ProofListResponse.from(
 			proofService.getProofList(accessToken, memberId, PageRequest.of(page, size))
+				.map(ProofResponse::from)
+				.toList());
+
+		if (response.proof().isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/feed")
+	public ResponseEntity<ProofListResponse> getFeedList(
+		@CookieValue("access-token") final String accessToken,
+		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
+		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
+		ProofListResponse response = ProofListResponse.from(
+			proofService.getFeed(accessToken, PageRequest.of(page, size))
 				.map(ProofResponse::from)
 				.toList());
 
