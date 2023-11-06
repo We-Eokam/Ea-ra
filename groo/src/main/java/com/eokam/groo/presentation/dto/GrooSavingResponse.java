@@ -31,7 +31,7 @@ public class GrooSavingResponse {
 
 	private LocalDateTime savedAt;
 
-	public static Object from(GrooSavingDto grooSavingDto) {
+	public static GrooSavingResponse from(GrooSavingDto grooSavingDto) {
 		return GrooSavingResponse.builder()
 			.savingId(grooSavingDto.savingId())
 			.memberId(grooSavingDto.memberId())
