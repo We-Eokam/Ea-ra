@@ -92,6 +92,7 @@ public class GrooAcceptanceTest {
 
 	private ExtractableResponse<Response> 월별_그린_적립내역_조회_요청() {
 		return given().log().all()
+			.cookie("access-token", ACCESS_TOKEN)
 			.queryParam("year", YEAR)
 			.queryParam("month", MONTH)
 			.when().get("/groo")
