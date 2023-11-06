@@ -46,11 +46,12 @@ export default function PostPage() {
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
     const { innerText } = event.currentTarget;
-
     const selectedOption = data.find((type) => type.name === innerText);
+    
     if (selectedOption) {
       setType(selectedOption.id);
       setIsRegist(false);
+      setShowOptions(false);
     }
   };
 
@@ -80,9 +81,11 @@ export default function PostPage() {
         </div>
         <InfoFrame>
           <InfoName>인증 활동</InfoName>
-          <SelectBox onClick={() => setShowOptions((prev) => !prev)}>
+          <SelectBox>
             <Dropdown isShow={showOptions} />
-            <Label>{actType.name}</Label>
+            <Label onClick={() => setShowOptions((prev) => !prev)}>
+              {actType.name}
+            </Label>
             <SelectOptions show={showOptions}>
               {data.map((option, index) => (
                 <Option key={index} onClick={handleOnChangeSelectValue}>
