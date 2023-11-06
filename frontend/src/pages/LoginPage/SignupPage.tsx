@@ -19,17 +19,7 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<string>("male");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
-  const [nickname, setNickname] = useState<string>('');
-  const [isNicknameValid, setIsNicknameValid] = useState<boolean>(false);
-
-  useEffect(() => {
-    // 닉네임이 두 글자 이상인 경우에만 유효하다고 설정
-    setIsNicknameValid(nickname.length >= 2);
-  }, [nickname]); // 닉네임 값이 바뀔 때마다 이 effect를 실행합니다.
-
-  const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNickname(event.target.value);
-  };
+  const [nickname, setNickname] = useState("");
 
   const areasList = ["강남구", "강동구", "강북구", "강서구", "영등포구"];
   const onToggle = () => setIsOpen(!isOpen);
@@ -41,6 +31,10 @@ export default function SignupPage() {
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(imageURL);
     }
+  };
+
+  const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
   };
 
   const onOptionClicked = (index: number) => () => {
@@ -76,8 +70,8 @@ export default function SignupPage() {
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
             <NicknameCheck>
-              <NicknameInput type="text" maxLength={8} />
-              <CheckButton>중복확인</CheckButton>
+              <NicknameInput type="text" maxLength={8} value={nickname} onChange={handleNicknameChange} />
+              <CheckButton isNicknameValid={nickname.length >= 2}>중복확인</CheckButton>
             </NicknameCheck>
           </NicknameFrame>
         </ProfileNickname>
@@ -126,6 +120,10 @@ export default function SignupPage() {
         <InitialGreen>
           {green?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
           그린
+        </InitialGreen>
+        <InfoName>추천인</InfoName>
+        <InitialGreen>
+          QKF4FDL
         </InitialGreen>
         <SignupFrame>
           <SignupButton>가입하기</SignupButton>
@@ -256,10 +254,11 @@ const NicknameInput = styled.input`
   }
 `;
 
-const CheckButton = styled.div`
+const CheckButton = styled.div<{ isNicknameValid: boolean }>`
   margin-bottom: 4px;
   color: var(--dark-gray);
-  color: var(--primary);
+  color: ${({ isNicknameValid }) => isNicknameValid ? "var(--primary)" : "var(--dark-gray)"};
+  transition: color 0.3 ease-in-out ;
   font-size: 14.5px;
   font-weight: 500;
 `
@@ -344,6 +343,7 @@ const BigGray = styled.div`
 
 const InitialGreen = styled(BigGray)`
   margin-top: 8px;
+  margin-bottom: 40px;
 `;
 
 const SignupFrame = styled.div`
