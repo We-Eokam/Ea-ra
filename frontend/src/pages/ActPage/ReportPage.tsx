@@ -65,6 +65,7 @@ export default function ReportPage() {
   const [activityDetail, setActivityDetail] = useState("");
   const [imgSelectorOpen, setImgSelectorOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // @ts-ignore
   const [friend, setFriend] = useState("");
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);

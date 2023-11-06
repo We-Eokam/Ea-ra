@@ -128,4 +128,5 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
+  overflow-x: hidden;
 `;
