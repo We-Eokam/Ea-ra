@@ -1,5 +1,6 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
@@ -8,6 +9,8 @@ import { ReactComponent as Add } from "../../assets/icons/add-icon.svg";
 import { ReactComponent as Setting } from "../../assets/icons/setting-icon.svg";
 
 export default function MyPage() {
+  const navigate = useNavigate();
+
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
@@ -20,6 +23,10 @@ export default function MyPage() {
 
   const handleSlider = (tabName: string) => {
     setActiveTab(tabName);
+  };
+
+  const navigateFriends = () => {
+    navigate("/mypage/friends");
   };
 
   const user = {
@@ -61,7 +68,7 @@ export default function MyPage() {
               {user.nickname}
               <SubText>{user.gru}그루</SubText>
             </TextBox>
-            <ShowBtn> 친구 보기 </ShowBtn>
+            <ShowBtn onClick={navigateFriends}> 친구 보기 </ShowBtn>
           </UserInfoContainer>
           <ProgressBar progress={user.progress} greeninit={user.greenInit} />
         </UserFrame>
