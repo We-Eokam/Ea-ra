@@ -48,7 +48,7 @@ export default function SearchBar() {
 }
 
 const SideMargin = styled.div`
-  width: 20px;
+  width: 5.56%;
 `;
 
 const SearchBarFrame = styled.div`
@@ -62,7 +62,6 @@ const SearchBarFrame = styled.div`
 `;
 
 const SearchWindow = styled.div`
-  /* margin: 0px 20px; */
   padding: 0px 6px;
   width: 100%;
   height: 32px;
