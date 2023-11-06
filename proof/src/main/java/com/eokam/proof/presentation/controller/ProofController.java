@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.dto.ProofDto;
-import com.eokam.proof.application.service.ProofService;
+import com.eokam.proof.application.service.ProofServiceImpl;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.response.ProofListResponse;
 import com.eokam.proof.presentation.dto.response.ProofResponse;
@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProofController {
 
-	private final ProofService proofService;
+	private final ProofServiceImpl proofService;
 	private final ProofCreateRequestValidator proofCreateRequestValidator;
 
 	@GetMapping("/me")

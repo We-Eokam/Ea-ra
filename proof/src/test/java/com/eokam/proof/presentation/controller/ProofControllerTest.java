@@ -36,7 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.dto.ProofImageDto;
-import com.eokam.proof.application.service.ProofService;
+import com.eokam.proof.application.service.ProofServiceImpl;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
 import com.eokam.proof.infrastructure.util.error.ErrorCode;
@@ -53,12 +53,13 @@ class ProofControllerTest extends BaseControllerTest {
 	ProofController proofController;
 
 	@Mock
-	ProofService proofService;
+	ProofServiceImpl proofService;
 	@Spy
 	ProofCreateRequestValidator proofCreateRequestValidator;
 
 	private static final List<ProofDto> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 	private static final List<ProofDto> EXPECTED_FRIENDS_PROOF_LIST = new ArrayList<>();
+	private static final List<ProofDto> EXPECTED_ALL_PROOF_LIST = new ArrayList<>();
 
 	@BeforeEach
 	public void beforeEach() {
@@ -948,6 +949,189 @@ class ProofControllerTest extends BaseControllerTest {
 		verify(proofService).getProofDetail(testJwt, 1L);
 	}
 
+	@Test
+	@DisplayName("피드 조회 성공")
+	void getFeed_Success() throws Exception {
+		LongStream.range(1, 6).forEach(this::generateProof);
+
+		String testJwt = createJwt(1L);
+
+		PageRequest pageRequest = PageRequest.of(0, 12);
+
+		int start = (int)pageRequest.getOffset();
+		int end = Math.min((start + pageRequest.getPageSize()), EXPECTED_ALL_PROOF_LIST.size());
+
+		Page<ProofDto> proofPage = new PageImpl<>(EXPECTED_ALL_PROOF_LIST.subList(start, end), pageRequest,
+			EXPECTED_ALL_PROOF_LIST.size());
+
+		given(proofService.getFeed(anyString(), any(PageRequest.class)))
+			.willReturn(proofPage);
+
+		// when & then
+		this.mockMvc.perform(get("/proof")
+				.param("page", "0")
+				.param("size", "12")
+				.cookie(new Cookie("access-token", testJwt))
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("proof")
+				.isArray()
+			)
+			.andExpect(jsonPath("proof[0].proof_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).proofId())
+			)
+			.andExpect(jsonPath("proof[0].member_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).memberId())
+			)
+			.andExpect(jsonPath("proof[0].activity_type")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).activityType().name())
+			)
+			.andExpect(jsonPath("proof[0].c_company_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).cCompanyId())
+			)
+			.andExpect(jsonPath("proof[0].created_at")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(0).createdAt())
+			)
+			.andExpect(
+				jsonPath("proof[0].picture")
+					.isArray()
+			)
+			.andExpect(
+				jsonPath("proof[0].picture[0].url")
+					.value("http://test1.com")
+			)
+			.andExpect(
+				jsonPath("proof[0].picture[0].name")
+					.value("test1.jpg")
+			)
+			.andExpect(jsonPath("proof[0].content")
+				.isEmpty()
+			)
+			.andExpect(jsonPath("proof[1].proof_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).proofId())
+			)
+			.andExpect(jsonPath("proof[1].member_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).memberId())
+			)
+			.andExpect(jsonPath("proof[1].activity_type")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).activityType().name())
+			)
+			.andExpect(jsonPath("proof[1].c_company_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).cCompanyId())
+			)
+			.andExpect(jsonPath("proof[1].created_at")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(1).createdAt())
+			)
+			.andExpect(
+				jsonPath("proof[1].picture")
+					.isArray()
+			)
+			.andExpect(
+				jsonPath("proof[1].picture[0].url")
+					.value("http://test2.com")
+			)
+			.andExpect(
+				jsonPath("proof[1].picture[0].name")
+					.value("test2.jpg")
+			)
+			.andExpect(jsonPath("proof[1].content")
+				.isEmpty()
+			)
+			.andExpect(jsonPath("proof[2].proof_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).proofId())
+			)
+			.andExpect(jsonPath("proof[2].member_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).memberId())
+			)
+			.andExpect(jsonPath("proof[2].activity_type")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).activityType().name())
+			)
+			.andExpect(jsonPath("proof[2].c_company_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).cCompanyId())
+			)
+			.andExpect(jsonPath("proof[2].created_at")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(2).createdAt())
+			)
+			.andExpect(
+				jsonPath("proof[2].picture")
+					.isArray()
+			)
+			.andExpect(
+				jsonPath("proof[2].picture[0].url")
+					.value("http://test3.com")
+			)
+			.andExpect(
+				jsonPath("proof[2].picture[0].name")
+					.value("test3.jpg")
+			)
+			.andExpect(jsonPath("proof[2].content")
+				.isEmpty()
+			)
+			.andExpect(jsonPath("proof[3].proof_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(3).proofId())
+			)
+			.andExpect(jsonPath("proof[3].member_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(3).memberId())
+			)
+			.andExpect(jsonPath("proof[3].activity_type")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(3).activityType().name())
+			)
+			.andExpect(jsonPath("proof[3].c_company_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(3).cCompanyId())
+			)
+			.andExpect(jsonPath("proof[3].created_at")
+				.value(EXPECTED_MY_PROOF_LIST.get(3).createdAt())
+			)
+			.andExpect(
+				jsonPath("proof[3].picture")
+					.isArray()
+			)
+			.andExpect(
+				jsonPath("proof[3].picture[0].url")
+					.value("http://test4.com")
+			)
+			.andExpect(
+				jsonPath("proof[3].picture[0].name")
+					.value("test4.jpg")
+			)
+			.andExpect(jsonPath("proof[3].content")
+				.isEmpty()
+			)
+			.andExpect(jsonPath("proof[4].proof_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).proofId())
+			)
+			.andExpect(jsonPath("proof[4].member_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).memberId())
+			)
+			.andExpect(jsonPath("proof[4].activity_type")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).activityType().name())
+			)
+			.andExpect(jsonPath("proof[4].c_company_id")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).cCompanyId())
+			)
+			.andExpect(jsonPath("proof[4].created_at")
+				.value(EXPECTED_FRIENDS_PROOF_LIST.get(4).createdAt())
+			)
+			.andExpect(
+				jsonPath("proof[4].picture")
+					.isArray()
+			)
+			.andExpect(
+				jsonPath("proof[4].picture[0].url")
+					.value("http://test5.com")
+			)
+			.andExpect(
+				jsonPath("proof[4].picture[0].name")
+					.value("test5.jpg")
+			)
+			.andExpect(jsonPath("proof[4].content")
+				.isEmpty()
+			);
+
+		verify(proofService).getFeed(testJwt, PageRequest.of(0, 12));
+	}
+
 	private void generateProof(Long i) {
 		List<ProofImageDto> proofImages1 = new ArrayList<>();
 		proofImages1.add(ProofImageDto.builder()
@@ -965,6 +1149,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof1);
+
 		List<ProofImageDto> proofImages2 = new ArrayList<>();
 		proofImages2.add(ProofImageDto.builder()
 			.proofImageId(2L)
@@ -980,6 +1166,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.proofImages(proofImages2)
 			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
+
+		EXPECTED_ALL_PROOF_LIST.add(proof2);
 
 		List<ProofImageDto> proofImages3 = new ArrayList<>();
 		proofImages3.add(ProofImageDto.builder()
@@ -997,6 +1185,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof3);
+
 		List<ProofImageDto> proofImages4 = new ArrayList<>();
 		proofImages4.add(ProofImageDto.builder()
 			.proofImageId(4L)
@@ -1013,6 +1203,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof4);
+
 		List<ProofImageDto> proofImages5 = new ArrayList<>();
 		proofImages5.add(ProofImageDto.builder()
 			.proofImageId(5L)
@@ -1028,6 +1220,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.proofImages(proofImages5)
 			.createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			.build();
+
+		EXPECTED_ALL_PROOF_LIST.add(proof5);
 
 		if (i == 1) {
 			EXPECTED_MY_PROOF_LIST.add(proof1);

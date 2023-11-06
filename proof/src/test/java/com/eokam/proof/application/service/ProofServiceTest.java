@@ -46,7 +46,7 @@ import com.eokam.proof.infrastructure.external.s3.service.S3Service;
 class ProofServiceTest extends BaseServiceTest {
 
 	@InjectMocks
-	ProofService proofService;
+	ProofServiceImpl proofService;
 	@Mock
 	ProofRepository proofRepository;
 	@Mock
@@ -59,6 +59,7 @@ class ProofServiceTest extends BaseServiceTest {
 
 	private static final List<Proof> EXPECTED_MY_PROOF_LIST = new ArrayList<>();
 	private static final List<Proof> EXPECTED_FRIENDS_PROOF_LIST = new ArrayList<>();
+	private static final List<Proof> EXPECTED_ALL_PROOF_LIST = new ArrayList<>();
 
 	@BeforeEach
 	void resetRepository() {
@@ -290,6 +291,35 @@ class ProofServiceTest extends BaseServiceTest {
 		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
 	}
 
+	@Test
+	@DisplayName("피드 조회를 성공")
+	@Transactional
+	void getFeed_Success() {
+		LongStream.range(1, 6).forEach(this::generateProof);
+
+		// given
+		String testJwt = createJwt(1L);
+
+		PageRequest pageRequest = PageRequest.of(0, 12);
+
+		int start = (int)pageRequest.getOffset();
+		int end = Math.min((start + pageRequest.getPageSize()), EXPECTED_ALL_PROOF_LIST.size());
+
+		Page<Proof> proofPage = new PageImpl<>(EXPECTED_ALL_PROOF_LIST.subList(start, end), pageRequest,
+			EXPECTED_ALL_PROOF_LIST.size());
+
+		given(followServiceFeign.getFriends(anyString(), any(IsFollowRequest.class)))
+			.willReturn(anyList());
+		given(proofRepository.findAllByMemberList(anyList(), any(PageRequest.class)))
+			.willReturn(proofPage);
+
+		// when
+		Page<ProofDto> actualResponse = proofService.getFeed(testJwt, pageRequest);
+
+		// then
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
+	}
+
 	private String createJwt(Long memberId) {
 		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
 
@@ -312,6 +342,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.createdAt(LocalDateTime.now())
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof1);
+
 		List<ProofImage> proofImages2 = new ArrayList<>();
 		proofImages2.add(ProofImage.builder()
 			.fileName("test2.jpg")
@@ -326,6 +358,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.proofImages(proofImages2)
 			.createdAt(LocalDateTime.now())
 			.build();
+
+		EXPECTED_ALL_PROOF_LIST.add(proof2);
 
 		List<ProofImage> proofImages3 = new ArrayList<>();
 		proofImages3.add(ProofImage.builder()
@@ -342,6 +376,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.createdAt(LocalDateTime.now())
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof3);
+
 		List<ProofImage> proofImages4 = new ArrayList<>();
 		proofImages4.add(ProofImage.builder()
 			.fileName("test4.jpg")
@@ -357,6 +393,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.createdAt(LocalDateTime.now())
 			.build();
 
+		EXPECTED_ALL_PROOF_LIST.add(proof4);
+
 		List<ProofImage> proofImages5 = new ArrayList<>();
 		proofImages5.add(ProofImage.builder()
 			.fileName("test5.jpg")
@@ -368,9 +406,11 @@ class ProofServiceTest extends BaseServiceTest {
 			.memberId(i)
 			.activityType(ActivityType.EMISSION_FREE_CAR)
 			.cCompanyId(5L)
-			.proofImages(proofImages4)
+			.proofImages(proofImages5)
 			.createdAt(LocalDateTime.now())
 			.build();
+
+		EXPECTED_ALL_PROOF_LIST.add(proof5);
 
 		if (i == 1) {
 			EXPECTED_MY_PROOF_LIST.add(proof1);
