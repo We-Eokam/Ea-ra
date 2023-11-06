@@ -16,7 +16,7 @@ import MapPage from "../pages/NtzPage/MapPage";
 import CompanyPage from "../pages/NtzPage/CompanyPage";
 
 import PostDetail from "../pages/FeedPage/PostDetail";
-
+import FriendsList from "../pages/MyPage/FriendsList";
 
 export default function Router() {
   return (
@@ -37,6 +37,7 @@ export default function Router() {
         <Route path="/netzero/map" element={<MapPage />}></Route>
         <Route path="/netzero/company" element={<CompanyPage />}></Route>
         <Route path="/mypage" element={<MyPage />}></Route>
+        <Route path="/mypage/friends" element={<FriendsList />}></Route>
       </Routes>
     </BrowserRouter>
   );
