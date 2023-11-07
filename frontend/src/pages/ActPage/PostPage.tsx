@@ -4,6 +4,7 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
+import DetailInput from "../../components/Input/DetailInput";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
 import { ShortButton, LongButton, ButtonFrame } from "../../style";
 import data from "../../common/act.json";
@@ -25,6 +26,7 @@ export default function PostPage() {
   const [type, setType] = useState(1);
   const [actType, setActType] = useState<DataProps>(data[0]);
   const [showOptions, setShowOptions] = useState(false);
+  const [activityDetail, setActivityDetail] = useState("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [isRegist, setIsRegist] = useState(false);
   const [selectIdx, setSelectIdx] = useState<number | null>(null);
@@ -42,18 +44,15 @@ export default function PostPage() {
     setActType(data[type - 1]);
   }, [type]);
 
-  const handleOnChangeSelectValue = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ) => {
-    const { innerText } = event.currentTarget;
-    const selectedOption = data.find((type) => type.name === innerText);
-    
-    if (selectedOption) {
-      setType(selectedOption.id);
-      setIsRegist(false);
-      setShowOptions(false);
-    }
+  const handleSelectOption = (index: number) => {
+    setType(index + 1);
+    setIsRegist(false);
+    setShowOptions(false);
   };
+
+  useEffect(() => {
+    console.log('바뀌나?', showOptions);
+  }, [showOptions])
 
   const handleImageCrop = (image: string) => {
     setCroppedImage(image);
@@ -75,27 +74,29 @@ export default function PostPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <ImgIcon src="../src/assets/images/upload-image-icon.png" />
+              <ImgIcon src="/public/images/upload-image.png" />
             )}
           </ImageCropper>
         </div>
         <InfoFrame>
           <InfoName>인증 활동</InfoName>
-          <SelectBox>
-            <Dropdown isShow={showOptions} />
-            <Label onClick={() => setShowOptions((prev) => !prev)}>
-              {actType.name}
-            </Label>
-            <SelectOptions show={showOptions}>
-              {data.map((option, index) => (
-                <Option key={index} onClick={handleOnChangeSelectValue}>
-                  {option.name}
-                </Option>
-              ))}
-            </SelectOptions>
+          <SelectBox onClick={() => setShowOptions((prev) => !prev)}>
+            <Label>{actType.name}</Label>
+            <Dropdown isShow={showOptions}/>
           </SelectBox>
+          <SelectOptions show={showOptions}>
+            {data.map((option, index) => (
+              <Option key={index} onClick={() => handleSelectOption(index)}>
+                {option.name}
+              </Option>
+            ))}
+          </SelectOptions>
         </InfoFrame>
-        {type !== 10 && (
+        {type === 10  ? (
+          <InfoFrame>
+            <DetailInput value={activityDetail} setValue={setActivityDetail} type="post"/>
+          </InfoFrame>
+        ) : (
           <InfoFrame>
             <InfoName>참여 기업 등록</InfoName>
             <ButtonsFrame>
@@ -193,10 +194,10 @@ const Label = styled.label`
 const SelectOptions = styled.ul<{ show: boolean }>`
   position: absolute;
   left: 0;
-  width: 99.8%;
+  width: 86.2%;
   overflow: hidden;
-  padding: 0px;
-  margin: 8px 0;
+  padding: 0;
+  margin: 8px 6.72%;
   height: 180px;
   max-height: ${(props) => (props.show ? 'none' : '0')};
   border-radius: 0 0 12px 12px;
@@ -226,6 +227,10 @@ const Button = styled(ShortButton)<{ isSelected: boolean }>`
     props.isSelected ? "var(--primary)" : "var(--white)"};
   height: 34px;
   margin-top: 8px;
+  &:hover {
+    font-size: 14px;
+    color: var(--black);
+  }
 `;
 
 const Margin = styled.div`
