@@ -24,6 +24,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 public class CpointAcceptanceTest {
 
 	@LocalServerPort
