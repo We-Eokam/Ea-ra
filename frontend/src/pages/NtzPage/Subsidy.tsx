@@ -7,9 +7,11 @@ import MainFrame from "../../components/MainFrame/MainFrame"
 import { LongButton } from "../../style"
 
 export default function Subsidy() {
+  const signupURL = "https://cpoint.or.kr/netzero/member/nv_memberRegistStep1.do"
+
   return (
     <>
-      <HeadBar pagename="" bgcolor="white" backbutton="yes" />
+      <HeadBar pagename="가입안내" bgcolor="white" backbutton="yes" />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="large">
         <Title style={{ marginTop: "48px" }}>
           탄소중립 포인트 제도,
@@ -50,7 +52,7 @@ export default function Subsidy() {
         <ForMargin />
       </MainFrame>
       <SignUpFrame>
-        <SingupButton>가입하기</SingupButton>
+        <SingupButton onClick={() => {window.open(signupURL)}}>가입하기</SingupButton>
       </SignUpFrame>
       <NavBar />
     </>
