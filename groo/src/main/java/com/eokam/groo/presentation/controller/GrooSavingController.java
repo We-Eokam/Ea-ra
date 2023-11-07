@@ -48,7 +48,7 @@ public class GrooSavingController {
 	}
 
 	@GetMapping("/current-week")
-	ResponseEntity<?> getDailyProofCountByWeek(@CookieValue(value = "access-token") String jwt){
+	ResponseEntity<WeeklyProofCountResponse> getDailyProofCountByWeek(@CookieValue(value = "access-token") String jwt){
 		Long memberId = tokenManager.getMemberId(jwt);
 		List<WeeklyProofCountDto> weeklyProofCountDtos = grooSavingService.getDailyProofCountByWeek(memberId);
 		return ResponseEntity.ok().body(WeeklyProofCountResponse.from(weeklyProofCountDtos));
