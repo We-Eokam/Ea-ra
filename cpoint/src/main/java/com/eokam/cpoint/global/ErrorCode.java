@@ -6,7 +6,9 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-	COMPANY_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_001", "존재하지 않는 회사입니다");
+	COMPANY_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMPANY_001", "존재하지 않는 회사입니다"),
+	COMPANY_ALREADY_CONNECTED(HttpStatus.BAD_REQUEST, "COMPANY_002", "이미 연동된 회사입니다."),
+	COMPANY_NOT_CONNECTED(HttpStatus.BAD_REQUEST, "COMPANY_003", "연동되지 않은 회사입니다.");
 
 	ErrorCode(HttpStatus httpStatus, String errorCode, String message) {
 		this.httpStatus = httpStatus;

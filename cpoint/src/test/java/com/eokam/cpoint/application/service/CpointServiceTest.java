@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.Mock;
 
 import com.eokam.cpoint.application.common.BaseServiceTest;
 import com.eokam.cpoint.application.dto.CpointDto;
@@ -29,16 +27,11 @@ public class CpointServiceTest extends BaseServiceTest {
 	@InjectMocks
 	private CpointServiceImpl cpointService;
 
-	@Spy
+	@Mock
 	private CpointRepository cpointRepository;
 
-	@Spy
+	@Mock
 	private CompanyRepository companyRepository;
-
-	@BeforeEach
-	public void setUp() throws Exception {
-		MockitoAnnotations.openMocks(this);
-	}
 
 	@Test
 	void 탄소중립포인트_조회_테스트() {
@@ -73,7 +66,6 @@ public class CpointServiceTest extends BaseServiceTest {
 
 		final CpointDto cpointDto = CpointDto.builder()
 			.member(memberDto)
-			.point(100)
 			.activityType(ActivityType.EMISSION_FREE_CAR)
 			.point(1000)
 			.companyId(1L)

@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 
 import com.eokam.cpoint.application.common.BaseServiceTest;
@@ -25,10 +26,10 @@ public class StoreServiceTest extends BaseServiceTest {
 	@InjectMocks
 	private StoreServiceImpl storeService;
 
-	@Spy
+	@Mock
 	private StoreRepository storeRepository;
 
-	@Spy
+	@Mock
 	private CompanyRepository companyRepository;
 
 	@Nested
