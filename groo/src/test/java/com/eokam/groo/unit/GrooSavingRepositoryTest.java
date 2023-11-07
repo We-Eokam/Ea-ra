@@ -3,11 +3,8 @@ package com.eokam.groo.unit;
 import static com.eokam.groo.acceptance.GrooAcceptanceStep.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,15 +29,6 @@ public class GrooSavingRepositoryTest {
 
 	@Autowired
 	private GrooSavingRepository grooSavingRepository;
-
-	private static Long expectedAccusationSum;
-	private static Long expectedAccusationCount;
-	private static Long expectedProofSum;
-	private static Long expectProofCount;
-
-	private static int START_DAY;
-	private static int END_DAY;
-
 
 	@Test
 	@DisplayName("그루 적립 내역을 저장한다.")
@@ -75,11 +63,6 @@ public class GrooSavingRepositoryTest {
 	@Transactional
 	void getDailySavingAmountsByMonth() {
 		// given
-		expectedProofSum = 0L;
-		expectProofCount = 0L;
-		expectedAccusationSum = 0L;
-		expectedAccusationCount = 0L;
-
 		List<GrooSaving> grooSavings = new ArrayList<>();
 		for (int i=0; i<10; i++){
 			GrooSaving grooSaving = of(SavingType.PROOF, ActivityType.DISPOSABLE_CUP);
@@ -89,6 +72,7 @@ public class GrooSavingRepositoryTest {
 			GrooSaving grooSaving = of(SavingType.ACCUSATION, ActivityType.ELECTRICITY);
 			grooSavings.add(grooSaving);
 		}
+		var expectedMonthlySumCount = getExpectedMonthlySumCount(grooSavings);
 
 		// when
 		grooSavingRepository.saveAll(grooSavings);
@@ -108,10 +92,10 @@ public class GrooSavingRepositoryTest {
 			accusationCount += grooDailySumAmountDto.getAccusationCount();
 		}
 
-		assertThat(proofSum).isEqualTo(expectedProofSum);
-		assertThat(proofCount).isEqualTo(expectProofCount);
-		assertThat(accusationSum).isEqualTo(expectedAccusationSum);
-		assertThat(accusationCount).isEqualTo(expectedAccusationCount);
+		assertThat(proofSum).isEqualTo(expectedMonthlySumCount.get("expectedProofSum"));
+		assertThat(proofCount).isEqualTo(expectedMonthlySumCount.get("expectedProofCount"));
+		assertThat(accusationSum).isEqualTo(expectedMonthlySumCount.get("expectedAccusationSum"));
+		assertThat(accusationCount).isEqualTo(expectedMonthlySumCount.get("expectedAccusationCount"));
 	}
 
 	@Test
@@ -119,11 +103,6 @@ public class GrooSavingRepositoryTest {
 	@Transactional
 	void getSavingAmountandCountByMonth() {
 		// given
-		expectedProofSum = 0L;
-		expectProofCount = 0L;
-		expectedAccusationSum = 0L;
-		expectedAccusationCount = 0L;
-
 		List<GrooSaving> grooSavings = new ArrayList<>();
 		for (int i=0; i<10; i++){
 			GrooSaving grooSaving = of(SavingType.PROOF, ActivityType.DISPOSABLE_CUP);
@@ -133,6 +112,7 @@ public class GrooSavingRepositoryTest {
 			GrooSaving grooSaving = of(SavingType.ACCUSATION, ActivityType.ELECTRICITY);
 			grooSavings.add(grooSaving);
 		}
+		var expectedMonthlySumCount = getExpectedMonthlySumCount(grooSavings);
 
 		// when
 		grooSavingRepository.saveAll(grooSavings);
@@ -140,10 +120,10 @@ public class GrooSavingRepositoryTest {
 		// then
 		var sumAndAmountByMonth = grooSavingRepository.getSumAndAmountByMonth(1L, 2023, 11);
 
-		assertThat(sumAndAmountByMonth.getProofSum()).isEqualTo(expectedProofSum);
-		assertThat(sumAndAmountByMonth.getProofCount()).isEqualTo(expectProofCount);
-		assertThat(sumAndAmountByMonth.getAccusationSum()).isEqualTo(expectedAccusationSum);
-		assertThat(sumAndAmountByMonth.getAccusationCount()).isEqualTo(expectedAccusationCount);
+		assertThat(sumAndAmountByMonth.getProofSum()).isEqualTo(expectedMonthlySumCount.get("expectedProofSum"));
+		assertThat(sumAndAmountByMonth.getProofCount()).isEqualTo(expectedMonthlySumCount.get("expectedProofCount"));
+		assertThat(sumAndAmountByMonth.getAccusationSum()).isEqualTo(expectedMonthlySumCount.get("expectedAccusationSum"));
+		assertThat(sumAndAmountByMonth.getAccusationCount()).isEqualTo(expectedMonthlySumCount.get("expectedAccusationCount"));
 	}
 
 	@Test
@@ -151,12 +131,8 @@ public class GrooSavingRepositoryTest {
 	@Transactional
 	void getProofCountByWeek() {
 		// given
-		LocalDate today = LocalDate.now();
-		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
-		START_DAY = startDate.getDayOfMonth();
-		END_DAY = endDate.getDayOfMonth();
-
+		LocalDate startDate = LocalDate.of(2023, 11, 5);
+		LocalDate endDate = LocalDate.of(2023, 11, 11);
 		List<GrooSaving> grooSavings = new ArrayList<>();
 		for (int i=0; i<10; i++){
 			GrooSaving grooSaving = ofProof();
@@ -180,16 +156,8 @@ public class GrooSavingRepositoryTest {
 	public GrooSaving of(SavingType savingType, ActivityType activityType) {
 		int randomNum = new Random().nextInt(50);
 		long memberId = new Random().nextLong(2L);
-		LocalDateTime localDateTime = LocalDateTime.now().plusDays(randomNum);
-		if (memberId == 1L && localDateTime.getMonth().equals(Month.NOVEMBER)){
-			if (SavingType.PROOF.equals(savingType)){
-				expectedProofSum += activityType.getSavingAmount();
-				expectProofCount++;
-			} else {
-				expectedAccusationSum += activityType.getSavingAmount();
-				expectedAccusationCount++;
-			}
-		}
+		LocalDateTime startDate = LocalDateTime.of(2023, 11, 1, 1, 0);
+		LocalDateTime localDateTime = startDate.plusDays(randomNum);
 		return GrooSaving.builder()
 			.memberId(memberId)
 			.savingType(savingType)
@@ -202,8 +170,7 @@ public class GrooSavingRepositoryTest {
 	}
 
 	public GrooSaving ofProof() {
-		LocalDateTime today = LocalDateTime.now();
-		LocalDateTime startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		LocalDateTime startDate = LocalDateTime.of(2023, 11, 5, 1, 0);
 		int randomNum = new Random().nextInt(5);
 		return GrooSaving.builder()
 			.memberId(1L)
@@ -227,6 +194,31 @@ public class GrooSavingRepositoryTest {
 		return dailyProofCount;
 	}
 
+	public Map<String, Long> getExpectedMonthlySumCount(List<GrooSaving> grooSavings) {
+		long expectedProofSum = 0L;
+		long expectedProofCount = 0L;
+		long expectedAccusationSum = 0L;
+		long expectedAccusationCount = 0L;
+
+		Map<String, Long> monthlySumCount = new HashMap<>();
+		for (GrooSaving grooSaving:grooSavings) {
+			if (grooSaving.getMemberId().equals(1L) && grooSaving.getSavedAt().getYear() == 2023 && grooSaving.getSavedAt().getMonthValue() == 11){
+				if (SavingType.PROOF.equals(grooSaving.getSavingType())){
+					expectedProofSum += grooSaving.getActivityType().getSavingAmount();
+					expectedProofCount++;
+				} else {
+					expectedAccusationSum += grooSaving.getActivityType().getSavingAmount();
+					expectedAccusationCount++;
+				}
+			}
+		}
+		monthlySumCount.put("expectedProofSum", expectedProofSum);
+		monthlySumCount.put("expectedProofCount", expectedProofCount);
+		monthlySumCount.put("expectedAccusationSum", expectedAccusationSum);
+		monthlySumCount.put("expectedAccusationCount", expectedAccusationCount);
+		return monthlySumCount;
+	}
+
 	private boolean isDateInRange(LocalDate localDateTime){
 		if (localDateTime.getYear() != YEAR){
 			return false;
@@ -234,7 +226,7 @@ public class GrooSavingRepositoryTest {
 		if (localDateTime.getMonthValue() != MONTH) {
 			return false;
 		}
-		if (localDateTime.getDayOfMonth() < START_DAY || localDateTime.getDayOfMonth() > END_DAY){
+		if (localDateTime.getDayOfMonth() < 5 || localDateTime.getDayOfMonth() > 11){
 			return false;
 		}
 		return true;
