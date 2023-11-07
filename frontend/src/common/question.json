@@ -100,5 +100,73 @@
         "action": "행동2"
       }
     ]
+  },
+  {
+    "id": 7,
+    "situation": "상황",
+    "question": "질문",
+    "answers": [
+      {
+        "type": "-",
+        "thoughts": "'생각1'",
+        "action": "행동1"
+      },
+      {
+        "type": "+",
+        "thoughts": "'생각2'",
+        "action": "행동2"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "situation": "상황",
+    "question": "질문",
+    "answers": [
+      {
+        "type": "-",
+        "thoughts": "'생각1'",
+        "action": "행동1"
+      },
+      {
+        "type": "+",
+        "thoughts": "'생각2'",
+        "action": "행동2"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "situation": "상황",
+    "question": "질문",
+    "answers": [
+      {
+        "type": "-",
+        "thoughts": "'생각1'",
+        "action": "행동1"
+      },
+      {
+        "type": "+",
+        "thoughts": "'생각2'",
+        "action": "행동2"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "situation": "상황",
+    "question": "질문",
+    "answers": [
+      {
+        "type": "-",
+        "thoughts": "'생각1'",
+        "action": "행동1"
+      },
+      {
+        "type": "+",
+        "thoughts": "'생각2'",
+        "action": "행동2"
+      }
+    ]
   }
 ]

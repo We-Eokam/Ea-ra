@@ -31,7 +31,7 @@ export default function TestPage() {
   useEffect(() => {
     setQuestion(data[id]);
 
-    if (id === 6) {
+    if (id === 10) {
       setResults(JSON.parse(localStorage.getItem("results") || '{}'));
       navigate("/result");
     };
@@ -47,8 +47,8 @@ export default function TestPage() {
 
   return (
     <>
+      <ProgressGreen progress={id*10}/>
       <MainFrame headbar="yes" navbar="yes" marginsize="large" bgcolor="">
-        {/* 진행상황 바 */}
         <QuestionFrame>
           <Situation dangerouslySetInnerHTML={{__html: question.situation}} />
           <div>{question.question}</div>
@@ -68,6 +68,15 @@ export default function TestPage() {
     </>
   );
 }
+
+const ProgressGreen = styled.div<{progress : number}>`
+  position: absolute;
+  margin-top: env(safe-area-inset-top);
+  height: 12px;
+  background-color: var(--primary);
+  width: ${({ progress }) => `${progress}%`};
+  transition: width 0.26s ease-in-out
+`
 
 const QuestionFrame = styled.div`
   padding: 20px 8px;
@@ -97,7 +106,7 @@ const BtnFrame = styled.div`
   left: 6.67%;
   right: 6.67%;
   bottom: 0;
-  padding-bottom: 8%;
+  padding-bottom: 14%;
   z-index: 2;
   background-color: var(--white);
 `;
