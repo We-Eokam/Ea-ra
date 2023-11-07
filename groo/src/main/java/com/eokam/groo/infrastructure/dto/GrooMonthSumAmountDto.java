@@ -1,10 +1,8 @@
 package com.eokam.groo.infrastructure.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class GrooMonthSumAmountDto {
 	private Long proofSum;
 	private Long proofCount;

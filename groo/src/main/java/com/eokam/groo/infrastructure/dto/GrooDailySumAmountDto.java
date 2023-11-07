@@ -4,10 +4,8 @@ import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class GrooDailySumAmountDto {
 	private Date date;
