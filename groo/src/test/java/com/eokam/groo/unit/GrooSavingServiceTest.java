@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +16,7 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -27,6 +30,7 @@ import com.eokam.groo.global.constant.ActivityType;
 import com.eokam.groo.global.constant.SavingType;
 import com.eokam.groo.infrastructure.dto.GrooDailySumAmountDto;
 import com.eokam.groo.infrastructure.dto.GrooMonthSumAmountDto;
+import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.repository.GrooSavingRepository;
 
 @ActiveProfiles("test")
@@ -102,6 +106,33 @@ public class GrooSavingServiceTest {
 		assertThat(grooMonthDto.proofCount()).isEqualTo(grooMonthSumAmountDto.getProofCount());
 		assertThat(grooMonthDto.proofSum()).isEqualTo(grooMonthSumAmountDto.getProofSum());
 		assertThat(grooMonthDto.grooSavingList().size()).isEqualTo(grooDailySumAmountDtoList.size());
+	}
+
+	@Test
+	@DisplayName("특정 월의 그린 적립 내역을 조회할 수 있다.")
+	void dD(){
+		// given
+		LocalDate today = LocalDate.now();
+		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+		List<WeeklyProofCountDto> expectedWeeklyProofCountDtoList = getWeeklyProofCountDtoList(startDate);
+		given(grooSavingRepository.getDailyProofCount(1L, startDate, endDate)).willReturn(expectedWeeklyProofCountDtoList);
+
+		// when
+		List<WeeklyProofCountDto> weeklyProofCountDtoList = grooSavingService.getDailyProofCountByWeek(1L);
+
+		// then
+		verify(grooSavingRepository).getDailyProofCount(1L, startDate, endDate);
+		assertThat(weeklyProofCountDtoList).hasSize(expectedWeeklyProofCountDtoList.size());
+	}
+
+	public List<WeeklyProofCountDto> getWeeklyProofCountDtoList(LocalDate startDate) {
+		List<WeeklyProofCountDto> weeklyProofCountDtoList = new ArrayList<>();
+		for (int i = 0; i<7; i++){
+			weeklyProofCountDtoList.add(
+				new WeeklyProofCountDto(Date.valueOf(startDate.plusDays(i)), new Random().nextLong(10L)));
+		}
+		return weeklyProofCountDtoList;
 	}
 
 	public List<GrooDailySumAmountDto> getGrooDailySumAmountDtoList() {
