@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import Lottie from "lottie-react";
+import JudgeEokam from "../../assets/lottie/eokam-judge.json"
 import data from "../../common/question.json";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { LongButton } from "../../style";
@@ -47,14 +48,16 @@ export default function TestPage() {
 
   return (
     <>
-      <ProgressGreen progress={id*10}/>
+      <ProgressGreen progress={id * 10} />
       <MainFrame headbar="yes" navbar="yes" marginsize="large" bgcolor="">
         <QuestionFrame>
-          <Situation dangerouslySetInnerHTML={{__html: question.situation}} />
+          <Situation dangerouslySetInnerHTML={{ __html: question.situation }} />
           <div>{question.question}</div>
         </QuestionFrame>
-        <MarginFrame/>
       </MainFrame>
+      <CharacterFrame>
+        <Lottie animationData={JudgeEokam} />
+      </CharacterFrame>
       <BtnFrame>
         {question.answers.map((ans) => {
           return (
@@ -69,7 +72,7 @@ export default function TestPage() {
   );
 }
 
-const ProgressGreen = styled.div<{progress : number}>`
+const ProgressGreen = styled.div<{ progress: number }>`
   position: absolute;
   margin-top: env(safe-area-inset-top);
   height: 12px;
@@ -95,11 +98,14 @@ const Situation = styled.div`
   text-align: center;
 `;
 
-const MarginFrame = styled.div`
-  width: 100%;
-  height: 32%;
-  max-height: 164px;
-`
+const CharacterFrame = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  max-width: 320px;
+`;
 
 const BtnFrame = styled.div`
   position: absolute;
