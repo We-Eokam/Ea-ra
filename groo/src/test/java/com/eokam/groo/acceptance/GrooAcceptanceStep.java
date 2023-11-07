@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,8 @@ public class GrooAcceptanceStep {
 	public static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MX0.b9AyXTApiN9ii7WMT1GO8h_wjWgGG5hsW11hXT3RXXk";
 	public static final Integer YEAR = 2023;
 	public static final Integer MONTH = 11;
-	public static final Integer DAY = 7;
+	private static final int FIRST_DAY_OF_WEEK = 5;
+	private static final int END_DAY_OF_WEEK = 11;
 	private static Long expectedAccusationSum;
 	private static Long expectedAccusationCount;
 	private static Long expectedProofSum;
@@ -119,5 +121,57 @@ public class GrooAcceptanceStep {
 				}
 			}
 		}
+	}
+
+	public static Long 일주일간_인증_적립내역이_생성되어있음() throws JsonProcessingException {
+		long expectProofCount = 0;
+		for (int i=0; i<20; i++){
+			var 적립시간 = 랜덤_날짜_생성();
+			var request = 그루_적립_요청(인증, 텀블러_사용, (long) i+10, 적립시간);
+			var response = 그루_적립_요청함(ACCESS_TOKEN, request);
+			if (response.statusCode()==HttpStatus.CREATED.value() && isDateInRange(적립시간)){
+				expectProofCount++;
+			}
+		}
+		return expectProofCount;
+	}
+
+	private static LocalDateTime 랜덤_날짜_생성() {
+		int randomNum = new Random().nextInt(10);
+		LocalDateTime firstday = LocalDateTime.of(2023, 11, 5, 1, 0);
+		return firstday.plusDays(randomNum);
+	}
+
+	private static boolean isDateInRange(LocalDateTime localDateTime){
+		if (localDateTime.getYear() != YEAR){
+			return false;
+		}
+		if (localDateTime.getMonthValue() != MONTH) {
+			return false;
+		}
+		if (localDateTime.getDayOfMonth() < FIRST_DAY_OF_WEEK || localDateTime.getDayOfMonth() > END_DAY_OF_WEEK){
+			return false;
+		}
+		return true;
+	}
+
+	public static ExtractableResponse<Response> 일주일간_인증활동_수_조회_요청(String accessToken) {
+		return given().log().all()
+			.cookie("access-token", accessToken)
+			.when().get("/groo/current-week")
+			.then().log().all()
+			.extract();
+	}
+
+	public static void 일주일간_인증활동_수_조회됨(ExtractableResponse<Response> response, Long expectedProofCountSum) {
+		List<Long> proofCountList = response.jsonPath().getList("groo_saving_list.proof_count", Long.class);
+		long proofCountSum = proofCountList.stream()
+			.mapToLong(Long::longValue)
+			.sum();
+		assertThat(proofCountSum).isEqualTo(expectedProofCountSum);
+	}
+
+	public static void 일주일간_인증활동_수_응답됨(ExtractableResponse<Response> response) {
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 	}
 }
