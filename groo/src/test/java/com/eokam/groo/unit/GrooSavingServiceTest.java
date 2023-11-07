@@ -5,10 +5,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.sql.Date;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,14 +40,9 @@ public class GrooSavingServiceTest {
 	private GrooSavingServiceImpl grooSavingService;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 	}
-
-	private static Long expectedAccusationSum;
-	private static Long expectedAccusationCount;
-	private static Long expectedProofSum;
-	private static Long expectedProofCount;
 
 	@Test
 	@DisplayName("그루 적립 내역을 저장한다.")
@@ -89,8 +82,7 @@ public class GrooSavingServiceTest {
 	void getDailySavingAmountByMonth() {
 		//given
 		List<GrooDailySumAmountDto> grooDailySumAmountDtoList = getGrooDailySumAmountDtoList();
-		GrooMonthSumAmountDto grooMonthSumAmountDto = new GrooMonthSumAmountDto(expectedProofSum, expectedProofCount,
-			expectedAccusationSum, expectedAccusationCount);
+		GrooMonthSumAmountDto grooMonthSumAmountDto = getExpectedMonthlySumCount(grooDailySumAmountDtoList);
 		given(grooSavingRepository.getDailySumAndAmount(1L, 2023, 11)).willReturn(grooDailySumAmountDtoList);
 		given(grooSavingRepository.getSumAndAmountByMonth(1L, 2023, 11)).willReturn(grooMonthSumAmountDto);
 
@@ -111,9 +103,8 @@ public class GrooSavingServiceTest {
 	@DisplayName("일주일간 일별 인증 횟수를 조회할 수 있다.")
 	void getProofCountByWeek(){
 		// given
-		LocalDate today = LocalDate.now();
-		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+		LocalDate startDate = LocalDate.of(2023, 11, 5);
+		LocalDate endDate = LocalDate.of(2023, 11, 11);
 		List<WeeklyProofCountDto> expectedWeeklyProofCountDtoList = getWeeklyProofCountDtoList(startDate);
 		given(grooSavingRepository.getDailyProofCount(1L, startDate, endDate)).willReturn(expectedWeeklyProofCountDtoList);
 
@@ -135,11 +126,6 @@ public class GrooSavingServiceTest {
 	}
 
 	public List<GrooDailySumAmountDto> getGrooDailySumAmountDtoList() {
-		expectedAccusationSum = 0L;
-		expectedAccusationCount = 0L;
-		expectedProofSum = 0L;
-		expectedProofCount = 0L;
-
 		List<GrooDailySumAmountDto> grooDailySumAmountDtos = new ArrayList<>();
 		for (int i =0;i<30;i++){
 			int randomNum = new Random().nextInt(50);
@@ -147,17 +133,30 @@ public class GrooSavingServiceTest {
 			long sum2 = new Random().nextLong(1000L);
 			long count1 = new Random().nextLong(10L);
 			long count2 = new Random().nextLong(10L);
-			LocalDate localDate = LocalDate.now().plusDays(randomNum);
+			LocalDate localDate = LocalDate.of(2023, 11, 5).plusDays(randomNum);
 			Date date = Date.valueOf(String.valueOf(localDate));
 			grooDailySumAmountDtos.add(new GrooDailySumAmountDto(date, sum1, count1, sum2, count2));
-			if (localDate.getMonth().getValue() == 11) {
-				expectedAccusationSum += sum2;
-				expectedAccusationCount += count2;
-				expectedProofSum += sum1;
-				expectedProofCount += count1;
-			}
 		}
 		return grooDailySumAmountDtos;
+	}
+
+	public GrooMonthSumAmountDto getExpectedMonthlySumCount(List<GrooDailySumAmountDto> grooDailySumAmountDtos) {
+		long expectedProofSum = 0L;
+		long expectedProofCount = 0L;
+		long expectedAccusationSum = 0L;
+		long expectedAccusationCount = 0L;
+
+		for (var dailySumAmountDto:grooDailySumAmountDtos){
+			if (dailySumAmountDto.getDate().toLocalDate().getYear() == 2023 && dailySumAmountDto.getDate().toLocalDate().getMonthValue() == 11) {
+				expectedAccusationSum += dailySumAmountDto.getAccusationSum();
+				expectedAccusationCount += dailySumAmountDto.getAccusationCount();
+				expectedProofSum += dailySumAmountDto.getProofSum();
+				expectedProofCount += dailySumAmountDto.getProofCount();
+			}
+		}
+
+		return new GrooMonthSumAmountDto(expectedProofSum, expectedProofCount,
+			expectedAccusationSum, expectedAccusationCount);
 	}
 
 }
