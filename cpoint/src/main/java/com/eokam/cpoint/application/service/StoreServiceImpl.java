@@ -1,11 +1,13 @@
 package com.eokam.cpoint.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eokam.cpoint.application.dto.ActivityStroeClassDto;
 import com.eokam.cpoint.application.dto.StoreClassDto;
 import com.eokam.cpoint.application.dto.StoreDto;
 import com.eokam.cpoint.domain.ActivityType;
@@ -58,5 +60,27 @@ public class StoreServiceImpl implements StoreService {
 			.collect(Collectors.toList());
 
 		return storeClassDtoList;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ActivityStroeClassDto> retrieveNearCpointStoreCategorizedByActivityType(Integer radius, Double latitude,
+		Double longitude) {
+		List<ActivityStroeClassDto> activityStroeClassDtoList = new ArrayList<>();
+		for (ActivityType activityType : ActivityType.values()) {
+			List<StoreClassDto> storeClassDtoList =
+				retrieveNearCpointStoreByActivityType(radius, latitude, longitude, activityType);
+
+			if (storeClassDtoList.isEmpty())
+				continue;
+
+			activityStroeClassDtoList
+				.add(ActivityStroeClassDto
+					.builder()
+					.activityType(activityType)
+					.stores(storeClassDtoList)
+					.build());
+		}
+		return activityStroeClassDtoList;
 	}
 }
