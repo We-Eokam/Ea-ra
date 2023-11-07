@@ -108,8 +108,8 @@ public class GrooSavingServiceTest {
 	}
 
 	@Test
-	@DisplayName("특정 월의 그린 적립 내역을 조회할 수 있다.")
-	void dD(){
+	@DisplayName("일주일간 일별 인증 횟수를 조회할 수 있다.")
+	void getProofCountByWeek(){
 		// given
 		LocalDate today = LocalDate.now();
 		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));

@@ -147,7 +147,7 @@ public class GrooSavingRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("특정 월의 그린 적립 양과 횟수를 조회할 수 있다.")
+	@DisplayName("일주일간 일별 인증 횟수를 조회할 수 있다.")
 	@Transactional
 	void getProofCountByWeek() {
 		// given
