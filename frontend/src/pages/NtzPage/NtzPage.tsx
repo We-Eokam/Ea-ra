@@ -144,48 +144,51 @@ export default function NtzPage() {
             텀블러 이용하기로 가장 많은 포인트를 얻었어요!
           </TextLine>
           <ChartFrame>
-            <ResponsivePie
-              data={chartData}
-              margin={{ top: 0, right: 100, bottom: 9, left: 60 }}
-              innerRadius={0.5}
-              padAngle={1.3}
-              cornerRadius={1}
-              activeOuterRadiusOffset={8}
-              borderWidth={1}
-              borderColor={{
-                from: "color",
-                modifiers: [["darker", 0.2]],
-              }}
-              arcLinkLabelsSkipAngle={10}
-              arcLinkLabelsTextColor="#727272"
-              arcLinkLabelsThickness={1}
-              arcLinkLabelsDiagonalLength={16}
-              arcLinkLabelsStraightLength={10}
-              arcLinkLabelsOffset={-11}
-              arcLinkLabelsColor={{ from: "color" }}
-              arcLabelsSkipAngle={10}
-              arcLabelsTextColor="#1C1C1C"
-              sortByValue={charSort}
-              legends={[
-                {
-                  anchor: "right",
-                  direction: "column",
-                  justify: false,
-                  translateX: 112,
-                  translateY: 90,
-                  itemsSpacing: 1,
-                  itemWidth: 100,
-                  itemHeight: 15,
-                  itemTextColor: "#727272",
-                  itemDirection: "left-to-right",
-                  itemOpacity: 1,
-                  symbolSize: 10,
-                  symbolShape: "circle",
-                  effects: [
-                  ],
-                },
-              ]}
-            />
+
+            <ChartInner>
+              <ResponsivePie
+                data={chartData}
+                margin={{ top: 0, right: 100, bottom: 9, left: 60 }}
+                innerRadius={0.5}
+                padAngle={1.3}
+                cornerRadius={1}
+                activeOuterRadiusOffset={8}
+                borderWidth={1}
+                borderColor={{
+                  from: "color",
+                  modifiers: [["darker", 0.2]],
+                }}
+                arcLinkLabelsSkipAngle={10}
+                arcLinkLabelsTextColor="#727272"
+                arcLinkLabelsThickness={1}
+                arcLinkLabelsDiagonalLength={16}
+                arcLinkLabelsStraightLength={10}
+                arcLinkLabelsOffset={-11}
+                arcLinkLabelsColor={{ from: "color" }}
+                arcLabelsSkipAngle={10}
+                arcLabelsTextColor="#1C1C1C"
+                sortByValue={charSort}
+                legends={[
+                  {
+                    anchor: "right",
+                    direction: "column",
+                    justify: false,
+                    translateX: 112,
+                    translateY: 90,
+                    itemsSpacing: 1,
+                    itemWidth: 100,
+                    itemHeight: 15,
+                    itemTextColor: "#727272",
+                    itemDirection: "left-to-right",
+                    itemOpacity: 1,
+                    symbolSize: 10,
+                    symbolShape: "circle",
+                    effects: [
+                    ],
+                  },
+                ]}
+                />
+            </ChartInner>
           </ChartFrame>
         </ChartContainer>
       </MainFrame>
@@ -303,4 +306,14 @@ const ChartFrame = styled.div`
   margin-top: 8px;
   width: 100%;
   height: 260px;
+  display: flex;
+  justify-content: center;
+`
+
+const ChartInner = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 372px;
+  height: 100%;
+  /* max-width: 380px; */
 `

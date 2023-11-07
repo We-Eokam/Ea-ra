@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import Lottie from "lottie-react";
+import JudgeEokam from "../../assets/lottie/eokam-judge.json"
 import data from "../../common/question.json";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { LongButton } from "../../style";
@@ -31,7 +32,7 @@ export default function TestPage() {
   useEffect(() => {
     setQuestion(data[id]);
 
-    if (id === 6) {
+    if (id === 10) {
       setResults(JSON.parse(localStorage.getItem("results") || '{}'));
       navigate("/result");
     };
@@ -47,14 +48,16 @@ export default function TestPage() {
 
   return (
     <>
+      <ProgressGreen progress={id * 10} />
       <MainFrame headbar="yes" navbar="yes" marginsize="large" bgcolor="">
-        {/* 진행상황 바 */}
         <QuestionFrame>
-          <Situation dangerouslySetInnerHTML={{__html: question.situation}} />
+          <Situation dangerouslySetInnerHTML={{ __html: question.situation }} />
           <div>{question.question}</div>
         </QuestionFrame>
-        <MarginFrame/>
       </MainFrame>
+      <CharacterFrame>
+        <Lottie animationData={JudgeEokam} />
+      </CharacterFrame>
       <BtnFrame>
         {question.answers.map((ans) => {
           return (
@@ -68,6 +71,15 @@ export default function TestPage() {
     </>
   );
 }
+
+const ProgressGreen = styled.div<{ progress: number }>`
+  position: absolute;
+  margin-top: env(safe-area-inset-top);
+  height: 12px;
+  background-color: var(--primary);
+  width: ${({ progress }) => `${progress}%`};
+  transition: width 0.26s ease-in-out
+`
 
 const QuestionFrame = styled.div`
   padding: 20px 8px;
@@ -86,18 +98,21 @@ const Situation = styled.div`
   text-align: center;
 `;
 
-const MarginFrame = styled.div`
-  width: 100%;
-  height: 32%;
-  max-height: 164px;
-`
+const CharacterFrame = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  max-width: 320px;
+`;
 
 const BtnFrame = styled.div`
   position: absolute;
   left: 6.67%;
   right: 6.67%;
   bottom: 0;
-  padding-bottom: 8%;
+  padding-bottom: 14%;
   z-index: 2;
   background-color: var(--white);
 `;
