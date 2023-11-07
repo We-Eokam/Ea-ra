@@ -4,6 +4,7 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalBackground } from "../../components/Modal/ModalBackground";
+import DetailInput from "../../components/Input/DetailInput";
 import AnimationModal from "../../components/Modal/AnimationModal";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
@@ -74,16 +75,6 @@ export default function ReportPage() {
     setImgSelectorOpen((prev) => !prev);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nowInput = e.target.value;
-    if (nowInput.length < 21) {
-      setActivityDetail(nowInput);
-      // setDetailLen(false);
-    } else {
-      // setDetailLen(true);
-    }
-  }
-
   const handleTempleteClick = (reportType: ReportTypeProps) => {
     setActivityType(reportType);
     setImgSelectorOpen(false);
@@ -116,16 +107,7 @@ export default function ReportPage() {
         </InfoFrame>
         {activityType.type === "OTHER" && (
           <InfoFrame>
-            <InfoName>
-              기타 사유 입력
-              <Text className="gray">{activityDetail.length}/20</Text>
-            </InfoName>
-            <DetailInput
-              value={activityDetail}
-              maxLength={20}
-              onChange={handleInputChange}
-              placeholder="ex) 쓰레기 무단 투기, 차량 요일제 무시 등"
-            />
+            <DetailInput value={activityDetail} setValue={setActivityDetail} type="warn"/>
           </InfoFrame>
         )}
         <InfoFrame>
@@ -155,7 +137,7 @@ export default function ReportPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <CropImg src="../src/assets/images/upload-image-icon.png" />
+              <ImgIcon src="/public/images/upload-image.png" />
             )}
           </ImageCropper>
         </InfoFrame>
@@ -237,19 +219,6 @@ const Text = styled.div`
   }
 `;
 
-const DetailInput = styled.input`
-  width: calc(100% - 8px);
-  font-size: 13px;
-  outline: none;
-  border: none;
-  border-bottom: 1px solid var(--nav-gray);
-  padding: 4px;
-
-  &::placeholder {
-    font-weight: 300;
-  }
-`;
-
 const Dropdown = styled(DropdownSvg)<{ isShow: boolean }>`
   transform: ${({ isShow }) => (isShow ? "rotate(270deg)" : "rotate(90deg)")};
   transition: transform 0.25s ease;
@@ -276,6 +245,11 @@ const CropImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+`;
+
+const ImgIcon = styled.img`
+  width: 36%;
+  padding: 32%;
 `;
 
 const Margin = styled.div`
