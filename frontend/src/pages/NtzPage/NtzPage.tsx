@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -5,8 +6,51 @@ import { ReactComponent as PigCoin } from "../../assets/icons/pig-coin.svg";
 import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
 import { useNavigate } from "react-router-dom";
 
+import { ResponsivePie } from "@nivo/pie";
+
 export default function NtzPage() {
+  const [charSort, setChartSort] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setChartSort(true);
+    }, 280)
+    return () => clearTimeout(timer);
+  }, [])
+
   const navigate = useNavigate();
+  const chartData = [
+    {
+      id: "전자영수증",
+      label: "전자영수증",
+      value: 18,
+      color: "hsl(233, 70%, 50%)",
+    },
+    {
+      id: "텀블러",
+      label: "텀블러",
+      value: 32,
+      color: "hsl(314, 70%, 50%)",
+    },
+    {
+      id: "일회용컵",
+      label: "일회용컵",
+      value: 478,
+      color: "hsl(80, 70%, 50%)",
+    },
+    {
+      id: "다회용기",
+      label: "다회용기",
+      value: 226,
+      color: "hsl(210, 70%, 50%)",
+    },
+    {
+      id: "폐휴대폰",
+      label: "폐휴대폰",
+      value: 329,
+      color: "hsl(1, 70%, 50%)",
+    },
+  ];
 
   const navigateMap = () => {
     navigate("/netzero/map");
@@ -18,6 +62,23 @@ export default function NtzPage() {
 
   const navigateComapny = () => {
     navigate("/netzero/company");
+  };
+
+  const shareKakao = () => {
+    window.Kakao.Share.sendDefault({
+      objectType: "feed",
+      content: {
+        title: "~~~~~~ 어라",
+        description: `~~~님이 어라로 초대했어요`,
+        imageUrl:
+          "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
+        link: {
+          // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
+          mobileWebUrl: `https://eara-test-repo.vercel.app/`,
+          webUrl: `https://eara-test-repo.vercel.app/`,
+        },
+      },
+    });
   };
 
   return (
@@ -68,24 +129,65 @@ export default function NtzPage() {
             <InfoImage src="/images/company.png" />
           </InfoButton>
 
-          <InfoButton style={{ marginRight: "3.5px" }}>
+          <InfoButton onClick={shareKakao} style={{ marginRight: "3.5px" }}>
             <InfoButtonGray>카카오톡으로</InfoButtonGray>
             <InfoButtonBlack>친구초대</InfoButtonBlack>
             <InfoImage src="/images/invite.png" />
           </InfoButton>
         </InfoButtonsFrame>
 
-        <CPointContainer style={{ marginTop: "8px", height: "288px" }}>
+        <ChartContainer>
           <TextLine>
             <Bold>나의 활동 요약</Bold>
           </TextLine>
           <TextLine style={{ fontSize: "14px", marginTop: "6px" }}>
             텀블러 이용하기로 가장 많은 포인트를 얻었어요!
           </TextLine>
-          <div style={{ marginTop: "80px", marginLeft: "40px" }}>
-            여기에 차트
-          </div>
-        </CPointContainer>
+          <ChartFrame>
+            <ResponsivePie
+              data={chartData}
+              margin={{ top: 0, right: 100, bottom: 9, left: 60 }}
+              innerRadius={0.5}
+              padAngle={1.3}
+              cornerRadius={1}
+              activeOuterRadiusOffset={8}
+              borderWidth={1}
+              borderColor={{
+                from: "color",
+                modifiers: [["darker", 0.2]],
+              }}
+              arcLinkLabelsSkipAngle={10}
+              arcLinkLabelsTextColor="#727272"
+              arcLinkLabelsThickness={1}
+              arcLinkLabelsDiagonalLength={16}
+              arcLinkLabelsStraightLength={10}
+              arcLinkLabelsOffset={-11}
+              arcLinkLabelsColor={{ from: "color" }}
+              arcLabelsSkipAngle={10}
+              arcLabelsTextColor="#1C1C1C"
+              sortByValue={charSort}
+              legends={[
+                {
+                  anchor: "right",
+                  direction: "column",
+                  justify: false,
+                  translateX: 112,
+                  translateY: 90,
+                  itemsSpacing: 1,
+                  itemWidth: 100,
+                  itemHeight: 15,
+                  itemTextColor: "#727272",
+                  itemDirection: "left-to-right",
+                  itemOpacity: 1,
+                  symbolSize: 10,
+                  symbolShape: "circle",
+                  effects: [
+                  ],
+                },
+              ]}
+            />
+          </ChartFrame>
+        </ChartContainer>
       </MainFrame>
       <NavBar />
     </>
@@ -176,6 +278,7 @@ const InfoButtonBlack = styled.div`
   font-size: 14px;
   font-weight: 600;
 `;
+
 const SmallText = styled.span`
   font-size: 11px;
   font-weight: 400;
@@ -188,3 +291,16 @@ const InfoImage = styled.img`
   bottom: 13px;
   margin-left: 53.5px;
 `;
+
+const ChartContainer = styled(CPointContainer)`
+  height: 328px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+`
+
+const ChartFrame = styled.div`
+  position: relative;
+  margin-top: 8px;
+  width: 100%;
+  height: 260px;
+`

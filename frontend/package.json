@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nivo/core": "^0.83.0",
+    "@nivo/pie": "^0.83.0",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.5.1",
     "moment": "^2.29.4",
