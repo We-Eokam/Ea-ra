@@ -4,9 +4,14 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
+import AnimationModal from "../../components/Modal/AnimationModal";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as Add } from "../../assets/icons/add-icon.svg";
 import { ReactComponent as Setting } from "../../assets/icons/setting-icon.svg";
+import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
+import { ReactComponent as Article } from "../../assets/icons/article-icon.svg";
+import { ReactComponent as Logout } from "../../assets/icons/logout-icon.svg";
+import { ReactComponent as Trash } from "../../assets/icons/Trash-icon.svg";
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -14,6 +19,8 @@ export default function MyPage() {
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   useEffect(() => {
     const tabIndex = tabs.indexOf(activeTab);
@@ -29,13 +36,21 @@ export default function MyPage() {
     navigate("/mypage/friends");
   };
 
+  const showModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   const user = {
     profileImg: "",
     nickname: "어쩌라고라고어쩌라고",
     gru: 25000,
     progress: 100,
     greenInit: 2400000,
-    isFollow: true,
+    reportCnt: 2,
   };
 
   const PostExample = [
@@ -56,7 +71,7 @@ export default function MyPage() {
         <HeadContext>
           <IconContainer>
             <Add />
-            <Setting />
+            <Setting onClick={showModal} />
           </IconContainer>
         </HeadContext>
       </HeadFrame>
@@ -87,17 +102,39 @@ export default function MyPage() {
         <PostsFrame>
           {activeTab === "인증"
             ? PostExample.map((post) => (
-                <Post>
-                  <CoverImg src={post.coverImg} />
-                </Post>
-              ))
+              <Post>
+                <CoverImg src={post.coverImg} />
+              </Post>
+            ))
             : ReportExample.map((post) => (
-                <Post>
-                  <CoverImg src={post.coverImg} />
-                </Post>
-              ))}
+              <Post>
+                <CoverImg src={post.coverImg} />
+              </Post>
+            ))}
         </PostsFrame>
       </MainFrame>
+
+      <AnimationModal isOpen={modalOpen} closeModal={closeModal}>
+        <OptionFrame>
+          <Opt>
+            <Edit />
+            <OptText>프로필 수정</OptText>
+          </Opt>
+          <Opt>
+            <Article />
+            <OptText>경고장 수</OptText>
+            <OptSubText>{user.reportCnt} 개</OptSubText>
+          </Opt>
+          <Opt>
+            <Logout />
+            <OptText isRed={true}>로그아웃</OptText>
+          </Opt>
+          <Opt>
+            <Trash />
+            <OptText isRed={true}>회원탈퇴</OptText>
+          </Opt>
+        </OptionFrame>
+      </AnimationModal>
       <NavBar />
     </>
   );
@@ -238,4 +275,34 @@ const CoverImg = styled.img`
   left: 0;
   width: 100%;
   object-fit: cover;
+`;
+
+const OptionFrame = styled.div`
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--gray);
+  background-color: var(--background);
+`;
+
+const Opt = styled.div`
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--gray);
+  }
+`;
+
+const OptText = styled.div<{ isRed?: boolean }>`
+  font-weight: 500;
+  margin-left: 12px;
+  flex-grow: 1;
+  margin-top: 1px;
+  
+  ${(props) => props.isRed && `color: var(--red);`}
+`;
+
+const OptSubText = styled.div`
+  color: var(--dark-gray);
 `;

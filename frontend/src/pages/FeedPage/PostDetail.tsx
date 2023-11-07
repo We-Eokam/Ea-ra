@@ -9,6 +9,7 @@ import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg"
 import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
 import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
+import OptionModal from "../../components/Modal/OptionModal";
 
 export default function PostDetail() {
   const post = {
@@ -25,10 +26,19 @@ export default function PostDetail() {
   }
 
   const [isLiked, setIsLiked] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const toggleLeaf = () => {
     setIsLiked(!isLiked);
   }
+
+  const showModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <>
@@ -41,7 +51,7 @@ export default function PostDetail() {
               <Bold>{post.writerNickname}</Bold>
               <SubText>{post.time}</SubText>
             </TextBox>
-            <BallMenu />
+            <BallMenu onClick={showModal} />
           </WriterContainer>
           <ActImg src={post.img} />
           <ReactionContainer>
@@ -68,6 +78,8 @@ export default function PostDetail() {
             </ActContainer>}
         </PostInfoFrame>
       </MainFrame>
+
+      <OptionModal isOpen={modalOpen} closeModal={closeModal} />
       <NavBar />
     </>
   )
