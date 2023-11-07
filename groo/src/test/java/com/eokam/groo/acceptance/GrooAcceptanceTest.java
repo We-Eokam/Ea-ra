@@ -4,13 +4,11 @@ import static com.eokam.groo.acceptance.GrooAcceptanceStep.*;
 import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import com.eokam.groo.global.constant.SavingType;
 import com.eokam.groo.utils.DatabaseCleanupExtension;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -68,14 +65,13 @@ public class GrooAcceptanceTest {
 	}
 
 	@Test
-	@Disabled
 	@DisplayName("일주일간(해당 주) 일별 인증 활동 수를 조회할 수 있다.")
 	void getDailyProofCountByWeek() throws JsonProcessingException {
 		// given
 		Long 일주일간_인증_적립_수_총합 = 일주일간_인증_적립내역이_생성되어있음();
 
 		// when
-		var response = 일주일간_인증활동_수_조회_요청(ACCESS_TOKEN, YEAR, MONTH, DAY);
+		var response = 일주일간_인증활동_수_조회_요청(ACCESS_TOKEN);
 
 		// then
 		일주일간_인증활동_수_응답됨(response);
@@ -114,11 +110,10 @@ public class GrooAcceptanceTest {
 		return true;
 	}
 
-	public ExtractableResponse<Response> 일주일간_인증활동_수_조회_요청(String accessToken, Integer year, Integer month, Integer day) {
+	public ExtractableResponse<Response> 일주일간_인증활동_수_조회_요청(String accessToken) {
 		return given().log().all()
 			.cookie("access-token", accessToken)
-			.queryParam("type", "week")
-			.when().get("/groo")
+			.when().get("/groo/current-week")
 			.then().log().all()
 			.extract();
 	}
