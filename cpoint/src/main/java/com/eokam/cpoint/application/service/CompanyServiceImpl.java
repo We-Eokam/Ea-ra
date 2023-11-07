@@ -51,7 +51,7 @@ public class CompanyServiceImpl implements CompanyService {
 	public CompanyDto connectCompany(MemberDto memberDto, Long companyId) {
 
 		Optional<CompanyConnect> alreadyConnected =
-			companyConnectRepository.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), companyId);
+			companyConnectRepository.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), companyId);
 
 		if (alreadyConnected.isPresent()) {
 			throw new BusinessException(ErrorCode.COMPANY_ALREADY_CONNECTED);
@@ -71,7 +71,7 @@ public class CompanyServiceImpl implements CompanyService {
 	public CompanyDto disconnectCompany(MemberDto memberDto, Long companyId) {
 
 		CompanyConnect alreadyConnected = companyConnectRepository
-			.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), companyId)
+			.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), companyId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_CONNECTED));
 
 		Company company = companyRepository.findCompanyById(companyId)

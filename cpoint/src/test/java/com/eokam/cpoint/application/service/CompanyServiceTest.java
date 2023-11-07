@@ -197,7 +197,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 					.build();
 
 			given(companyConnectRepository
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
 				.willReturn(Optional.empty());
 
 			given(companyConnectRepository
@@ -210,7 +210,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 			//then
 			verify(companyRepository).findCompanyById(메가커피.getId());
 			verify(companyConnectRepository)
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId());
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId());
 			verify(companyConnectRepository).save(argThat(cc -> cc.getCompany().getName().equals("메가커피")));
 
 			assertThat(생성결과.getCompanyId()).isEqualTo(메가커피.getId());
@@ -237,7 +237,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 					.build();
 
 			given(companyConnectRepository
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
 				.willReturn(Optional.of(메가커피_연동));
 
 			//when & then
@@ -272,7 +272,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 					.build();
 
 			given(companyConnectRepository
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
 				.willReturn(Optional.of(메가커피_연동));
 
 			//when
@@ -281,7 +281,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 			//then
 			verify(companyRepository).findCompanyById(메가커피.getId());
 			verify(companyConnectRepository)
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId());
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId());
 			verify(companyConnectRepository).delete(argThat(cc -> cc.getCompany().getName().equals("메가커피")));
 
 			assertThat(삭제결과.getCompanyId()).isEqualTo(메가커피.getId());
@@ -301,7 +301,7 @@ public class CompanyServiceTest extends BaseServiceTest {
 			Company 메가커피 = Company.builder().id(1L).name("메가커피").build();
 
 			given(companyConnectRepository
-				.findCompanyConnectByMemberIdAAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
+				.findCompanyConnectByMemberIdAndCompanyId(memberDto.getMemberId(), 메가커피.getId()))
 				.willReturn(Optional.empty());
 
 			//when & then

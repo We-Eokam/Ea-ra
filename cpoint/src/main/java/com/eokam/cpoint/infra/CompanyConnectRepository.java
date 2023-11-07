@@ -8,6 +8,6 @@ import com.eokam.cpoint.domain.CompanyConnect;
 
 public interface CompanyConnectRepository extends JpaRepository<CompanyConnect, Long> {
 
-	Optional<CompanyConnect> findCompanyConnectByMemberIdAAndCompanyId(Long memberId, Long companyId);
+	Optional<CompanyConnect> findCompanyConnectByMemberIdAndCompanyId(Long memberId, Long companyId);
 
 }
