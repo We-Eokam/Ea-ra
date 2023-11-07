@@ -35,11 +35,13 @@
 }
 
 .content-wrapper {
-  width: 100%;
+  /* width: 100%; */
+  width: 96%;
   display: flex;
   justify-content: center;
-  margin: 12px 0 24px;
+  margin: 16px 0 24px;
   max-height: 420px;
+  padding: 0 2%;
 }
 
 .footer {

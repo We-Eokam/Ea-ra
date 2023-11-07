@@ -18,6 +18,7 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
   const cropperRef = useRef<ReactCropperElement>(null);
   const [image, setImage] = useState<null | string>(null);
   const [rotation, setRotation] = useState(0);
+  const [marginValue, setMarginValue] = useState(- 8);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -64,6 +65,11 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
       if (degrees >= 0) {
         cropperRef.current?.cropper.rotate(degrees - rotation);
         setRotation(degrees);
+        if (degrees < 334) {
+          setMarginValue(degrees/3.6 - 8.65);
+        } else {
+          setMarginValue(84);
+        }
       } else {
         cropperRef.current?.cropper.rotate(degrees);
       }
@@ -113,7 +119,9 @@ const ImageCropper = ({ onCrop, children }: CropProps) => {
             }}
           />
         </div>
-        <Text>Rotation: {rotation}°</Text>
+        <TextFrame>
+          <Text left={marginValue}>{rotation}°</Text>
+        </TextFrame>
         <Slider
           type="range"
           min="0"
@@ -166,7 +174,7 @@ const InputLabel = styled.label`
     cursor: pointer;
   }
   overflow: hidden;
-  z-index: 3;
+  z-index: 2;
 `;
 
 const ModalTitle = styled.div`
@@ -175,10 +183,16 @@ const ModalTitle = styled.div`
   text-align: center;
 `;
 
-const Text = styled.div`
-  font-size: 15px;
-  font-weight: 400;
+const TextFrame = styled.div`
   width: 100%;
+  max-width: 464px;
+`
+const Text = styled.div<{left: number}>`
+  font-size: 15px;
+  width: 48px;
+  text-align: end;
+  font-weight: 400;
+  margin-left: ${(props) => `${props.left}%`};
 `;
 
 const IconFrame = styled.div`
