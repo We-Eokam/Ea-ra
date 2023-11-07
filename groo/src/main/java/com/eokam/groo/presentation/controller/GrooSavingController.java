@@ -1,6 +1,7 @@
 package com.eokam.groo.presentation.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.application.service.GrooSavingService;
+import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.jwt.TokenManager;
 import com.eokam.groo.presentation.dto.GrooSavingMonthResponse;
 import com.eokam.groo.presentation.dto.GrooSavingRequest;
 import com.eokam.groo.presentation.dto.GrooSavingResponse;
+import com.eokam.groo.presentation.dto.WeeklyProofCountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,5 +45,12 @@ public class GrooSavingController {
 		Long memberId = tokenManager.getMemberId(jwt);
 		GrooMonthDto grooMonthDto = grooSavingService.getDailySavingAmountByMonth(memberId, year, month);
 		return ResponseEntity.ok().body(GrooSavingMonthResponse.from(grooMonthDto));
+	}
+
+	@GetMapping("/current-week")
+	ResponseEntity<?> getDailyProofCountByWeek(@CookieValue(value = "access-token") String jwt){
+		Long memberId = tokenManager.getMemberId(jwt);
+		List<WeeklyProofCountDto> weeklyProofCountDtos = grooSavingService.getDailyProofCountByWeek(memberId);
+		return ResponseEntity.ok().body(WeeklyProofCountResponse.from(weeklyProofCountDtos));
 	}
 }
