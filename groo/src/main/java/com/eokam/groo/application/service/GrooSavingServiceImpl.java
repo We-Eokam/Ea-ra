@@ -3,6 +3,7 @@ package com.eokam.groo.application.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
@@ -20,12 +21,14 @@ public class GrooSavingServiceImpl implements GrooSavingService{
 	private final GrooSavingRepository grooSavingRepository;
 
 	@Override
+	@Transactional
 	public GrooSavingDto createGrooSaving(GrooSavingDto grooSavingDto) {
 		GrooSaving grooSaving = grooSavingRepository.save(GrooSaving.from(grooSavingDto));
 		return GrooSavingDto.from(grooSaving);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public GrooMonthDto getDailySavingAmountByMonth(Long memberId, Integer year, Integer month) {
 		List<GrooDailySumAmountDto> dailySumAndAmount = grooSavingRepository.getDailySumAndAmount(memberId, year,
 			month);
