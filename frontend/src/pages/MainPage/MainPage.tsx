@@ -8,21 +8,20 @@ import { useNavigate } from "react-router-dom";
 
 import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
 
-
 export default function MainPage() {
   const navigate = useNavigate();
 
   const toNotification = () => {
-    navigate("/notice")
-  }
+    navigate("/notice");
+  };
 
   const toMonthCal = () => {
     navigate("/calendar");
   };
 
   const toAct = () => {
-    navigate("/act")
-  }
+    navigate("/act");
+  };
 
   function getCurrentWeek() {
     const day = new Date();
@@ -103,7 +102,11 @@ export default function MainPage() {
           </WeekdayFrame>
 
           <ButtonsFrame>
-            <ShortButton background="var(--third)" color="var(--primary)" onClick={toAct} >
+            <ShortButton
+              background="var(--third)"
+              color="var(--primary)"
+              onClick={toAct}
+            >
               남은 빚 갚기
             </ShortButton>
             <ShortButton onClick={toMonthCal}>월별 내역</ShortButton>
@@ -118,10 +121,9 @@ export default function MainPage() {
 const NotificationIcon = styled(Notification)`
   position: absolute;
   right: 5.56%;
-  top: calc(env(safe-area-inset-top) + 40px);
-  filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.12))
-
-`
+  top: calc(env(safe-area-inset-top) + 24px);
+  filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.12));
+`;
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;
