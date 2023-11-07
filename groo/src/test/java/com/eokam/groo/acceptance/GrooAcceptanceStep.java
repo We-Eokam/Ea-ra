@@ -29,6 +29,7 @@ public class GrooAcceptanceStep {
 	public static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MX0.b9AyXTApiN9ii7WMT1GO8h_wjWgGG5hsW11hXT3RXXk";
 	public static final Integer YEAR = 2023;
 	public static final Integer MONTH = 11;
+	public static final Integer DAY = 7;
 	private static Long expectedAccusationSum;
 	private static Long expectedAccusationCount;
 	private static Long expectedProofSum;
