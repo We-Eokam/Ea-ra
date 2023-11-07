@@ -1,11 +1,17 @@
 package com.eokam.groo.unit;
 
+import static com.eokam.groo.acceptance.GrooAcceptanceStep.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +37,10 @@ public class GrooSavingRepositoryTest {
 	private static Long expectedAccusationCount;
 	private static Long expectedProofSum;
 	private static Long expectProofCount;
+
+	private static int START_DAY;
+	private static int END_DAY;
+
 
 	@Test
 	@DisplayName("그루 적립 내역을 저장한다.")
@@ -136,6 +146,37 @@ public class GrooSavingRepositoryTest {
 		assertThat(sumAndAmountByMonth.getAccusationCount()).isEqualTo(expectedAccusationCount);
 	}
 
+	@Test
+	@DisplayName("특정 월의 그린 적립 양과 횟수를 조회할 수 있다.")
+	@Transactional
+	void getProofCountByWeek() {
+		// given
+		LocalDate today = LocalDate.now();
+		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+		START_DAY = startDate.getDayOfMonth();
+		END_DAY = endDate.getDayOfMonth();
+
+		List<GrooSaving> grooSavings = new ArrayList<>();
+		for (int i=0; i<10; i++){
+			GrooSaving grooSaving = ofProof();
+			grooSavings.add(grooSaving);
+		}
+
+		// when
+		grooSavingRepository.saveAll(grooSavings);
+
+		// then
+		var dailyProofCountList = grooSavingRepository.getDailyProofCount(1L, startDate, endDate);
+
+		Map<LocalDate, Long> expectedDailyProofCount = getExpectedDailyProofCount(grooSavings);
+		assertThat(dailyProofCountList.size()).isEqualTo(expectedDailyProofCount.size());
+		for (var dailyProofCount:dailyProofCountList) {
+			LocalDate key = dailyProofCount.getDate().toLocalDate();
+			assertThat(dailyProofCount.getProofCount()).isEqualTo(expectedDailyProofCount.get(key));
+		}
+	}
+
 	public GrooSaving of(SavingType savingType, ActivityType activityType) {
 		int randomNum = new Random().nextInt(50);
 		long memberId = new Random().nextLong(2L);
@@ -158,5 +199,44 @@ public class GrooSavingRepositoryTest {
 			.proofAccusationId(2L)
 			.remainGroo(100L)
 			.build();
+	}
+
+	public GrooSaving ofProof() {
+		LocalDateTime today = LocalDateTime.now();
+		LocalDateTime startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		int randomNum = new Random().nextInt(5);
+		return GrooSaving.builder()
+			.memberId(1L)
+			.savingType(SavingType.PROOF)
+			.activityType(ActivityType.ECO_FRIENDLY_PRODUCTS)
+			.amount(ActivityType.ECO_FRIENDLY_PRODUCTS.getSavingAmount())
+			.savedAt(startDate.plusDays(randomNum))
+			.proofAccusationId(2L)
+			.remainGroo(100L)
+			.build();
+	}
+
+	public Map<LocalDate, Long> getExpectedDailyProofCount(List<GrooSaving> grooSavings) {
+		Map<LocalDate, Long> dailyProofCount = new HashMap<>();
+		for (GrooSaving grooSaving:grooSavings) {
+			if (isDateInRange(grooSaving.getSavedAt().toLocalDate())){
+				LocalDate localDate = grooSaving.getSavedAt().toLocalDate();
+				dailyProofCount.put(localDate, dailyProofCount.getOrDefault(localDate, 0L) + 1L);
+			}
+		}
+		return dailyProofCount;
+	}
+
+	private boolean isDateInRange(LocalDate localDateTime){
+		if (localDateTime.getYear() != YEAR){
+			return false;
+		}
+		if (localDateTime.getMonthValue() != MONTH) {
+			return false;
+		}
+		if (localDateTime.getDayOfMonth() < START_DAY || localDateTime.getDayOfMonth() > END_DAY){
+			return false;
+		}
+		return true;
 	}
 }
