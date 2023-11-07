@@ -44,14 +44,14 @@ public class GrooAcceptanceTest {
 	@DisplayName("특정 월의 그린 적립 내역을 조회할 수 있다.")
 	void getDailySavingAmountsByMonth() throws JsonProcessingException {
 		// given
-		그루_적립내역이_생성되어있음();
+		var 한달간_활동별_그루_적립_양_횟수 = 그루_적립내역이_생성되어있음();
 
 		// when
 		var response = 월별_그린_적립내역_조회_요청(ACCESS_TOKEN, YEAR, MONTH);
 
 		// then
 		월별_그린_적립내역_응답됨(response);
-		월별_그린_적립내역_조회됨(response);
+		월별_그린_적립내역_조회됨(response, 한달간_활동별_그루_적립_양_횟수);
 	}
 
 	@Test

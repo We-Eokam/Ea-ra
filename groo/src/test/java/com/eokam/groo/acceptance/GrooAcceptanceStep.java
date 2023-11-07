@@ -4,7 +4,9 @@ import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
@@ -32,21 +34,17 @@ public class GrooAcceptanceStep {
 	public static final Integer MONTH = 11;
 	private static final int FIRST_DAY_OF_WEEK = 5;
 	private static final int END_DAY_OF_WEEK = 11;
-	private static Long expectedAccusationSum;
-	private static Long expectedAccusationCount;
-	private static Long expectedProofSum;
-	private static Long expectProofCount;
 
-	public static void 월별_그린_적립내역_조회됨(ExtractableResponse<Response> response) {
+	public static void 월별_그린_적립내역_조회됨(ExtractableResponse<Response> response, Map<String, Long> map) {
 		long 이번달_얻은_그루_합 = response.jsonPath().getLong("proof_sum");
 		long 이번달_인증_활동_횟수 = response.jsonPath().getLong("proof_count");
 		long 이번달_받은_제보_그루_합 = response.jsonPath().getLong("accusation_sum");
 		long 이번달_받은_제보_횟수 = response.jsonPath().getLong("accusation_count");
 
-		assertThat(이번달_얻은_그루_합).isEqualTo(expectedProofSum);
-		assertThat(이번달_인증_활동_횟수).isEqualTo(expectProofCount);
-		assertThat(이번달_받은_제보_그루_합).isEqualTo(expectedAccusationSum);
-		assertThat(이번달_받은_제보_횟수).isEqualTo(expectedAccusationCount);
+		assertThat(이번달_얻은_그루_합).isEqualTo(map.get("expectedProofSum"));
+		assertThat(이번달_인증_활동_횟수).isEqualTo(map.get("expectedProofCount"));
+		assertThat(이번달_받은_제보_그루_합).isEqualTo(map.get("expectedAccusationSum"));
+		assertThat(이번달_받은_제보_횟수).isEqualTo(map.get("expectedAccusationCount"));
 	}
 
 	public static void 월별_그린_적립내역_응답됨(ExtractableResponse<Response> response) {
@@ -63,17 +61,20 @@ public class GrooAcceptanceStep {
 			.extract();
 	}
 
-	public static void 그루_적립내역이_생성되어있음() throws JsonProcessingException {
-		횟수_적립양_초기화();
-		랜덤_날짜_인증_활동_20개_생성(인증, 텀블러_사용);
-		랜덤_날짜_인증_활동_20개_생성(제보, 일회용컵_사용);
+	public static Map<String, Long> 그루_적립내역이_생성되어있음() throws JsonProcessingException {
+		Map<String, Long> sumAndCount = 횟수_적립양_초기화();
+		랜덤_날짜_인증_활동_20개_생성(인증, 텀블러_사용, sumAndCount);
+		랜덤_날짜_인증_활동_20개_생성(제보, 일회용컵_사용, sumAndCount);
+		return sumAndCount;
 	}
 
-	private static void 횟수_적립양_초기화() {
-		expectedAccusationSum = 0L;
-		expectedAccusationCount = 0L;
-		expectedProofSum = 0L;
-		expectProofCount = 0L;
+	private static Map<String, Long> 횟수_적립양_초기화() {
+		Map<String, Long> map = new HashMap<>();
+		map.put("expectedAccusationSum", 0L);
+		map.put("expectedAccusationCount", 0L);
+		map.put("expectedProofSum", 0L);
+		map.put("expectProofCount", 0L);
+		return map;
 	}
 
 	public static void 그루_적립내역_생성됨(ExtractableResponse<Response> response) {
@@ -105,22 +106,23 @@ public class GrooAcceptanceStep {
 			.extract();
 	}
 
-	private static void 랜덤_날짜_인증_활동_20개_생성(SavingType savingType, ActivityType activityType) throws JsonProcessingException {
+	private static Map<String, Long> 랜덤_날짜_인증_활동_20개_생성(SavingType savingType, ActivityType activityType, Map<String, Long> sumAndCount) throws JsonProcessingException {
 		for (int i=0; i<20; i++){
 			int randomNum = new Random().nextInt(50);
-			var 적립시간 = LocalDateTime.now().plusDays(randomNum);
+			var 적립시간 = LocalDateTime.of(2023,11,1,1,0).plusDays(randomNum);
 			String request = 그루_적립_요청(savingType, activityType, (long) i+10, 적립시간);
 			var response = 그루_적립_요청함(ACCESS_TOKEN, request);
-			if (response.statusCode()==HttpStatus.CREATED.value() && 적립시간.getMonth().getValue() == MONTH){
+			if (response.statusCode()==HttpStatus.CREATED.value() && 적립시간.getYear() == YEAR && 적립시간.getMonth().getValue() == MONTH){
 				if (SavingType.PROOF.equals(savingType)) {
-					expectedProofSum += activityType.getSavingAmount();
-					expectProofCount++;
+					sumAndCount.put("expectedProofSum", sumAndCount.getOrDefault("expectedProofSum", 0L) + activityType.getSavingAmount());
+					sumAndCount.put("expectedProofCount", sumAndCount.getOrDefault("expectedProofCount", 0L) + 1L);
 				} else {
-					expectedAccusationSum += activityType.getSavingAmount();
-					expectedAccusationCount++;
+					sumAndCount.put("expectedAccusationSum", sumAndCount.getOrDefault("expectedAccusationSum", 0L) + activityType.getSavingAmount());
+					sumAndCount.put("expectedAccusationCount", sumAndCount.getOrDefault("expectedAccusationCount", 0L) + 1L);
 				}
 			}
 		}
+		return sumAndCount;
 	}
 
 	public static Long 일주일간_인증_적립내역이_생성되어있음() throws JsonProcessingException {
