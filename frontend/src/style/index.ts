@@ -55,4 +55,5 @@ export const ButtonFrame = styled.div<FrameProps>`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 `;
