@@ -3,7 +3,6 @@ package com.eokam.groo.acceptance;
 import static com.eokam.groo.acceptance.GrooAcceptanceStep.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +15,6 @@ import com.eokam.groo.utils.DatabaseCleanupExtension;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 
 @ExtendWith(DatabaseCleanupExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

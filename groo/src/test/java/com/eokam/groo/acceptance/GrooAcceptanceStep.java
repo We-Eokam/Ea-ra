@@ -4,8 +4,6 @@ import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.HashMap;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
@@ -94,7 +92,7 @@ public class GrooAcceptanceStep {
 		return objectMapper.writeValueAsString(grooSavingRequest);
 	}
 
-	public static ExtractableResponse<Response> 그루_적립_요청함(String accessToken, String request) throws JsonProcessingException {
+	public static ExtractableResponse<Response> 그루_적립_요청함(String accessToken, String request) {
 		return given().log().all()
 			.cookie("access-token", accessToken)
 			.contentType(ContentType.JSON)
