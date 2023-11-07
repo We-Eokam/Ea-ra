@@ -43,7 +43,7 @@ public class CpointAcceptanceTest {
 	}
 
 	private void 탄소중립실천포인트_연계기업_상세_조회_검증(final ExtractableResponse<Response> 응답, final Long 기업PK) {
-		assertThat(응답.jsonPath().getInt("companyId")).isEqualTo(기업PK);
+		assertThat(응답.jsonPath().getLong("companyId")).isEqualTo(기업PK);
 	}
 
 	private void 탄소중립실천포인트_활동요약_조회_검증(final ExtractableResponse<Response> 응답, Integer 카테고리수) {
