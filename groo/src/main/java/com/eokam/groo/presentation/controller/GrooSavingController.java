@@ -15,6 +15,7 @@ import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.application.service.GrooSavingService;
 import com.eokam.groo.infrastructure.jwt.TokenManager;
+import com.eokam.groo.presentation.dto.GrooSavingMonthResponse;
 import com.eokam.groo.presentation.dto.GrooSavingRequest;
 import com.eokam.groo.presentation.dto.GrooSavingResponse;
 
@@ -37,9 +38,9 @@ public class GrooSavingController {
 	}
 
 	@GetMapping
-	ResponseEntity<?> getDailySavingAmountByMonth(@CookieValue(value = "access-token") String jwt, @RequestParam Integer year, @RequestParam Integer month) {
+	ResponseEntity<GrooSavingMonthResponse> getDailySavingAmountByMonth(@CookieValue(value = "access-token") String jwt, @RequestParam Integer year, @RequestParam Integer month) {
 		Long memberId = tokenManager.getMemberId(jwt);
-		GrooMonthDto dailySavingAmountByMonth = grooSavingService.getDailySavingAmountByMonth(memberId, year, month);
-		return ResponseEntity.ok().body(dailySavingAmountByMonth);
+		GrooMonthDto grooMonthDto = grooSavingService.getDailySavingAmountByMonth(memberId, year, month);
+		return ResponseEntity.ok().body(GrooSavingMonthResponse.from(grooMonthDto));
 	}
 }
