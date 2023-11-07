@@ -9,9 +9,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.eokam.cpoint.domain.Company;
+import com.eokam.cpoint.domain.CompanyConnect;
 import com.eokam.cpoint.domain.CompanyPolicy;
 import com.eokam.cpoint.domain.Cpoint;
 import com.eokam.cpoint.domain.Store;
+import com.eokam.cpoint.infra.CompanyConnectRepository;
 import com.eokam.cpoint.infra.CompanyPolicyRepository;
 import com.eokam.cpoint.infra.CompanyRepository;
 import com.eokam.cpoint.infra.CpointRepository;
@@ -40,6 +42,9 @@ public abstract class CommonRepositoryTest {
 
 	@Autowired
 	protected StoreRepository storeRepository;
+
+	@Autowired
+	protected CompanyConnectRepository companyConnectRepository;
 
 	protected Long 단일회사_생성(final Company company) {
 		return companyRepository.save(company).getId();
@@ -75,5 +80,14 @@ public abstract class CommonRepositoryTest {
 	protected void 여러매장_생성(final Store... stores) {
 		var storesToSave = List.of(stores);
 		storeRepository.saveAll(storesToSave);
+	}
+
+	protected Long 단일연동_생성(final CompanyConnect companyConnect) {
+		return companyConnectRepository.save(companyConnect).getId();
+	}
+
+	protected void 여러연동_생성(final CompanyConnect... companyConnects) {
+		var companyConntectsToSave = List.of(companyConnects);
+		companyConnectRepository.saveAll(companyConntectsToSave);
 	}
 }
