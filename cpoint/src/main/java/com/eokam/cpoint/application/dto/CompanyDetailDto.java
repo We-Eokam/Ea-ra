@@ -1,7 +1,6 @@
 package com.eokam.cpoint.application.dto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.eokam.cpoint.domain.Company;
 import com.eokam.cpoint.domain.CompanyPolicy;
@@ -25,7 +24,7 @@ public class CompanyDetailDto {
 			.builder()
 			.companyId(company.getId())
 			.companyName(company.getName())
-			.companyPolicies(companyPolicies.stream().map(CompanyPolicyDto::from).collect(Collectors.toList()))
+			.companyPolicies(companyPolicies.stream().map(CompanyPolicyDto::from).toList())
 			.isConnect(isConnect)
 			.build();
 	}
@@ -35,7 +34,7 @@ public class CompanyDetailDto {
 			.builder()
 			.companyId(companyDto.getCompanyId())
 			.companyName(companyDto.getCompanyName())
-			.companyPolicies(companyPolicies.stream().map(CompanyPolicyDto::from).collect(Collectors.toList()))
+			.companyPolicies(companyPolicies.stream().map(CompanyPolicyDto::from).toList())
 			.isConnect(companyDto.getIsConnect())
 			.build();
 	}
