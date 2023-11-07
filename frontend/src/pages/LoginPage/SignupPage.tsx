@@ -70,8 +70,15 @@ export default function SignupPage() {
           <NicknameFrame>
             <InfoName>닉네임</InfoName>
             <NicknameCheck>
-              <NicknameInput type="text" maxLength={8} value={nickname} onChange={handleNicknameChange} />
-              <CheckButton isNicknameValid={nickname.length >= 2}>중복확인</CheckButton>
+              <NicknameInput
+                type="text"
+                maxLength={8}
+                value={nickname}
+                onChange={handleNicknameChange}
+              />
+              <CheckButton isNicknameValid={nickname.length >= 2}>
+                중복확인
+              </CheckButton>
             </NicknameCheck>
           </NicknameFrame>
         </ProfileNickname>
@@ -122,9 +129,7 @@ export default function SignupPage() {
           그린
         </InitialGreen>
         <InfoName>추천인</InfoName>
-        <InitialGreen>
-          QKF4FDL
-        </InitialGreen>
+        <InitialGreen>QKF4FDL</InitialGreen>
         <SignupFrame>
           <SignupButton>가입하기</SignupButton>
           <Terms>
@@ -192,6 +197,7 @@ const ProfileImage = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 100px;
+  object-fit: cover;
   /* border: 1px solid var(--nav-gray); */
 `;
 
@@ -222,24 +228,24 @@ const InfoName = styled.div`
 
 const NicknameCheck = styled.div`
   position: relative;
-  height: 32px;
-  margin-top: 5px;
+  height: 24px;
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-`
+`;
 
 const NicknameInput = styled.input`
   position: relative;
-  width: calc(100% - 62px);
-  position: relative;
-  margin-top: 6px;
+  width: calc(100% - 68px);
   height: 100%;
   border: none;
   background-color: var(--white);
   border-bottom: 1.5px solid var(--nav-gray);
   font-size: 17px;
   font-weight: 400;
+  border-radius: 0px !important;
+  padding-left: 0px;
   &:focus {
     border-bottom: 1.5px solid var(--primary);
     outline: none;
@@ -257,11 +263,13 @@ const NicknameInput = styled.input`
 const CheckButton = styled.div<{ isNicknameValid: boolean }>`
   margin-bottom: 4px;
   color: var(--dark-gray);
-  color: ${({ isNicknameValid }) => isNicknameValid ? "var(--primary)" : "var(--dark-gray)"};
-  transition: color 0.3 ease-in-out ;
+  color: ${({ isNicknameValid }) =>
+    isNicknameValid ? "var(--primary)" : "var(--dark-gray)"};
+  transition: color 0.3s ease-in-out;
   font-size: 14.5px;
   font-weight: 500;
-`
+  white-space: nowrap;
+`;
 
 const GenderButtonFrame = styled.div`
   position: relative;
@@ -314,6 +322,11 @@ const DropdownAreas = styled.div<DropdownProps>`
   border-radius: 0px 0px 10px 10px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
   overflow-y: scroll;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    display: block;
+  }
 `;
 
 const OneArea = styled.div`
