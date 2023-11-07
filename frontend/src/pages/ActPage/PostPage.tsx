@@ -146,6 +146,11 @@ const CropImg = styled.img`
   object-fit: cover;
 `;
 
+const ImgIcon = styled.img`
+  width: 36%;
+  padding: 32%;
+`;
+
 const InfoFrame = styled.div`
   width: 100%;
   margin: 32px 0;
