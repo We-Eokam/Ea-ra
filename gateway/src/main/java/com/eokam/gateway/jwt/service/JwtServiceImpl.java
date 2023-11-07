@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtServiceImpl implements JwtService {
 	public static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
-	@Value("${JWT_KEY}")
+	@Value("${jwt.key}")
 	private String key;
 
 	private SecretKey generateKey() {

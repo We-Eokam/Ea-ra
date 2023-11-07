@@ -1,12 +1,12 @@
 server:
-  port: 8000
+  port: 4000
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
 
 spring:
   application:
@@ -22,3 +22,6 @@ spring:
             - Path=/proof/**
           filters:
             - CustomAuthFilter
+
+jwt:
+  key: ${JWT_KEY}
