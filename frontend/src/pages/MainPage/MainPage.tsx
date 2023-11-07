@@ -52,14 +52,43 @@ export default function MainPage() {
   var progress = 100;
   var greenInit = 2400000;
 
-  const weekActCount = [4, 2, 0, 6, 8, 4, 0];
+  const groo_saving_list = [
+    {
+        "date": "2023-11-5",
+        "proof_count": 1
+    },
+    {
+        "date": "2023-11-6",
+        "proof_count": 0
+    },
+    {
+        "date": "2023-11-7",
+        "proof_count": 2
+    },
+    {
+        "date": "2023-11-8",
+        "proof_count": 0
+    },
+    {
+        "date": "2023-11-9",
+        "proof_count": 4
+    },
+    {
+        "date": "2023-11-10",
+        "proof_count": 1
+    },
+    {
+        "date": "2023-11-11",
+        "proof_count": 2
+    }
+]
 
   const getCountColor = (count: number): string => {
     if (count === 0) {
       return "var(--white)";
-    } else if (count <= 2) {
+    } else if (count <= 1) {
       return "var(--third)";
-    } else if (count <= 4) {
+    } else if (count <= 2) {
       return "var(--secondary)";
     } else {
       return "var(--primary)";
@@ -96,7 +125,7 @@ export default function MainPage() {
             {onlyDay.map((day, index) => (
               <OneDay>
                 <DayNumber>{day}</DayNumber>
-                <DayProgress count={getCountColor(weekActCount[index])} />
+                <DayProgress count={getCountColor(groo_saving_list[index].proof_count)} />
               </OneDay>
             ))}
           </WeekdayFrame>
@@ -121,7 +150,7 @@ export default function MainPage() {
 const NotificationIcon = styled(Notification)`
   position: absolute;
   right: 5.56%;
-  top: calc(env(safe-area-inset-top) + 24px);
+  top: max(env(safe-area-inset-top), 24px);
   filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.12));
 `;
 
