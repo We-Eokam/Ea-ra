@@ -9,12 +9,12 @@ import com.eokam.cpoint.presentation.dto.MemberDto;
 
 public interface CompanyService {
 
-	public List<CompanyDto> retrieveCompanyList(MemberDto memberDto, ActivityType activityType);
+	List<CompanyDto> retrieveCompanyList(MemberDto memberDto, ActivityType activityType);
 
-	public CompanyDetailDto retrieveCompanyDetail(MemberDto memberDto, Long companyId);
+	CompanyDetailDto retrieveCompanyDetail(MemberDto memberDto, Long companyId);
 
-	public CompanyDto connectCompany(MemberDto memberDto, Long companyId);
+	CompanyDto connectCompany(MemberDto memberDto, Long companyId);
 
-	public CompanyDto disconnectCompany(MemberDto memberDto, Long companyId);
+	CompanyDto disconnectCompany(MemberDto memberDto, Long companyId);
 
 }
