@@ -26,4 +26,7 @@ public class CpointCreateRequest {
 	@NotNull(message = "탄소중립실천포인트 관련 활동이 필요합니다.")
 	private ActivityType activityType;
 
+	@NotNull(message = "회사 PK가 필요합니다.")
+	private Long companyId;
+
 }
