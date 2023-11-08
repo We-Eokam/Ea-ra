@@ -2,6 +2,7 @@ package com.eokam.cpoint.application.dto;
 
 import com.eokam.cpoint.domain.ActivityType;
 import com.eokam.cpoint.domain.Cpoint;
+import com.eokam.cpoint.presentation.dto.CpointCreateRequest;
 import com.eokam.cpoint.presentation.dto.MemberDto;
 
 import lombok.Builder;
@@ -26,6 +27,16 @@ public class CpointDto {
 			.activityType(cpoint.getActivityType())
 			.companyId(cpoint.getCompany().getId())
 			.point(cpoint.getPoint())
+			.build();
+	}
+
+	public static CpointDto of(CpointCreateRequest cpointCreateRequest, MemberDto memberDto) {
+		return CpointDto
+			.builder()
+			.member(memberDto)
+			.point(cpointCreateRequest.getAmount())
+			.activityType(cpointCreateRequest.getActivityType())
+			.companyId(cpointCreateRequest.getCompanyId())
 			.build();
 	}
 
