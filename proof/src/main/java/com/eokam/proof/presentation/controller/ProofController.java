@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -42,7 +43,7 @@ public class ProofController {
 		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
 		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
 		ProofListResponse response = ProofListResponse.from(
-			proofService.getMyProofList(accessToken, PageRequest.of(page, size))
+			proofService.getMyProofList(accessToken, PageRequest.of(page, size, Sort.by("createdAt").descending()))
 				.map(ProofResponse::from)
 				.toList());
 
@@ -82,7 +83,8 @@ public class ProofController {
 		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
 		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
 		ProofListResponse response = ProofListResponse.from(
-			proofService.getProofList(accessToken, memberId, PageRequest.of(page, size))
+			proofService.getProofList(accessToken, memberId,
+					PageRequest.of(page, size, Sort.by("createdAt").descending()))
 				.map(ProofResponse::from)
 				.toList());
 
@@ -99,7 +101,7 @@ public class ProofController {
 		@RequestParam @Min(value = 0, message = "page 값은 0 이상이어야 합니다.") final Integer page,
 		@RequestParam @Min(value = 1, message = "size 값은 1 이상이어야 합니다.") final Integer size) {
 		ProofListResponse response = ProofListResponse.from(
-			proofService.getFeed(accessToken, PageRequest.of(page, size))
+			proofService.getFeed(accessToken, PageRequest.of(page, size, Sort.by("createdAt").descending()))
 				.map(ProofResponse::from)
 				.toList());
 
