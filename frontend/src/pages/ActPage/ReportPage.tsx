@@ -1,14 +1,21 @@
 // import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalBackground } from "../../components/Modal/ModalBackground";
 import DetailInput from "../../components/Input/DetailInput";
+
+import { ReactComponent as AddSvg } from "../../assets/icons/add-icon.svg";
+import { ReactComponent as RemoveSvg } from "../../assets/icons/close-icon.svg";
+import SearchBar from "../../components/SearchBar/SearchBar";
 import AnimationModal from "../../components/Modal/AnimationModal";
+
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
+import reportTypes from "../../common/report.json"
 
 interface ReportTypeProps {
   type: string;
@@ -17,47 +24,18 @@ interface ReportTypeProps {
   imgUrl: string;
 }
 
-const reportTypes = [
-  {
-    type: "PLASTIC",
-    content: "일회용품 사용",
-    example: "카페 일회용컵, 비닐봉지, 배달 용기 등 불필요한 일회용품 사용",
-    imgUrl: "/images/template1.png",
-  },
-  {
-    type: "PAPER",
-    content: "종이 낭비",
-    example: "종이 영수증을 받거나 휴지를 과도하게 사용하는 등 종이를 낭비",
-    imgUrl: "/images/template2.png",
-  },
-  {
-    type: "ELECTRICITY",
-    content: "전기 낭비",
-    example:
-      "플러그 안뽑기, 빈 방에 불 켜놓기, 반팔입고 히터 사용 등 과도한 전기 사용",
-    imgUrl: "/images/template3.png",
-  },
-  {
-    type: "WATER",
-    content: "물 낭비",
-    example:
-      "양치 컵 미사용, 물 틀어놓고 설거지, 세탁 나눠서 하기 등 물 절약 비실천",
-    imgUrl: "/images/template4.png",
-  },
-  {
-    type: "FOOD",
-    content: "식재료 낭비",
-    example:
-      "먹을만큼 음식을 구매하지 않는 행위 등으로 많은 음식물 쓰레기를 배출",
-    imgUrl: "/images/template5.png",
-  },
-  {
-    type: "OTHER",
-    content: "기타",
-    example: "이외 분리수거를 안하거나, 물티슈 사용 등 환경 오염 활동",
-    imgUrl: "/images/template6.png",
-  },
-];
+// 일단 임시로 해놓음 api 완성되면 수정 필
+interface FriendDataProps {
+  userId: number;
+  profileImg: string;
+  nickname: string;
+}
+
+const friendExaple = {
+  "userId": 1,
+  "profileImg": "/icons/icon-48x48.png",
+  "nickname": "임시 닉네임",
+}
 
 export default function ReportPage() {
   const [activityType, setActivityType] = useState<ReportTypeProps>(
@@ -67,9 +45,30 @@ export default function ReportPage() {
   const [imgSelectorOpen, setImgSelectorOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // @ts-ignore
-  const [friend, setFriend] = useState("");
+  const [friendId, setFriendId] = useState<number | null>(null);
+  const [friendInfo, setFriendInfo] = useState<FriendDataProps | null>(null);
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const targetFromURL = Number(params.get("target"));
+
+    if (targetFromURL) {
+      setFriendId(targetFromURL);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    setFriendModalOpen(false);
+    console.log("넘어온 친구 아이디", friendId);
+    if (friendId) {
+      // api 보내서 friendInfo 바꿈 지금은 임시
+      setFriendInfo(friendExaple);
+    } else {
+      setFriendInfo(null);
+    }
+  }, [friendId])
 
   const handleImgSelector = () => {
     setImgSelectorOpen((prev) => !prev);
@@ -126,10 +125,20 @@ export default function ReportPage() {
           </TempletesFrame>
         </InfoFrame>
         <InfoFrame>
-          <InfoName onClick={() => setFriendModalOpen(true)}>
+          <InfoName>
             제보할 친구
           </InfoName>
-          누르면 모달로 제보할 친구 목록 보여줌
+          {friendInfo ? (
+            <InfoName style={{ marginBottom: "0"}}>
+              <ProfileImg><img src={friendInfo.profileImg}/></ProfileImg>
+              {friendInfo.nickname}
+              <RemoveSvg onClick={() => setFriendId(null)}/>
+            </InfoName>
+            ) : (
+            <ProfileImg onClick={() => setFriendModalOpen(true)}>
+              <AddBtn />
+            </ProfileImg>
+          )}
         </InfoFrame>
         <InfoFrame>
           <InfoName>증거 사진 제출</InfoName>
@@ -137,7 +146,7 @@ export default function ReportPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <ImgIcon src="/public/images/upload-image.png" />
+              <ImgIcon src="/images/upload-image.png" />
             )}
           </ImageCropper>
         </InfoFrame>
@@ -156,9 +165,10 @@ export default function ReportPage() {
       <AnimationModal
         isOpen={friendModalOpen}
         closeModal={handleFriendModalClose}
-        closeBtn={true}
       >
-        친구 목록
+        <FriendListFrame>
+          <SearchBar setUserId={setFriendId} type="follow"/>
+        </FriendListFrame>
       </AnimationModal>
     </>
   );
@@ -171,12 +181,12 @@ const InfoFrame = styled.div<{ padding?: string }>`
 
 const InfoName = styled.div`
   position: relative;
-  width: 100%;
   font-size: 14px;
   color: var(--dark-gray);
   margin-bottom: 12px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 `;
 
 const SelectTempleteBox = styled.div`
@@ -213,7 +223,7 @@ const Text = styled.div`
 
   &.gray {
     color: var(--dark-gray);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 400;
     margin: 6px 4px 0 0;
   }
@@ -241,6 +251,32 @@ const TempletesFrame = styled.div<{ isShow: boolean }>`
   margin-bottom: 4px;
 `;
 
+const ProfileImg = styled.div`
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--nav-gray);
+  /* background-color: var(--gray); */
+
+  img {
+    width: 100%;
+    border-radius: 50%;
+  }
+`;
+
+const AddBtn = styled(AddSvg)`
+  position: absolute;
+  left: 24px;
+  top: 24px;
+
+  path {
+    fill: var(--white);
+    stroke: var(--blue);
+    stroke-width: 1.5;
+  }
+`;
+
 const CropImg = styled.img`
   width: 100%;
   height: 100%;
@@ -254,4 +290,8 @@ const ImgIcon = styled.img`
 
 const Margin = styled.div`
   margin: 88px;
+`;
+
+const FriendListFrame = styled.div`
+  height: 560px;
 `;

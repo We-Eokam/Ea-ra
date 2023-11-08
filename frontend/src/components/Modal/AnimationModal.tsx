@@ -5,7 +5,7 @@ import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 
 interface AnimationModalProps {
   isOpen: boolean;
-  closeModal: () => void;
+  closeModal?: () => void;
   closeBtn?: boolean;
   children: React.ReactNode;
 }
@@ -105,7 +105,7 @@ const ModalContainer = styled.div<ModalProps>`
   background-color: var(--white);
   border-radius: 25px 25px 0px 0px;
   box-shadow: 0px -2px 16px rgba(0, 0, 0, 0.12);
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   overflow-x: hidden;
   z-index: 4;
   width: 88.88%;

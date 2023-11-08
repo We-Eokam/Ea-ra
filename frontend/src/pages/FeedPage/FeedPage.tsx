@@ -1,5 +1,5 @@
 // import React from 'react'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -39,6 +39,14 @@ export default function FeedPage() {
 
   const [isLiked, setIsLiked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // userId 바뀌면 해당 유저의 프로필 페이지로
+  useEffect(() => {
+    if (userId) {
+      // navigate 써서 페이지 보내기
+    }
+  }, [userId]);
 
   const toggleLeaf = () => {
     setIsLiked(!isLiked);
@@ -55,7 +63,7 @@ export default function FeedPage() {
   return (
     <>
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
-      <SearchBar />
+      <SearchBar setUserId={setUserId} type="all"/>
       <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
         <Margin />
         {PostExample.map((post, index) => (
@@ -169,5 +177,5 @@ const ReactionText = styled.div`
 `;
 
 const BottomMargin = styled.div`
-  height: 52px;
+  height: 16px;
 `;

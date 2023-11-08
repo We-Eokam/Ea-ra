@@ -58,6 +58,8 @@ const Input = styled.input`
   outline: none;
   border: none;
   border-bottom: 1px solid var(--nav-gray);
+  border-radius: 0px;
+  background-color: var(--white);
   padding: 4px;
 
   &::placeholder {

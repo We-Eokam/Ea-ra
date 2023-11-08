@@ -2,25 +2,36 @@ import styled from "styled-components";
 import { useState, useEffect } from 'react';
 
 interface FollowBtnProps {
-  isFollow?: boolean;
+  status: string;
 }
 
-const FollowBtn = ({ isFollow }: FollowBtnProps) => {
-  const [followed, setFollowed] = useState(isFollow);
+const FollowBtn = ({ status }: FollowBtnProps) => {
+  const [followed, setFollowed] = useState(false);
+  const [content, setContent] = useState("");
  
   useEffect(() => {
-    setFollowed(isFollow);
-  }, [isFollow]);
+    if (status === "follow") {
+      setContent("친구 끊기");
+      setFollowed(true);
+    } else if (status === "request") {
+      setContent("요청됨");
+      setFollowed(true);
+    } else if (status === "accept") {
+      setContent("수락하기");
+    } else if (status === "nothing") {
+      setContent("친구 맺기");
+    }
+  }, [status]);
 
   const handleFollowClick = async () => {
     // axios 요청 성공 후 버튼 바뀌도록
-    setFollowed(!followed)
+    // setFollowed(!followed)
   };
 
   return (
     <>
       <Button followed={followed} onClick={handleFollowClick}>
-        {followed ? "친구 끊기" : "친구 맺기"}
+        {content}
       </Button>
     </>
   );

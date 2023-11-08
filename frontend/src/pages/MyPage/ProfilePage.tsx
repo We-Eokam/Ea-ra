@@ -28,7 +28,7 @@ export default function ProfilePage() {
     gru: 25000,
     progress: 100,
     greenInit: 2400000,
-    isFollow: true,
+    // status: true,
   };
 
   const PostExample = [
@@ -54,7 +54,7 @@ export default function ProfilePage() {
               {user.nickname}
               <SubText>{user.gru}그루</SubText>
             </TextBox>
-            <FollowBtn isFollow={user.isFollow} />
+            <FollowBtn status="follow" />
           </UserInfoContainer>
           <ProgressBar progress={user.progress} greeninit={user.greenInit} />
         </UserFrame>
