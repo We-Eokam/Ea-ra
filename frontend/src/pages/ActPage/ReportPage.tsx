@@ -1,14 +1,17 @@
 // import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalBackground } from "../../components/Modal/ModalBackground";
 import DetailInput from "../../components/Input/DetailInput";
+import SearchBar from "../../components/SearchBar/SearchBar";
 import AnimationModal from "../../components/Modal/AnimationModal";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
+import reportTypes from "../../common/report.json"
 
 interface ReportTypeProps {
   type: string;
@@ -16,48 +19,6 @@ interface ReportTypeProps {
   example: string;
   imgUrl: string;
 }
-
-const reportTypes = [
-  {
-    type: "PLASTIC",
-    content: "일회용품 사용",
-    example: "카페 일회용컵, 비닐봉지, 배달 용기 등 불필요한 일회용품 사용",
-    imgUrl: "/images/template1.png",
-  },
-  {
-    type: "PAPER",
-    content: "종이 낭비",
-    example: "종이 영수증을 받거나 휴지를 과도하게 사용하는 등 종이를 낭비",
-    imgUrl: "/images/template2.png",
-  },
-  {
-    type: "ELECTRICITY",
-    content: "전기 낭비",
-    example:
-      "플러그 안뽑기, 빈 방에 불 켜놓기, 반팔입고 히터 사용 등 과도한 전기 사용",
-    imgUrl: "/images/template3.png",
-  },
-  {
-    type: "WATER",
-    content: "물 낭비",
-    example:
-      "양치 컵 미사용, 물 틀어놓고 설거지, 세탁 나눠서 하기 등 물 절약 비실천",
-    imgUrl: "/images/template4.png",
-  },
-  {
-    type: "FOOD",
-    content: "식재료 낭비",
-    example:
-      "먹을만큼 음식을 구매하지 않는 행위 등으로 많은 음식물 쓰레기를 배출",
-    imgUrl: "/images/template5.png",
-  },
-  {
-    type: "OTHER",
-    content: "기타",
-    example: "이외 분리수거를 안하거나, 물티슈 사용 등 환경 오염 활동",
-    imgUrl: "/images/template6.png",
-  },
-];
 
 export default function ReportPage() {
   const [activityType, setActivityType] = useState<ReportTypeProps>(
@@ -67,9 +28,22 @@ export default function ReportPage() {
   const [imgSelectorOpen, setImgSelectorOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // @ts-ignore
-  const [friend, setFriend] = useState("");
+  const [friendId, setFriendId] = useState<number | null>(null);
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const targetFromURL = Number(params.get("target"));
+    console.log("url 안넘어오면 뭐라찍히나", targetFromURL)
+    if (targetFromURL) {
+      // url에 친구가 넘어오면 api 요청 보내서 제보할 친구 데이터 바꾸기
+    }
+  }, [location]);
+
+  useEffect(() => {
+    setFriendModalOpen(false);
+  }, [friendId])
 
   const handleImgSelector = () => {
     setImgSelectorOpen((prev) => !prev);
@@ -156,9 +130,10 @@ export default function ReportPage() {
       <AnimationModal
         isOpen={friendModalOpen}
         closeModal={handleFriendModalClose}
-        closeBtn={true}
       >
-        친구 목록
+        <FriendListFrame>
+          <SearchBar setUserId={setFriendId} type="follow"/>
+        </FriendListFrame>
       </AnimationModal>
     </>
   );
@@ -254,4 +229,8 @@ const ImgIcon = styled.img`
 
 const Margin = styled.div`
   margin: 88px;
+`;
+
+const FriendListFrame = styled.div`
+  height: 580px;
 `;
