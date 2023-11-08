@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from 'react';
 
 interface FollowBtnProps {
-  status: string;
+  status?: string;
 }
 
 const FollowBtn = ({ status }: FollowBtnProps) => {
