@@ -3,15 +3,15 @@ package com.eokam.cpoint.presentation.controller;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -19,7 +19,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import com.eokam.cpoint.application.dto.CompanyDetailDto;
 import com.eokam.cpoint.application.dto.CompanyDto;
-import com.eokam.cpoint.application.service.CompanyService;
 import com.eokam.cpoint.domain.ActivityType;
 import com.eokam.cpoint.domain.Company;
 import com.eokam.cpoint.domain.CompanyPolicy;
@@ -33,9 +32,6 @@ import com.eokam.cpoint.presentation.dto.MemberDto;
 import jakarta.servlet.http.Cookie;
 
 public class CompanyControllerTest extends BaseControllerTest {
-
-	@MockBean
-	private CompanyService companyService;
 
 	@Test
 	void 회사목록조회() throws Exception {
@@ -66,7 +62,7 @@ public class CompanyControllerTest extends BaseControllerTest {
 		ResultActions perform =
 			mockMvc.perform(get("/cpoint/company")
 					.cookie(new Cookie("access-token", 멤버Id가10인_JWT쿠키))
-					.param("category", ActivityType.HIGH_QUALITY_RECYCLED_PRODUCTS.name()))
+					.queryParam("category", ActivityType.HIGH_QUALITY_RECYCLED_PRODUCTS.name()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.company_list[*].id", hasItems(1, 2, 3, 4)))
@@ -82,7 +78,11 @@ public class CompanyControllerTest extends BaseControllerTest {
 					fieldWithPath("company_list.[].name").type(JsonFieldType.STRING).description("회사 이름"),
 					fieldWithPath("company_list.[].is_connect").type(JsonFieldType.BOOLEAN).description("연동 여부"),
 					fieldWithPath("company_list.[].policies").ignored()
+				),
+				queryParameters(
+					parameterWithName("category").description("활동 종류 (activity_type)")
 				)
+
 			)
 		);
 	}
@@ -229,7 +229,7 @@ public class CompanyControllerTest extends BaseControllerTest {
 
 		//when & then
 		ResultActions perform =
-			mockMvc.perform(get("/cpoint/company/" + 스타벅스.getId())
+			mockMvc.perform(get("/cpoint/company/{company_id}", 스타벅스.getId())
 					.cookie(new Cookie("access-token", 멤버Id가10인_JWT쿠키)))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -249,6 +249,9 @@ public class CompanyControllerTest extends BaseControllerTest {
 					fieldWithPath("is_connect").type(JsonFieldType.BOOLEAN).description("연동 여부"),
 					fieldWithPath("policies.[].activity_type").type(JsonFieldType.STRING).description("활동 종류"),
 					fieldWithPath("policies.[].target").type(JsonFieldType.STRING).description("대상 범위")
+				),
+				pathParameters(
+					parameterWithName("company_id").description("회사 PK /cpoint/company/{company_id}")
 				)
 			)
 		);
@@ -386,7 +389,7 @@ public class CompanyControllerTest extends BaseControllerTest {
 
 		//when & then
 		ResultActions perform =
-			mockMvc.perform(post("/cpoint/company/" + 스타벅스.getId() + "/connect")
+			mockMvc.perform(post("/cpoint/company/{company_id}/connect", 스타벅스.getId())
 					.cookie(new Cookie("access-token", 멤버Id가10인_JWT쿠키)))
 				.andExpect(status().isCreated())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -401,6 +404,9 @@ public class CompanyControllerTest extends BaseControllerTest {
 					fieldWithPath("name").type(JsonFieldType.STRING).description("회사 이름"),
 					fieldWithPath("is_connect").type(JsonFieldType.BOOLEAN).description("연동 여부"),
 					fieldWithPath("policies").ignored()
+				),
+				pathParameters(
+					parameterWithName("company_id").description("회사 PK  /cpoint/company/{company_id}/connect")
 				)
 			)
 		);
@@ -541,7 +547,7 @@ public class CompanyControllerTest extends BaseControllerTest {
 
 		//when & then
 		ResultActions perform =
-			mockMvc.perform(delete("/cpoint/company/" + 스타벅스.getId() + "/connect")
+			mockMvc.perform(delete("/cpoint/company/{company_id}/connect", 스타벅스.getId())
 					.cookie(new Cookie("access-token", 멤버Id가10인_JWT쿠키)))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -556,6 +562,9 @@ public class CompanyControllerTest extends BaseControllerTest {
 					fieldWithPath("name").type(JsonFieldType.STRING).description("회사 이름"),
 					fieldWithPath("is_connect").type(JsonFieldType.BOOLEAN).description("연동 여부"),
 					fieldWithPath("policies").ignored()
+				),
+				pathParameters(
+					parameterWithName("company_id").description("회사 PK  /cpoint/company/{company_id}/connect")
 				)
 			)
 		);

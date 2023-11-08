@@ -16,4 +16,8 @@ public class CpointSummaryResponse {
 
 	private List<CpointSummaryDto> summaryList;
 
+	public static CpointSummaryResponse from(List<CpointSummaryDto> cpointSummaryDtos) {
+		return CpointSummaryResponse.builder().summaryList(cpointSummaryDtos).build();
+	}
+
 }

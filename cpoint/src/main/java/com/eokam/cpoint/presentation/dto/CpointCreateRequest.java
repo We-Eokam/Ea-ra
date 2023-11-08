@@ -1,6 +1,8 @@
 package com.eokam.cpoint.presentation.dto;
 
 import com.eokam.cpoint.domain.ActivityType;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CpointCreateRequest {
 
 	@NotNull(message = "memberId가 필요합니다.")
