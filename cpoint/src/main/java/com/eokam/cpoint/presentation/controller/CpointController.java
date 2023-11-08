@@ -51,6 +51,6 @@ public class CpointController {
 	public ResponseEntity<CpointSummaryResponse> retrieveCpointSummary(@JwtMember MemberDto memberDto) {
 		List<CpointSummaryDto> summaryList =
 			cpointService.retrieveCpointSummary(memberDto);
-		return ResponseEntity.ok(CpointSummaryResponse.builder().summaryList(summaryList).build());
+		return ResponseEntity.ok(CpointSummaryResponse.from(summaryList));
 	}
 }
