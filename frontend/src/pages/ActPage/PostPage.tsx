@@ -50,10 +50,6 @@ export default function PostPage() {
     setShowOptions(false);
   };
 
-  useEffect(() => {
-    console.log('바뀌나?', showOptions);
-  }, [showOptions])
-
   const handleImageCrop = (image: string) => {
     setCroppedImage(image);
   };
@@ -74,7 +70,7 @@ export default function PostPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <ImgIcon src="/public/images/upload-image.png" />
+              <ImgIcon src="/images/upload-image.png" />
             )}
           </ImageCropper>
         </div>

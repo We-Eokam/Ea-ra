@@ -137,7 +137,7 @@ export default function ReportPage() {
             {croppedImage ? (
               <CropImg src={croppedImage} alt="Cropped" />
             ) : (
-              <ImgIcon src="/public/images/upload-image.png" />
+              <ImgIcon src="/images/upload-image.png" />
             )}
           </ImageCropper>
         </InfoFrame>
