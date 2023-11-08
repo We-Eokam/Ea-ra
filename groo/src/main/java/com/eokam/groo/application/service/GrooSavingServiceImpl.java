@@ -41,6 +41,7 @@ public class GrooSavingServiceImpl implements GrooSavingService{
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<WeeklyProofCountDto> getDailyProofCountByWeek(Long memberId) {
 		LocalDate today = LocalDate.now();
 		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
