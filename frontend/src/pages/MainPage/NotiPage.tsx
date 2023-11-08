@@ -18,7 +18,7 @@ export default function NotiPage() {
       type: 1,
       userNickname: "짱구는못말려",
       profileImg: "src/assets/images/jjanggu.png",
-      isFollow: false,
+      isFollow: "follow",
       accept: false,
       time: "2분 전",
     },
@@ -26,7 +26,7 @@ export default function NotiPage() {
       type: 1,
       userNickname: "나더워",
       profileImg: "src/assets/images/earth.png",
-      isFollow: true,
+      isFollow: "accept",
       accept: false,
       time: "1일 전",
     },
@@ -34,7 +34,7 @@ export default function NotiPage() {
       type: 1,
       userNickname: "지뀨하기",
       profileImg: "src/assets/images/ziggu.png",
-      isFollow: true,
+      isFollow: "follow",
       accept: true,
       time: "1일 전",
     },
@@ -64,7 +64,7 @@ export default function NotiPage() {
               </TextContainer>
             </LeftContainer>
             {notice.type == 1 ? (
-              <FollowBtn isFollow={notice.isFollow} />
+              <FollowBtn status={notice.isFollow} />
             ) : (
               <WitnessImg src={notice.witnessImg} />
             )}
