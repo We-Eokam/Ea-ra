@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
@@ -45,6 +43,7 @@ import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.member.MemberProfile;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
 import com.eokam.proof.infrastructure.external.s3.service.S3Service;
+import com.eokam.proof.util.JwtUtil;
 
 class ProofServiceTest extends BaseServiceTest {
 
@@ -175,7 +174,7 @@ class ProofServiceTest extends BaseServiceTest {
 		given(s3Service.saveList(anyList())).willReturn(s3FileDetailList);
 
 		// when
-		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);
+		ProofDto actualResponse = proofService.createProof(createJwt(1L), proofCreateDto, multipartFiles);
 
 		// then
 		assertThat(actualResponse.proofId()).isEqualTo(EXPECTED_PROOF_ID);
@@ -233,7 +232,7 @@ class ProofServiceTest extends BaseServiceTest {
 		given(s3Service.saveList(anyList())).willReturn(s3FileDetailList);
 
 		// when
-		ProofDto actualResponse = proofService.createProof(proofCreateDto, multipartFiles);
+		ProofDto actualResponse = proofService.createProof(createJwt(1L), proofCreateDto, multipartFiles);
 
 		// then
 		assertThat(actualResponse.proofId()).isEqualTo(EXPECTED_PROOF_ID);
@@ -342,9 +341,7 @@ class ProofServiceTest extends BaseServiceTest {
 	}
 
 	private String createJwt(Long memberId) {
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
-		return "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		return JwtUtil.createAccessToken(memberId);
 	}
 
 	private void generateProof(Long i) {

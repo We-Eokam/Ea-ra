@@ -49,7 +49,7 @@ public class ProofServiceImpl implements ProofService {
 	@Override
 	public Page<ProofDto> getProofList(String jwt, Long memberId, PageRequest pageRequest) {
 		if (!isFriend(jwt, memberId)) {
-			throw new ProofException(ErrorCode.PROOF_NOT_AUTORIZED);
+			throw new ProofException(ErrorCode.PROOF_UNAUTHORIZED);
 		}
 
 		Page<Proof> proofPage = proofRepository.findAllByMemberId(memberId, pageRequest);
@@ -59,7 +59,10 @@ public class ProofServiceImpl implements ProofService {
 
 	@Override
 	@Transactional
-	public ProofDto createProof(ProofCreateDto proofCreateDto, List<MultipartFile> multipartFiles) {
+	public ProofDto createProof(String jwt, ProofCreateDto proofCreateDto, List<MultipartFile> multipartFiles) {
+		if (!ParseJwtUtil.parseMemberId(jwt).equals(proofCreateDto.memberId())) {
+			throw new ProofException(ErrorCode.PROOF_CREATE_UNAUTHORIZED);
+		}
 
 		Proof savedProof = proofRepository.save(Proof.from(proofCreateDto));
 
@@ -76,7 +79,7 @@ public class ProofServiceImpl implements ProofService {
 			ErrorCode.PROOF_NOT_EXIST));
 
 		if (!isMeOrFriend(jwt, proof)) {
-			throw new ProofException(ErrorCode.PROOF_NOT_AUTORIZED);
+			throw new ProofException(ErrorCode.PROOF_UNAUTHORIZED);
 		}
 
 		return ProofDto.from(proof);

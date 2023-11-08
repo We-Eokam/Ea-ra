@@ -12,8 +12,9 @@ public enum ErrorCode {
 	REQUIRE_CCOMPANY_ID(HttpStatus.BAD_REQUEST, "PROOF_003", "c_company_id가 필요합니다."),
 	REQUIRE_CONTENT_ID(HttpStatus.BAD_REQUEST, "PROOF_004", "content가 필요합니다."),
 	PROOF_NOT_EXIST(HttpStatus.NOT_FOUND, "PROOF_005", "존재하지 않는 인증 내역입니다."),
-	PROOF_NOT_AUTORIZED(HttpStatus.UNAUTHORIZED, "PROOF_006", "접근 권한이 없는 인증입니다."),
-	CONTENT_TOO_LONG(HttpStatus.BAD_REQUEST, "PROOF_007", "컨텐츠 내용이 20자를 초과했습니다.");
+	PROOF_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "PROOF_006", "접근 권한이 없는 인증입니다."),
+	CONTENT_TOO_LONG(HttpStatus.BAD_REQUEST, "PROOF_007", "컨텐츠 내용이 20자를 초과했습니다."),
+	PROOF_CREATE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "PROOF_008", "인증 생성 권한이 없습니다");
 
 	ErrorCode(HttpStatus httpStatus, String errorCode, String message) {
 		this.httpStatus = httpStatus;

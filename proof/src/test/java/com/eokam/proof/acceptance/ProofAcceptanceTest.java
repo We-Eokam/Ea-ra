@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -38,6 +36,7 @@ import com.eokam.proof.infrastructure.external.member.FollowStatus;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.member.MemberProfile;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
+import com.eokam.proof.util.JwtUtil;
 
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
@@ -311,11 +310,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	}
 
 	private ExtractableResponse<Response> 전체_인증_내역_조회(Long page, Long size) {
-		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
 		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = JWT_발급(1L);
 
 		return given().log().all()
 			.when()
@@ -325,12 +321,14 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.extract();
 	}
 
+	private static String JWT_발급(Long memberId) {
+		return JwtUtil.createAccessToken(memberId);
+	}
+
 	private ExtractableResponse<Response> 인증_조회(long l) {
 		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
 		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = JWT_발급(memberId);
 
 		return given().log().all()
 			.when()
@@ -342,10 +340,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	private ExtractableResponse<Response> 인증_생성_시도(ProofCreateRequest 생성_요청) throws JSONException, IOException {
 		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
 		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = JWT_발급(memberId);
 
 		final ClassPathResource resource = new ClassPathResource("static/earth.jpg");
 
@@ -374,10 +370,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	private static ExtractableResponse<Response> 내_인증_내역_조회(Long page, Long size) {
 		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
 		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = JWT_발급(memberId);
 
 		return given().log().all()
 			.when()
@@ -389,10 +383,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 	private static ExtractableResponse<Response> 친구_인증_내역_조회(Long friendId, Long page, Long size) {
 		long memberId = 1L;
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
 		// given
-		String testJwt = "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		String testJwt = JWT_발급(memberId);
 
 		return given().log().all()
 			.when()

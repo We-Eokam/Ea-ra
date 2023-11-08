@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -44,6 +43,7 @@ import com.eokam.proof.infrastructure.util.error.GlobalExceptionHandler;
 import com.eokam.proof.infrastructure.util.error.exception.ProofException;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.validator.ProofCreateRequestValidator;
+import com.eokam.proof.util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 
@@ -347,7 +347,7 @@ class ProofControllerTest extends BaseControllerTest {
 			EXPECTED_FRIENDS_PROOF_LIST.size());
 
 		given(proofService.getProofList(anyString(), anyLong(), any(PageRequest.class)))
-			.willThrow(new ProofException(ErrorCode.PROOF_NOT_AUTORIZED));
+			.willThrow(new ProofException(ErrorCode.PROOF_UNAUTHORIZED));
 
 		// when & then
 		this.mockMvc.perform(get("/proof")
@@ -430,7 +430,8 @@ class ProofControllerTest extends BaseControllerTest {
 			.content(EXPECTED_CONTENT)
 			.build();
 
-		given(proofService.createProof(argThat(proofDto -> proofDto.activityType().equals(activityType)), anyList()))
+		given(proofService.createProof(anyString(), argThat(proofDto -> proofDto.activityType().equals(activityType)),
+			anyList()))
 			.willReturn(expectedProofDto);
 
 		JSONObject input = new JSONObject();
@@ -480,7 +481,7 @@ class ProofControllerTest extends BaseControllerTest {
 		List<MultipartFile> multipartFileList = new ArrayList<>();
 		multipartFileList.add(mockMultipartFile);
 
-		verify(proofService).createProof(ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
+		verify(proofService).createProof(testJwt, ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
 	}
 
 	@Test
@@ -532,7 +533,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.content(EXPECTED_CONTENT)
 			.build();
 
-		given(proofService.createProof(any(ProofCreateDto.class), anyList()))
+		given(proofService.createProof(anyString(), any(ProofCreateDto.class), anyList()))
 			.willReturn(expectedProofDto);
 
 		JSONObject input = new JSONObject();
@@ -577,7 +578,7 @@ class ProofControllerTest extends BaseControllerTest {
 		List<MultipartFile> multipartFileList = new ArrayList<>();
 		multipartFileList.add(mockMultipartFile);
 
-		verify(proofService).createProof(ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
+		verify(proofService).createProof(testJwt, ProofCreateDto.of(testJwt, proofCreateRequest), multipartFileList);
 	}
 
 	@ParameterizedTest
@@ -764,7 +765,7 @@ class ProofControllerTest extends BaseControllerTest {
 			.build();
 
 		given(proofService.getProofDetail(anyString(), anyLong())).willThrow(
-			new ProofException(ErrorCode.PROOF_NOT_AUTORIZED));
+			new ProofException(ErrorCode.PROOF_UNAUTHORIZED));
 
 		// when & then
 		this.mockMvc.perform(get("/proof/" + 1)
@@ -980,8 +981,6 @@ class ProofControllerTest extends BaseControllerTest {
 	}
 
 	private static String createJwt(Long memberId) {
-		byte[] payload = Base64.getEncoder().encode(Long.toString(memberId).getBytes());
-
-		return "Header." + new String(payload, StandardCharsets.UTF_8) + ".Secret";
+		return JwtUtil.createAccessToken(memberId);
 	}
 }

@@ -14,7 +14,7 @@ public interface ProofService {
 
 	Page<ProofDto> getProofList(String jwt, Long memberId, PageRequest pageRequest);
 
-	ProofDto createProof(ProofCreateDto proofCreateDto, List<MultipartFile> multipartFiles);
+	ProofDto createProof(String jwt, ProofCreateDto proofCreateDto, List<MultipartFile> multipartFiles);
 
 	ProofDto getProofDetail(String jwt, Long proofId);
 
