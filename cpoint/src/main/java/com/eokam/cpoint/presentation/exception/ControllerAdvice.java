@@ -6,6 +6,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,7 +34,16 @@ public class ControllerAdvice {
 		MethodArgumentTypeMismatchException exception) {
 		log.error("handleMethodArgumentTypeMismatchException", exception);
 		ErrorResponse errorResponse =
-			ErrorResponse.create(exception, HttpStatus.BAD_REQUEST, exception.getName()+"의 타입이 일치하지 않습니다.");
+			ErrorResponse.create(exception, HttpStatus.BAD_REQUEST, exception.getName() + "의 타입이 일치하지 않습니다.");
+		return ResponseEntity.badRequest().body(errorResponse);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+		MethodArgumentNotValidException exception) {
+		log.error("MethodArgumentNotValidException", exception);
+		ErrorResponse errorResponse =
+			ErrorResponse.create(exception, HttpStatus.BAD_REQUEST, exception.getMessage());
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
 
