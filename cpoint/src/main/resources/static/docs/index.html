@@ -474,6 +474,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#탄소중립활동포인트요약조회">탄소중립활동포인트 활동요약 조회</a></li>
 </ul>
 </li>
+<li><a href="#매장API">매장 API</a>
+<ul class="sectlevel2">
+<li><a href="#주변매장조회">주변 매장 조회</a></li>
+<li><a href="#주변매장조회_실패_쿼리스트링_없음">주변 매장 조회 실패 쿼리스트링 빼먹음</a></li>
+<li><a href="#주변매장조회_실패_잘못된_쿼리스트링">주변 매장 조회 실패 쿼리스트링 빼먹음</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -492,6 +499,27 @@ Host: localhost:8080
 Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.mmEC4b0afZan9cC90acvqCzaLNzQboEkJctrs44W6oI</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="연계기업목록조회_query_parameters"><a class="link" href="#연계기업목록조회_query_parameters">Query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활동 종류 (activity_type)</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="연계기업목록조회_http_response"><a class="link" href="#연계기업목록조회_http_response">HTTP response</a></h4>
@@ -700,6 +728,28 @@ Host: localhost:8080
 Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.mmEC4b0afZan9cC90acvqCzaLNzQboEkJctrs44W6oI</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="연계기업상세조회_path_parameters"><a class="link" href="#연계기업상세조회_path_parameters">Path parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /cpoint/company/{company_id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>company_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회사 PK /cpoint/company/{company_id}</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="연계기업상세조회_http_response"><a class="link" href="#연계기업상세조회_http_response">HTTP response</a></h4>
@@ -932,6 +982,28 @@ Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.m
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="연계기업연동_path_parameters"><a class="link" href="#연계기업연동_path_parameters">Path parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /cpoint/company/{company_id}/connect</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>company_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회사 PK  /cpoint/company/{company_id}/connect</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="연계기업연동_http_response"><a class="link" href="#연계기업연동_http_response">HTTP response</a></h4>
@@ -1227,6 +1299,28 @@ Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.m
 </div>
 </div>
 <div class="sect3">
+<h4 id="연계기업연동해제_path_parameters"><a class="link" href="#연계기업연동해제_path_parameters">Path parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /cpoint/company/{company_id}/connect</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>company_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">회사 PK  /cpoint/company/{company_id}/connect</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
 <h4 id="연계기업연동해제_http_response"><a class="link" href="#연계기업연동해제_http_response">HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
@@ -1519,22 +1613,11 @@ Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.m
 }</code></pre>
 </div>
 </div>
+<div id="탄소중립활동포인트적립_" class="paragraph">
+<p>==</p>
 </div>
-<div class="sect3">
-<h4 id="탄소중립활동포인트적립_http_response"><a class="link" href="#탄소중립활동포인트적립_http_response">HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 97
-
-{
-  "member_id" : 10,
-  "point" : 1000,
-  "company_id" : 10,
-  "activity_type" : "TUMBLER"
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>Snippet  not found for operation::cpoint-controller-test/탄소중립포인트적립</p>
 </div>
 </div>
 <div class="sect3">
@@ -1575,6 +1658,23 @@ Content-Length: 97
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="탄소중립활동포인트적립_http_response"><a class="link" href="#탄소중립활동포인트적립_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 97
+
+{
+  "member_id" : 10,
+  "point" : 1000,
+  "company_id" : 10,
+  "activity_type" : "TUMBLER"
+}</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="탄소중립활동포인트적립_response_fields"><a class="link" href="#탄소중립활동포인트적립_response_fields">Response fields</a></h4>
@@ -1863,11 +1963,324 @@ Content-Length: 306
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="매장API"><a class="link" href="#매장API">매장 API</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="주변매장조회"><a class="link" href="#주변매장조회">주변 매장 조회</a></h3>
+<div class="sect3">
+<h4 id="주변매장조회_http_request"><a class="link" href="#주변매장조회_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /cpoint/store?radius=100&amp;latitude=35.0&amp;longitude=127.0 HTTP/1.1
+Host: localhost:8080
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.mmEC4b0afZan9cC90acvqCzaLNzQboEkJctrs44W6oI</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_query_parameters"><a class="link" href="#주변매장조회_query_parameters">Query parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>radius</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">반경(m단위) 0이상</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>latitude</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 위치 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>longitude</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 위치 경도</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_http_response"><a class="link" href="#주변매장조회_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1032
+
+{
+  "store_list" : [ {
+    "activity_type" : "EMISSION_FREE_CAR",
+    "stores" : [ {
+      "company_id" : 3,
+      "company_name" : "멀티캠퍼스",
+      "branch_name" : "선릉캠퍼스",
+      "latitude" : 127.000001,
+      "longitude" : 35.0,
+      "distance" : 20.0
+    }, {
+      "company_id" : 3,
+      "company_name" : "멀티캠퍼스",
+      "branch_name" : "역삼캠퍼스",
+      "latitude" : 127.000001,
+      "longitude" : 35.0,
+      "distance" : 10.0
+    } ]
+  }, {
+    "activity_type" : "TUMBLER",
+    "stores" : [ {
+      "company_id" : 1,
+      "company_name" : "스타벅스",
+      "branch_name" : "강남점",
+      "latitude" : 127.000001,
+      "longitude" : 35.0,
+      "distance" : 100.0
+    } ]
+  }, {
+    "activity_type" : "ELECTRONIC_RECEIPT",
+    "stores" : [ {
+      "company_id" : 2,
+      "company_name" : "메가커피",
+      "branch_name" : "언주로점",
+      "latitude" : 127.000001,
+      "longitude" : 35.0,
+      "distance" : 110.0
+    } ]
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_response_fields"><a class="link" href="#주변매장조회_response_fields">Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주변 매장 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].activity_type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활동 종류(카테고리로 사용)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">활동 종류에 해당하는 매장들</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].company_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기업 PK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].company_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">기업명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].branch_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매장명(지점명)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].latitude</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매장 위치 위도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].longitude</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매장 위치 경도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store_list.[].stores.[].distance</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">매장 거리</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="주변매장조회_실패_쿼리스트링_없음"><a class="link" href="#주변매장조회_실패_쿼리스트링_없음">주변 매장 조회 실패 쿼리스트링 빼먹음</a></h3>
+<div class="sect3">
+<h4 id="주변매장조회_실패_쿼리스트링_없음_http_request"><a class="link" href="#주변매장조회_실패_쿼리스트링_없음_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /cpoint/store?radius=100&amp;latitude=35.0 HTTP/1.1
+Host: localhost:8080
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.mmEC4b0afZan9cC90acvqCzaLNzQboEkJctrs44W6oI</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_실패_쿼리스트링_없음_http_response"><a class="link" href="#주변매장조회_실패_쿼리스트링_없음_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1171
+
+{
+  "statusCode" : "BAD_REQUEST",
+  "headers" : { },
+  "detailMessageCode" : "problemDetail.org.springframework.web.bind.MethodArgumentNotValidException",
+  "detailMessageArguments" : null,
+  "titleMessageCode" : "problemDetail.title.org.springframework.web.bind.MethodArgumentNotValidException",
+  "body" : {
+    "type" : "about:blank",
+    "title" : "Bad Request",
+    "status" : 400,
+    "detail" : "Validation failed for argument [0] in public org.springframework.http.ResponseEntity&lt;com.eokam.cpoint.presentation.dto.ActivityTypeStoreListReponse&gt; com.eokam.cpoint.presentation.controller.StoreController.retrieveActivityTypeStoreList(com.eokam.cpoint.presentation.dto.CStoreNearbyListRetrieveRequest): [Field error in object 'CStoreNearbyListRetrieveRequest' on field 'longitude': rejected value [null]; codes [NotNull.CStoreNearbyListRetrieveRequest.longitude,NotNull.longitude,NotNull.java.lang.Double,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [CStoreNearbyListRetrieveRequest.longitude,longitude]; arguments []; default message [longitude]]; default message [longitude가 필요합니다.]] "
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_실패_쿼리스트링_없음_response_fields"><a class="link" href="#주변매장조회_실패_쿼리스트링_없음_response_fields">Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body.title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bad Request</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body.detail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러메시지 (필드에 해당하는 메세지)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="주변매장조회_실패_잘못된_쿼리스트링"><a class="link" href="#주변매장조회_실패_잘못된_쿼리스트링">주변 매장 조회 실패 쿼리스트링 빼먹음</a></h3>
+<div class="sect3">
+<h4 id="주변매장조회_실패_잘못된_쿼리스트링_http_request"><a class="link" href="#주변매장조회_실패_잘못된_쿼리스트링_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /cpoint/store?radius=100&amp;latitude=35.0&amp;longitude=%EB%82%98%EB%8A%94%EB%AC%B8%EC%96%B4%EA%BF%88%EC%9D%84%EA%BE%B8%EB%8A%94%EB%AC%B8%EC%96%B4 HTTP/1.1
+Host: localhost:8080
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MTB9.mmEC4b0afZan9cC90acvqCzaLNzQboEkJctrs44W6oI</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_실패_잘못된_쿼리스트링_http_response"><a class="link" href="#주변매장조회_실패_잘못된_쿼리스트링_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1354
+
+{
+  "statusCode" : "BAD_REQUEST",
+  "headers" : { },
+  "detailMessageCode" : "problemDetail.org.springframework.web.method.annotation.ModelAttributeMethodProcessor$1",
+  "detailMessageArguments" : null,
+  "titleMessageCode" : "problemDetail.title.org.springframework.web.method.annotation.ModelAttributeMethodProcessor$1",
+  "body" : {
+    "type" : "about:blank",
+    "title" : "Bad Request",
+    "status" : 400,
+    "detail" : "Validation failed for argument [0] in public org.springframework.http.ResponseEntity&lt;com.eokam.cpoint.presentation.dto.ActivityTypeStoreListReponse&gt; com.eokam.cpoint.presentation.controller.StoreController.retrieveActivityTypeStoreList(com.eokam.cpoint.presentation.dto.CStoreNearbyListRetrieveRequest): [Field error in object 'CStoreNearbyListRetrieveRequest' on field 'longitude': rejected value [나는문어꿈을꾸는문어]; codes [typeMismatch.CStoreNearbyListRetrieveRequest.longitude,typeMismatch.longitude,typeMismatch.java.lang.Double,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [CStoreNearbyListRetrieveRequest.longitude,longitude]; arguments []; default message [longitude]]; default message [Failed to convert value of type 'java.lang.String' to required type 'java.lang.Double'; For input string: \"나는문어꿈을꾸는문어\"]] "
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="주변매장조회_실패_잘못된_쿼리스트링_response_fields"><a class="link" href="#주변매장조회_실패_잘못된_쿼리스트링_response_fields">Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 정보</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body.title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bad Request</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>body.detail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러메시지 (필드에 해당하는 메세지)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-11-08 14:17:21 +0900
+Last updated 2023-11-08 16:04:23 +0900
 </div>
 </div>
 </body>

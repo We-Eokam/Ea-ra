@@ -1,12 +1,15 @@
 package com.eokam.cpoint.application.dto;
 
 import com.eokam.cpoint.domain.Company;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StoreClassDto {
 
 	private Long companyId;

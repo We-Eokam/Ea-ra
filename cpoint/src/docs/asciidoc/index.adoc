@@ -12,7 +12,7 @@
 [[연계기업목록조회]]
 === 연계기업 목록조회 성공
 
-operation::company-controller-test/회사목록조회[snippets='http-request,http-response,response-fields']
+operation::company-controller-test/회사목록조회[snippets='http-request,query-parameters,http-response,response-fields']
 +
 
 [[연계기업목록조회_잘못된_ActivityType]]
@@ -36,7 +36,7 @@ operation::company-controller-test/회사목록조회_jwt잘못된_요청_테스
 [[연계기업상세조회]]
 === 연계기업 상세조회 성공
 
-operation::company-controller-test/회사상세조회[snippets='http-request,http-response,response-fields']
+operation::company-controller-test/회사상세조회[snippets='http-request,path-parameters,http-response,response-fields']
 +
 
 [[연계기업상세조회_PK잘못됨]]
@@ -54,7 +54,7 @@ operation::company-controller-test/회사상세조회_없는_회사pk[snippets='
 [[연계기업연동]]
 === 연계기업 연동 성공
 
-operation::company-controller-test/회사연동[snippets='http-request,http-response,response-fields']
+operation::company-controller-test/회사연동[snippets='http-request,path-parameters,http-response,response-fields']
 +
 
 [[연계기업연동실패_이미연동됨]]
@@ -78,7 +78,7 @@ operation::company-controller-test/회사연동_pk잘못됨[snippets='http-reque
 [[연계기업연동해제]]
 === 연계기업 연동해제 성공
 
-operation::company-controller-test/회사연동해제[snippets='http-request,http-response,response-fields']
+operation::company-controller-test/회사연동해제[snippets='http-request,path-parameters,http-response,response-fields']
 +
 
 [[연계기업연동해제_연동되지않은회사]]
@@ -111,7 +111,7 @@ operation::cpoint-controller-test/탄소중립포인트조회_잘못된jwt[snipp
 [[탄소중립활동포인트적립]]
 === 탄소중립활동포인트 적립
 
-operation::cpoint-controller-test/탄소중립포인트적립[snippets='http-request,http-response,request-fields,response-fields']
+operation::cpoint-controller-test/탄소중립포인트적립[snippets='http-request,,request-fields,http-response,response-fields']
 +
 
 [[탄소중립활동포인트적립_실패_잘못된_payload]]
@@ -130,4 +130,25 @@ operation::cpoint-controller-test/탄소중립포인트적립_잘못된회사pk[
 === 탄소중립활동포인트 활동요약 조회
 
 operation::cpoint-controller-test/탄소중립활동요약조회[snippets='http-request,http-response,response-fields']
++
+
+[[매장API]]
+== 매장 API
+
+[[주변매장조회]]
+=== 주변 매장 조회
+
+operation::store-controller-test/매장조회[snippets='http-request,query-parameters,http-response,response-fields']
++
+
+[[주변매장조회_실패_쿼리스트링_없음]]
+=== 주변 매장 조회 실패 쿼리스트링 빼먹음
+
+operation::store-controller-test/매장조회_쿼리스트링없음[snippets='http-request,http-response,response-fields']
++
+
+[[주변매장조회_실패_잘못된_쿼리스트링]]
+=== 주변 매장 조회 실패 쿼리스트링 빼먹음
+
+operation::store-controller-test/매장조회_잘못된쿼리스트링[snippets='http-request,http-response,response-fields']
 +
