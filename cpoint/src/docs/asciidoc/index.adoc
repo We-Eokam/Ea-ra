@@ -86,3 +86,48 @@ operation::company-controller-test/회사연동해제[snippets='http-request,htt
 
 operation::company-controller-test/회사연동해제_연동되지않은회사[snippets='http-request,http-response,response-fields']
 +
+
+[[탄소중립활동포인트API]]
+== 탄소중립활동포인트 API
+
+[[탄소중립활동포인트조회]]
+=== 탄소중립활동포인트 조회
+
+operation::cpoint-controller-test/탄소중립포인트조회[snippets='http-request,http-response,response-fields']
++
+
+[[탄소중립활동포인트조회_실패_JWT없음]]
+=== 탄소중립활동포인트 조회 실패 JWT없음
+
+operation::cpoint-controller-test/탄소중립포인트조회_jwt없음[snippets='http-request,http-response']
++
+
+[[탄소중립활동포인트조회_실패_잘못된JWT]]
+=== 탄소중립활동포인트 조회 실패 잘못된JWT
+
+operation::cpoint-controller-test/탄소중립포인트조회_잘못된jwt[snippets='http-request,http-response']
++
+
+[[탄소중립활동포인트적립]]
+=== 탄소중립활동포인트 적립
+
+operation::cpoint-controller-test/탄소중립포인트적립[snippets='http-request,http-response,request-fields,response-fields']
++
+
+[[탄소중립활동포인트적립_실패_잘못된_payload]]
+=== 탄소중립활동포인트 적립 실패 Payload 잘못됨
+
+operation::cpoint-controller-test/탄소중립포인트적립_잘못된-payload[snippets='http-request,http-response,response-fields']
++
+
+[[탄소중립활동포인트적립_실패_잘못된회사PK]]
+=== 탄소중립활동포인트 적립 실패 회사 없음
+
+operation::cpoint-controller-test/탄소중립포인트적립_잘못된회사pk[snippets='http-request,http-response,response-fields']
++
+
+[[탄소중립활동포인트요약조회]]
+=== 탄소중립활동포인트 활동요약 조회
+
+operation::cpoint-controller-test/탄소중립활동요약조회[snippets='http-request,http-response,response-fields']
++
