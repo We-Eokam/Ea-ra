@@ -135,7 +135,7 @@ export default function SignupPage() {
           <Terms>
             회원가입 시 어라의 개인정보 처리방침 및 이용약관에
             <br />
-            동의하는 것으로 간주합니다.
+            동의하는 것으로 간주합니다
           </Terms>
         </SignupFrame>
       </MainFrame>
