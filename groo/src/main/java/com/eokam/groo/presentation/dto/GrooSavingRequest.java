@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.eokam.groo.global.constant.ActivityType;
 import com.eokam.groo.global.constant.SavingType;
 import com.eokam.groo.global.validation.TypeMatchCheck;
+import com.eokam.groo.global.validation.ValidationGroups;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -19,19 +20,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@TypeMatchCheck(savingType = "savingType", activityType = "activityType")
+@TypeMatchCheck(savingType = "savingType", activityType = "activityType", groups = ValidationGroups.OtherCheckGroup.class)
 public class GrooSavingRequest {
-	@NotNull
+	@NotNull(groups = ValidationGroups.NotNullGroup.class)
 	private SavingType savingType;
 
-	@NotNull
+	@NotNull(groups = ValidationGroups.NotNullGroup.class)
 	private ActivityType activityType;
 
-	@NotNull
-	@Positive
+	@NotNull(groups = ValidationGroups.NotNullGroup.class)
+	@Positive(groups = ValidationGroups.OtherCheckGroup.class)
 	private Long proofAccusationId;
 
-	@NotNull
-	@Past
+	@NotNull(groups = ValidationGroups.NotNullGroup.class)
+	@Past(groups = ValidationGroups.OtherCheckGroup.class)
 	private LocalDateTime savedAt;
 }
