@@ -61,7 +61,7 @@ public class ProofController {
 		proofCreateRequestValidator.validate(request);
 
 		ProofResponse response = ProofResponse.from(
-			proofService.createProof(ProofCreateDto.of(accessToken, request), images));
+			proofService.createProof(accessToken, ProofCreateDto.of(accessToken, request), images));
 
 		return ResponseEntity.created(URI.create("/proof/" + response.proofId())).body(response);
 	}

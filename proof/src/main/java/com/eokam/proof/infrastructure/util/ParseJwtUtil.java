@@ -1,11 +1,19 @@
 package com.eokam.proof.infrastructure.util;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 
 public class ParseJwtUtil {
-	public static Long parseMemberId(String jwt) {
-		String payload = jwt.split("\\.")[1];
-		return Long.parseLong(new String(Base64.getDecoder().decode(payload), StandardCharsets.UTF_8));
+
+	public static Claims getTokenClaims(String token) {
+		String[] splitToken = token.split("\\.");
+		String unsignedToken = splitToken[0] + "." + splitToken[1] + ".";
+		return Jwts.parser().parseClaimsJwt(unsignedToken).getBody();
 	}
+
+	public static Long parseMemberId(String token) {
+		Claims tokenClaims = getTokenClaims(token);
+		return tokenClaims.get("memberId", Long.class);
+	}
+
 }
