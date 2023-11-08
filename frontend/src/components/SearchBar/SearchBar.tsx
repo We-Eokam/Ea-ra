@@ -25,56 +25,56 @@ const users = [
     nickname: "어쩌라고라고어쩌라고",
     gru: 25000,
     isFollow: true,
-    userId: 1
+    userId: 1,
   },
   {
     profileImg: "",
     nickname: "어쩌라고",
     gru: 25000,
     isFollow: true,
-    userId: 2
+    userId: 2,
   },
   {
     profileImg: "",
     nickname: "어쩌",
     gru: 25000,
     isFollow: true,
-    userId: 3
+    userId: 3,
   },
   {
     profileImg: "",
     nickname: "지구지킴",
     gru: 25000,
     isFollow: true,
-    userId: 4
+    userId: 4,
   },
   {
     profileImg: "",
     nickname: "지",
     gru: 25000,
     isFollow: true,
-    userId: 5
+    userId: 5,
   },
   {
     profileImg: "",
     nickname: "지구지",
     gru: 25000,
     isFollow: true,
-    userId: 6
+    userId: 6,
   },
   {
     profileImg: "",
     nickname: "지현",
     gru: 25000,
     isFollow: true,
-    userId: 7
+    userId: 7,
   },
   {
     profileImg: "",
     nickname: "지현이",
     gru: 25000,
     isFollow: true,
-    userId: 8
+    userId: 8,
   },
 ];
 
@@ -82,13 +82,15 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [entire, setEntire] = useState<FriendDataProps[]>([]);
-  const [results, setReseults] = useState<FriendDataProps[]>([])
+  const [results, setReseults] = useState<FriendDataProps[]>([]);
+  const [minuspx, setMinuspx] = useState(48);
 
   useEffect(() => {
     // type에 따라 사용자 목록 불러와서 entire에 넣어주기
     if (type == "all") {
       // 전체 사용자 불러오는 api
     } else if (type == "follow") {
+      setMinuspx(68);
       // 맞팔인 사용자만 불러오는 api
     }
     // 일단 임시 데이터 넣어놓음
@@ -111,7 +113,11 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
     const tmpValue = e.target.value.trim();
     setInputValue(tmpValue);
     if (tmpValue) {
-      setReseults(entire.filter((friend: FriendDataProps)=> friend.nickname.includes(tmpValue)));
+      setReseults(
+        entire.filter((friend: FriendDataProps) =>
+          friend.nickname.includes(tmpValue)
+        )
+      );
     } else if (results.length) {
       setReseults([]);
     }
@@ -126,8 +132,8 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
 
   return (
     <>
-      <SearchBarFrame>
-        <SearchWindow isFocused={isFocused}>
+      <SearchBarFrame type={type}>
+        <SearchWindow isFocused={isFocused} px={minuspx}>
           <SearchIcon />
           <SearchInput
             placeholder="검색.."
@@ -152,21 +158,17 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
           </UserInfoContainer>
         ))}
         <BottomBox>
-          {results.length ? (
-            "마지막 검색 결과입니다."
-          ) : (
-            "검색 결과가 없습니다."
-          )}
+          {results.length ? "마지막 검색 결과입니다." : "검색 결과가 없습니다."}
         </BottomBox>
       </SearchResultFrame>
     </>
   );
 }
 
-const SearchBarFrame = styled.div`
+const SearchBarFrame = styled.div<{ type: string }>`
   position: absolute;
   z-index: 1;
-  padding: 0 20px;
+  padding: ${(props) => (props.type === "all" ? "0 20px" : "0")};
   left: 0;
   right: 0;
   height: 52px;
@@ -177,10 +179,10 @@ const SearchBarFrame = styled.div`
   background-color: var(--white);
 `;
 
-const SearchWindow = styled.div<{ isFocused: Boolean }>`
+const SearchWindow = styled.div<{ isFocused: boolean, px: number }>`
   /* margin: 0px 20px; */
   padding: 0px 6px;
-  width: ${(props) => (props.isFocused ? "calc(100% - 48px)" : "100%")};
+  width: ${(props) => (props.isFocused ? `calc(100% - ${props?.px}px)` : "100%")};
   transition: width 0.3s ease-in-out;
   height: 32px;
   border-radius: 6px;
@@ -240,8 +242,8 @@ const UserInfoContainer = styled.div`
 `;
 
 const ProfileImg = styled.img`
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;

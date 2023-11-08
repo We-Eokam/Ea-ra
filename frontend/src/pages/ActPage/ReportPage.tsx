@@ -6,8 +6,12 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalBackground } from "../../components/Modal/ModalBackground";
 import DetailInput from "../../components/Input/DetailInput";
+
+import { ReactComponent as AddSvg } from "../../assets/icons/add-icon.svg";
+import { ReactComponent as RemoveSvg } from "../../assets/icons/close-icon.svg";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import AnimationModal from "../../components/Modal/AnimationModal";
+
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
@@ -20,6 +24,19 @@ interface ReportTypeProps {
   imgUrl: string;
 }
 
+// 일단 임시로 해놓음 api 완성되면 수정 필
+interface FriendDataProps {
+  userId: number;
+  profileImg: string;
+  nickname: string;
+}
+
+const friendExaple = {
+  "userId": 1,
+  "profileImg": "/icons/icon-48x48.png",
+  "nickname": "임시 닉네임",
+}
+
 export default function ReportPage() {
   const [activityType, setActivityType] = useState<ReportTypeProps>(
     reportTypes[0]
@@ -29,20 +46,28 @@ export default function ReportPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   // @ts-ignore
   const [friendId, setFriendId] = useState<number | null>(null);
+  const [friendInfo, setFriendInfo] = useState<FriendDataProps | null>(null);
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const targetFromURL = Number(params.get("target"));
-    console.log("url 안넘어오면 뭐라찍히나", targetFromURL)
+
     if (targetFromURL) {
-      // url에 친구가 넘어오면 api 요청 보내서 제보할 친구 데이터 바꾸기
+      setFriendId(targetFromURL);
     }
   }, [location]);
 
   useEffect(() => {
     setFriendModalOpen(false);
+    console.log("넘어온 친구 아이디", friendId);
+    if (friendId) {
+      // api 보내서 friendInfo 바꿈 지금은 임시
+      setFriendInfo(friendExaple);
+    } else {
+      setFriendInfo(null);
+    }
   }, [friendId])
 
   const handleImgSelector = () => {
@@ -100,10 +125,20 @@ export default function ReportPage() {
           </TempletesFrame>
         </InfoFrame>
         <InfoFrame>
-          <InfoName onClick={() => setFriendModalOpen(true)}>
+          <InfoName>
             제보할 친구
           </InfoName>
-          누르면 모달로 제보할 친구 목록 보여줌
+          {friendInfo ? (
+            <InfoName style={{ marginBottom: "0"}}>
+              <ProfileImg><img src={friendInfo.profileImg}/></ProfileImg>
+              {friendInfo.nickname}
+              <RemoveSvg onClick={() => setFriendId(null)}/>
+            </InfoName>
+            ) : (
+            <ProfileImg onClick={() => setFriendModalOpen(true)}>
+              <AddBtn />
+            </ProfileImg>
+          )}
         </InfoFrame>
         <InfoFrame>
           <InfoName>증거 사진 제출</InfoName>
@@ -146,12 +181,12 @@ const InfoFrame = styled.div<{ padding?: string }>`
 
 const InfoName = styled.div`
   position: relative;
-  width: 100%;
   font-size: 14px;
   color: var(--dark-gray);
   margin-bottom: 12px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 `;
 
 const SelectTempleteBox = styled.div`
@@ -188,7 +223,7 @@ const Text = styled.div`
 
   &.gray {
     color: var(--dark-gray);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 400;
     margin: 6px 4px 0 0;
   }
@@ -216,6 +251,32 @@ const TempletesFrame = styled.div<{ isShow: boolean }>`
   margin-bottom: 4px;
 `;
 
+const ProfileImg = styled.div`
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--nav-gray);
+  /* background-color: var(--gray); */
+
+  img {
+    width: 100%;
+    border-radius: 50%;
+  }
+`;
+
+const AddBtn = styled(AddSvg)`
+  position: absolute;
+  left: 24px;
+  top: 24px;
+
+  path {
+    fill: var(--white);
+    stroke: var(--blue);
+    stroke-width: 1.5;
+  }
+`;
+
 const CropImg = styled.img`
   width: 100%;
   height: 100%;
@@ -232,5 +293,5 @@ const Margin = styled.div`
 `;
 
 const FriendListFrame = styled.div`
-  height: 580px;
+  height: 560px;
 `;

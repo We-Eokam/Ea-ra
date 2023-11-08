@@ -177,5 +177,5 @@ const ReactionText = styled.div`
 `;
 
 const BottomMargin = styled.div`
-  height: 52px;
+  height: 16px;
 `;
