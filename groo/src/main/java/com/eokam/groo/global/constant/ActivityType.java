@@ -6,30 +6,32 @@ import lombok.Getter;
 public enum ActivityType {
 
 	// Accusation
-	DISPOSABLE(250L),
-	PAPER(150L),
-	ELECTRICITY(350L),
-	WATER(400L),
-	FOOD(300L),
-	OTHER(200L),
+	DISPOSABLE(250L, SavingType.ACCUSATION),
+	PAPER(150L, SavingType.ACCUSATION),
+	ELECTRICITY(350L, SavingType.ACCUSATION),
+	WATER(400L, SavingType.ACCUSATION),
+	FOOD(300L, SavingType.ACCUSATION),
+	OTHER(200L, SavingType.ACCUSATION),
 
 	// Proof
 
-	ELECTRONIC_RECEIPT(135L),
-	TUMBLER(410L),
-	DISPOSABLE_CUP(275L),
-	DISCARDED_PHONE(1370L),
-	ECO_FRIENDLY_PRODUCTS(1370L),
-	EMISSION_FREE_CAR(685L),
-	HIGH_QUALITY_RECYCLED_PRODUCTS(315L),
-	MULTI_USER_CONTAINER(1370L),
-	REFILL_STATION(2700L),
-	ETC(150L)
+	ELECTRONIC_RECEIPT(135L, SavingType.PROOF),
+	TUMBLER(410L, SavingType.PROOF),
+	DISPOSABLE_CUP(275L, SavingType.PROOF),
+	DISCARDED_PHONE(1370L, SavingType.PROOF),
+	ECO_FRIENDLY_PRODUCTS(1370L, SavingType.PROOF),
+	EMISSION_FREE_CAR(685L, SavingType.PROOF),
+	HIGH_QUALITY_RECYCLED_PRODUCTS(315L, SavingType.PROOF),
+	MULTI_USER_CONTAINER(1370L, SavingType.PROOF),
+	REFILL_STATION(2700L, SavingType.PROOF),
+	ETC(150L, SavingType.PROOF)
 	;
 
 	private Long savingAmount;
+	private SavingType savingType;
 
-	ActivityType(Long savingAmount) {
+	ActivityType(Long savingAmount, SavingType savingType) {
 		this.savingAmount = savingAmount;
+		this.savingType = savingType;
 	}
 }

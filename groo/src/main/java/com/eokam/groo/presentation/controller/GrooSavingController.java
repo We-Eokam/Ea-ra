@@ -22,6 +22,7 @@ import com.eokam.groo.presentation.dto.GrooSavingRequest;
 import com.eokam.groo.presentation.dto.GrooSavingResponse;
 import com.eokam.groo.presentation.dto.WeeklyProofCountResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,7 +34,7 @@ public class GrooSavingController {
 	private final TokenManager tokenManager;
 
 	@PostMapping
-	ResponseEntity<GrooSavingResponse> createGrooSaving(@CookieValue(value = "access-token") String jwt, @RequestBody GrooSavingRequest request) {
+	ResponseEntity<GrooSavingResponse> createGrooSaving(@CookieValue(value = "access-token") String jwt, @RequestBody @Valid GrooSavingRequest request) {
 		Long memberId = tokenManager.getMemberId(jwt);
 		GrooSavingDto grooSavingDto = grooSavingService.createGrooSaving(GrooSavingDto.of(request, memberId));
 		ResponseEntity.created(URI.create("/groo/" + grooSavingDto.savingId())).body(GrooSavingResponse.from(grooSavingDto));
