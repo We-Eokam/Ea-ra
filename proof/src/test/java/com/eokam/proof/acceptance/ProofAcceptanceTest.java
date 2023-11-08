@@ -79,11 +79,11 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(activityTypeList.get(4 - i)).isEqualTo(EXPECTED_MY_PROOF_LIST.get(i).getActivityType().name());
 			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
-				EXPECTED_MY_PROOF_LIST.get(i).getCCompanyId());
-			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
-			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
+				EXPECTED_MY_PROOF_LIST.get(4 - i).getCCompanyId());
+			assertThat(pictureUrlList.get(4 - i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
+			assertThat(pictureNameList.get(4 - i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
 		});
 	}
 
@@ -122,13 +122,14 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_FRIEND_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(activityTypeList.get(4 - i)).isEqualTo(
+				EXPECTED_FRIEND_PROOF_LIST.get(i).getActivityType().name());
 			assertThat(Integer.toUnsignedLong(memberIdList.get(i))).isEqualTo(
-				EXPECTED_FRIEND_PROOF_LIST.get(i).getMemberId());
+				EXPECTED_FRIEND_PROOF_LIST.get(4 - i).getMemberId());
 			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
-				EXPECTED_FRIEND_PROOF_LIST.get(i).getCCompanyId());
-			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
-			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
+				EXPECTED_FRIEND_PROOF_LIST.get(4 - i).getCCompanyId());
+			assertThat(pictureUrlList.get(4 - i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
+			assertThat(pictureNameList.get(4 - i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
 		});
 	}
 
@@ -299,13 +300,13 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		List<List<String>> pictureNameList = response.body().jsonPath().getList("proof.picture.name");
 
 		IntStream.range(0, 5).forEach(i -> {
-			assertThat(activityTypeList.get(i)).isEqualTo(EXPECTED_ALL_PROOF_LIST.get(i).getActivityType().name());
+			assertThat(activityTypeList.get(4 - i)).isEqualTo(EXPECTED_ALL_PROOF_LIST.get(i).getActivityType().name());
 			assertThat(Integer.toUnsignedLong(memberIdList.get(i))).isEqualTo(
-				EXPECTED_ALL_PROOF_LIST.get(i).getMemberId());
+				EXPECTED_ALL_PROOF_LIST.get(4 - i).getMemberId());
 			assertThat(Integer.toUnsignedLong(cCompanyIdList.get(i))).isEqualTo(
-				EXPECTED_ALL_PROOF_LIST.get(i).getCCompanyId());
-			assertThat(pictureUrlList.get(i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
-			assertThat(pictureNameList.get(i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
+				EXPECTED_ALL_PROOF_LIST.get(4 - i).getCCompanyId());
+			assertThat(pictureUrlList.get(4 - i).get(0)).isEqualTo("http://test" + (i + 1) + ".com");
+			assertThat(pictureNameList.get(4 - i).get(0)).isEqualTo("test" + (i + 1) + ".jpg");
 		});
 	}
 
