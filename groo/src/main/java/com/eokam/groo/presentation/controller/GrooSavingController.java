@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.application.service.GrooSavingService;
+import com.eokam.groo.global.validation.ValidationSequence;
 import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.jwt.TokenManager;
 import com.eokam.groo.presentation.dto.GrooSavingMonthResponse;
@@ -22,7 +24,6 @@ import com.eokam.groo.presentation.dto.GrooSavingRequest;
 import com.eokam.groo.presentation.dto.GrooSavingResponse;
 import com.eokam.groo.presentation.dto.WeeklyProofCountResponse;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,7 +35,7 @@ public class GrooSavingController {
 	private final TokenManager tokenManager;
 
 	@PostMapping
-	ResponseEntity<GrooSavingResponse> createGrooSaving(@CookieValue(value = "access-token") String jwt, @RequestBody @Valid GrooSavingRequest request) {
+	ResponseEntity<GrooSavingResponse> createGrooSaving(@CookieValue(value = "access-token") String jwt, @RequestBody @Validated(ValidationSequence.class) GrooSavingRequest request) {
 		Long memberId = tokenManager.getMemberId(jwt);
 		GrooSavingDto grooSavingDto = grooSavingService.createGrooSaving(GrooSavingDto.of(request, memberId));
 		ResponseEntity.created(URI.create("/groo/" + grooSavingDto.savingId())).body(GrooSavingResponse.from(grooSavingDto));
