@@ -25,13 +25,10 @@ public class Member extends BaseEntity {
 
 	private String profileImage;
 
-	@Builder.Default
 	private Integer groo = 0;
 
-	@Builder.Default
 	private Integer billCount = 0;
 
-	@Builder.Default
 	private Integer bill = 0;
 
 	@Builder
@@ -42,5 +39,15 @@ public class Member extends BaseEntity {
 		this.groo = groo;
 		this.billCount = billCount;
 		this.bill = bill;
+	}
+
+	@Builder
+	public Member(Long id, String nickname, String profileImage) {
+		this.id = id;
+		this.nickname = nickname;
+		this.profileImage = profileImage;
+		this.groo = 0;
+		this.billCount = 0;
+		this.bill = 0;
 	}
 }
