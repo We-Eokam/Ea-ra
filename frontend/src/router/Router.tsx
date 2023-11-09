@@ -20,6 +20,7 @@ import CompanyPage from "../pages/NtzPage/CompanyPage";
 
 import PostDetail from "../pages/FeedPage/PostDetail";
 import FriendsList from "../pages/MyPage/FriendsList";
+import ProfilePage from "../pages/MyPage/ProfilePage";
 
 export default function Router() {
   return (
@@ -44,6 +45,7 @@ export default function Router() {
         <Route path="/netzero/company" element={<CompanyPage />}></Route>
         <Route path="/mypage" element={<MyPage />}></Route>
         <Route path="/mypage/friends" element={<FriendsList />}></Route>
+        <Route path="/profile/:id" element={<ProfilePage />}></Route>
       </Routes>
     </BrowserRouter>
   );

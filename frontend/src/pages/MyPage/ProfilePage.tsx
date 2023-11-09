@@ -1,5 +1,6 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -8,9 +9,30 @@ import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import NavBar from "../../components/NavBar/NavBar";
 
 export default function ProfilePage() {
+  const { id } = useParams<{ id: string }>();
+  const [status, setStatus] = useState("");
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
+
+  useEffect(() => {
+    // userId로 axios 보내서 user 정보 가져오기
+    // status랑 정보 2개 불러와야하는데 지금은 임시
+    setStatus("follow");
+    // setStatus("request");
+    // setStatus("accept");
+    // setStatus("nothing");
+  }, [id]);
+
+  useEffect(() => {
+    if (status === "follow") {
+      // 다른 상태에서 친구로 변경될 때만 정보 가져와서 바꿈
+    } else {
+      // 그 외 다른 상태로 변경되면 아무일도 일어나지 않음
+    }
+    console.log("밖에 있는 거", status);
+  }, [status]);
+
 
   useEffect(() => {
     const tabIndex = tabs.indexOf(activeTab);
@@ -39,7 +61,16 @@ export default function ProfilePage() {
 
   const ReportExample = [
     {
-      coverImg: "",
+      coverImg: "/images/template6.png",
+    },
+    {
+      coverImg: "/images/template6.png",
+    },
+    {
+      coverImg: "/images/template5.png",
+    },
+    {
+      coverImg: "/images/template2.png",
     },
   ];
 
@@ -54,7 +85,7 @@ export default function ProfilePage() {
               {user.nickname}
               <SubText>{user.gru}그루</SubText>
             </TextBox>
-            <FollowBtn status="follow" />
+            <FollowBtn status={status} setStatus={setStatus}/>
           </UserInfoContainer>
           <ProgressBar progress={user.progress} greeninit={user.greenInit} />
         </UserFrame>
@@ -70,19 +101,34 @@ export default function ProfilePage() {
           ))}
           <ActiveTab offsetX={offsetX} />
         </SliderFrame>
-        <PostsFrame>
-          {activeTab === "인증"
-            ? PostExample.map((post) => (
-                <Post>
-                  <CoverImg src={post.coverImg} />
-                </Post>
-              ))
-            : ReportExample.map((post) => (
-                <Post>
-                  <CoverImg src={post.coverImg} />
-                </Post>
-              ))}
-        </PostsFrame>
+        {status === "follow" ? (
+          <PostsFrame>
+            {activeTab === "인증"
+              ? PostExample.map((post) => (
+                  <Post>
+                    <CoverImg src={post.coverImg} />
+                  </Post>
+                ))
+              : ReportExample.map((post) => (
+                  <Post>
+                    <CoverImg src={post.coverImg} />
+                  </Post>
+                ))}
+          </PostsFrame>
+        ) : (
+          <Text>
+            {status === "request" && (
+              `${user.nickname}님이 회원님의 친구요청을 수락하면`
+            )}
+            {status === "accept" && (
+              "친구요청을 수락하면"
+            )}
+            {status === "nothing" && (
+              "친구 신청을 보내보세요!"
+            )}
+            <br/>{user.nickname}님의 활동을 볼 수 있어요
+          </Text>
+        )}
       </MainFrame>
       <NavBar />
     </>
@@ -90,7 +136,7 @@ export default function ProfilePage() {
 }
 
 const UserFrame = styled.div`
-  padding: 0px 5.56%;
+  padding: 12px 5.56%;
 `;
 
 const UserInfoContainer = styled.div`
@@ -110,20 +156,20 @@ const ProfileImg = styled.img`
 const TextBox = styled.div`
   flex-grow: 1;
   margin-left: 12px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 500;
   word-wrap: break-word;
 `;
 
 const SubText = styled.div`
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--dark-gray);
 `;
 
 const SliderFrame = styled.div`
   position: relative;
-  margin: 20px 4.44%;
+  margin: 28px 4.44% 20px;
   height: 40px;
   padding: 4px;
   border-radius: 100px;
@@ -180,4 +226,11 @@ const CoverImg = styled.img`
   left: 0;
   width: 100%;
   object-fit: cover;
+`;
+
+const Text = styled.div`
+  color: var(--dark-gray);
+  text-align: center;
+  padding: 32px 0;
+  line-height: 24px;
 `;
