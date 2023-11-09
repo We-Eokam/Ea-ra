@@ -43,6 +43,8 @@ public class AcceptanceAccusationStep {
 	public static ExtractableResponse<Response> 받은_고발장_목록_조회_요청() throws IOException {
 		return given().log().all()
 			.queryParam("memberId", MEMBER_ID)
+			.queryParam("page", 0)
+			.queryParam("size", 12)
 			.when().get("/accusation")
 			.then().log().all()
 			.extract();
