@@ -23,7 +23,7 @@ export default function Subsidy() {
         </SubTitle>
 
         <ImageFrame>
-          <CoinImage src="/images/subsidy-coin.png" />
+          <CoinImage src="/images/netzero/subsidy-coin.png" />
         </ImageFrame>
 
         <Title style={{ marginTop: "56px" }}>탄소중립포인트 제도는?</Title>

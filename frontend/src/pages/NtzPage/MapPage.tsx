@@ -152,7 +152,7 @@ export default function MapPage() {
         map.setCenter(locPosition);
 
         // 마커와 인포윈도우를 표시합니다
-        var imageSrc = "/images/gps-my.png";
+        var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new window.kakao.maps.Size(32, 32);
         var imageOption = {offset : new window.kakao.maps.Point(16,24)};
 
@@ -205,7 +205,8 @@ export default function MapPage() {
           </CurrencyInfoFrame>
 
           <StoreScroll>
-          {places
+          {places?.length > 0 ? (
+            places
             .filter((Store) => 
               selectedCategoryIndex === 0 ||
               Store.category === categoryList[selectedCategoryIndex]
@@ -221,7 +222,7 @@ export default function MapPage() {
                   </StoreInfo>
                 </StoreInfoFrame>
               </StoreFrame>
-            ))}
+            ))) : (<div>dd</div>)}
             <HideLastBorder />
           </StoreScroll>
         </MapModal>

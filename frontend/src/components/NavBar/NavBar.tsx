@@ -82,13 +82,13 @@ const LinkTab = styled(Link)<{ active: boolean }>`
     css`
       color: var(--black); // 활성 탭에 대한 스타일을 지정하세요.
       path {
-        fill: black;
+        fill: var(--black);
       }
       rect {
-        fill: black;
+        fill: var(--black);
       }
       circle {
-        fill: black;
+        fill: var(--black);
       }
     `}
 `;
