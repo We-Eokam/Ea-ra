@@ -5,6 +5,7 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import { ShortButton, LongButton } from "../../style";
 import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
+import areasList from "../../common/seoul-area.json"
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -20,9 +21,17 @@ export default function SignupPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState("");
-
-  const areasList = ["강남구", "강동구", "강북구", "강서구", "영등포구"];
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  
+  const green = 2400000;
+  
   const onToggle = () => setIsOpen(!isOpen);
+
+  const alertSignup = () => {
+    if (isNicknameChecked) {
+      alert("ㅇㅇㅇㅇ")
+    }
+  }
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,7 +55,11 @@ export default function SignupPage() {
     setSelectedGender(gender);
   };
 
-  const green = 2400000;
+  const handleCheckNickname = () => {
+    // 서버에 닉네임 중복 요청을 보내는 로직을 여기에 추가
+
+    setIsNicknameChecked(true);
+  };
 
   return (
     <>
@@ -76,7 +89,7 @@ export default function SignupPage() {
                 value={nickname}
                 onChange={handleNicknameChange}
               />
-              <CheckButton isNicknameValid={nickname.length >= 2}>
+              <CheckButton onClick={handleCheckNickname} isNicknameValid={nickname.length >= 2}>
                 중복확인
               </CheckButton>
             </NicknameCheck>
@@ -131,7 +144,7 @@ export default function SignupPage() {
         <InfoName>추천인</InfoName>
         <InitialGreen>QKF4FDL</InitialGreen>
         <SignupFrame>
-          <SignupButton>가입하기</SignupButton>
+          <SignupButton disabled={!isNicknameChecked} onClick={alertSignup}>가입하기</SignupButton>
           <Terms>
             회원가입 시 어라의 개인정보 처리방침 및 이용약관에
             <br />
@@ -323,10 +336,6 @@ const DropdownAreas = styled.div<DropdownProps>`
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
   overflow-y: scroll;
   overflow-x: hidden;
-
-  &::-webkit-scrollbar {
-    display: block;
-  }
 `;
 
 const OneArea = styled.div`
@@ -370,11 +379,11 @@ const SignupFrame = styled.div`
   align-items: center;
 `;
 
-const SignupButton = styled(LongButton)`
+const SignupButton = styled(LongButton)<{ disabled: boolean }>`
   width: calc(86.67%);
-  left: 0;
-  right: 0;
   margin-bottom: 28px;
+  background-color: ${({ disabled }) => (disabled ? "var(--nav-gray)" : "var(--primary)")};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 `;
 
 const Terms = styled(InfoName)`

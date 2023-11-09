@@ -3,8 +3,11 @@ import styled from "styled-components";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ReactComponent as LoginBackgroundSVG } from "../../assets/icons/login-background.svg";
 
-
 export default function LoginPage() {
+  const helpURL = "http://pf.kakao.com/_xbxhxgsG";
+  const netZeroURL =
+    "https://cpoint.or.kr/netzero/member/nv_memberRegistStep1.do";
+
   return (
     <>
       <MainFrame headbar="no" navbar="no" bgcolor="white" marginsize="no">
@@ -12,27 +15,41 @@ export default function LoginPage() {
           <LoginBackground />
         </BackgroundFrame>
         <EARA>
-          <EARABold>어 - 라?</EARABold><br />어느 날 갑자기<br />지구가 당신을<br />고소한다면?
+          <EARABold>어 - 라?</EARABold>
+          <br />
+          어느 날 갑자기
+          <br />
+          지구가 당신을
+          <br />
+          고소한다면?
         </EARA>
-        <LogoImage src="/images/logo-nobackground.png"/>
+        {/* <LogoImage src="/images/logo-nobackground.png"/> */}
         <ButtonsFrame>
           <KakaoButton>
             카카오로 시작하기
             <KakaoLogo src="images/kakao-logo.png" />
           </KakaoButton>
           <HelpButtonsFrame>
-            <HelpButton>
+            <HelpButton
+              onClick={() => {
+                window.open(helpURL);
+              }}
+            >
               고객센터 문의하기
             </HelpButton>
-            <HelpButton>
+            <HelpButton
+              onClick={() => {
+                window.open(netZeroURL);
+              }}
+            >
               탄소중립포인트제도
             </HelpButton>
           </HelpButtonsFrame>
-            <Terms>
-              회원가입 시 어라의 개인정보 처리방침 및 이용약관에
-              <br />
-              동의하는 것으로 간주합니다
-            </Terms>
+          <Terms>
+            회원가입 시 어라의 개인정보 처리방침 및 이용약관에
+            <br />
+            동의하는 것으로 간주합니다
+          </Terms>
         </ButtonsFrame>
       </MainFrame>
     </>
@@ -45,36 +62,35 @@ const BackgroundFrame = styled.div`
   height: 45%;
   display: flex;
   justify-content: center;
-`
+`;
 
 const LoginBackground = styled(LoginBackgroundSVG)`
   position: relative;
   width: auto;
   height: 100%;
   transform: scale(2.36) translate(11.9%, -15%);
-`
+`;
 
 const EARA = styled.div`
-  margin-top: 20px;
+  margin-top: 40px;
   font-size: 1.625em;
   font-weight: 400;
   line-height: 1.4em;
-  margin-left: 10.56%;
-`
+  margin-left: 13.56%;
+`;
 
 const EARABold = styled.span`
   font-size: 1em;
   font-weight: 600;
   line-height: 2em;
+`;
 
-`
-
-const LogoImage = styled.img`
-  position: absolute;
-  top: calc(45% + 112px);
-  width: 34%;
-  right: 6%;
-`
+// const LogoImage = styled.img`
+//   position: absolute;
+//   top: calc(45% + 112px);
+//   width: 34%;
+//   right: 6%;
+// `
 
 const ButtonsFrame = styled.div`
   position: absolute;
@@ -132,4 +148,4 @@ const Terms = styled.div`
   text-align: center;
   font-size: 11.5px;
   font-weight: 300;
-`
+`;

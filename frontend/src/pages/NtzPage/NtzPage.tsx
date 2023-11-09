@@ -112,13 +112,13 @@ export default function NtzPage() {
           <InfoButton onClick={navigateSubsidy}>
             <InfoButtonGray>내가 놓친</InfoButtonGray>
             <InfoButtonBlack>보조금 혜택</InfoButtonBlack>
-            <InfoImage src="/images/subsidy.png" />
+            <InfoImage src="/images/netzero/subsidy.png" />
           </InfoButton>
 
           <InfoButton onClick={navigateMap}>
             <InfoButtonGray>내 주변</InfoButtonGray>
             <InfoButtonBlack>참여가능 매장</InfoButtonBlack>
-            <InfoImage src="/images/store.png" />
+            <InfoImage src="/images/netzero/store.png" />
           </InfoButton>
 
           <InfoButton onClick={navigateComapny}>
@@ -126,13 +126,13 @@ export default function NtzPage() {
             <InfoButtonBlack>
               60<SmallText>개</SmallText>
             </InfoButtonBlack>
-            <InfoImage src="/images/company.png" />
+            <InfoImage src="/images/netzero/company.png" />
           </InfoButton>
 
           <InfoButton onClick={shareKakao} style={{ marginRight: "3.5px" }}>
             <InfoButtonGray>카카오톡으로</InfoButtonGray>
             <InfoButtonBlack>친구초대</InfoButtonBlack>
-            <InfoImage src="/images/invite.png" />
+            <InfoImage src="/images/netzero/invite.png" />
           </InfoButton>
         </InfoButtonsFrame>
 
