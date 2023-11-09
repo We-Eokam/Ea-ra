@@ -25,10 +25,13 @@ public class Member extends BaseEntity {
 
 	private String profileImage;
 
+	@Builder.Default
 	private Integer groo = 0;
 
+	@Builder.Default
 	private Integer billCount = 0;
 
+	@Builder.Default
 	private Integer bill = 0;
 
 	@Builder
