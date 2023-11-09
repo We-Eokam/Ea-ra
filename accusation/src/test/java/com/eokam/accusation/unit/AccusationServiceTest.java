@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.accusation.application.dto.AccusationDto;
+import com.eokam.accusation.application.dto.PageAccusationDto;
 import com.eokam.accusation.application.service.AccusationServiceImpl;
 import com.eokam.accusation.domain.entity.Accusation;
 import com.eokam.accusation.domain.entity.AccusationImage;
@@ -93,24 +98,29 @@ public class AccusationServiceTest {
 		// given
 		List<Accusation> accusations = number수만큼_memberId에게_고발장_보내기(1L, 10);
 		List<AccusationImage> accusationImages = 보낸_고발장에_사진_한개씩_추가(accusations);
-		given(accusationRepository.findByMemberId(1L)).willReturn(accusations);
+		PageRequest pageRequest = PageRequest.of(0, 12, Sort.by("accusationId").descending());
+		given(accusationRepository.findByMemberId(1L, pageRequest)).willReturn(
+			new PageImpl<>(accusations, pageRequest, accusations.size()));
 		for (int i = 1; i <= 10; i++) {
 			given(accusationImageRepository.findByAccusation_AccusationId((long)i)).willReturn(
 				Collections.singletonList(accusationImages.get(i - 1)));
 		}
 
 		// when
-		List<AccusationDto> accusationDtoList = accusationService.getAccusationList(1L);
+		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(1L, 0, 12);
 
 		// then
-		verify(accusationRepository).findByMemberId(1L);
+		Assertions.assertThat(pageAccusationDto.getPageInfo().getTotalPages()).isEqualTo(1);
+		Assertions.assertThat(pageAccusationDto.getPageInfo().getTotalElements()).isEqualTo(10);
+		Assertions.assertThat(pageAccusationDto.getPageInfo().getIsLast()).isTrue();
+		verify(accusationRepository).findByMemberId(1L, pageRequest);
 		for (int i = 1; i <= 10; i++) {
 			verify(accusationImageRepository).findByAccusation_AccusationId((long)i);
 		}
 		verify(accusationImageRepository, Mockito.times(10))
 			.findByAccusation_AccusationId(any());
-		assertThat(accusationDtoList).hasSize(10);
-		for (AccusationDto accusationDto : accusationDtoList) {
+		assertThat(pageAccusationDto.getAccusationDtoList()).hasSize(10);
+		for (AccusationDto accusationDto : pageAccusationDto.getAccusationDtoList()) {
 			assertThat(accusationDto.imageList()).hasSize(1);
 		}
 	}

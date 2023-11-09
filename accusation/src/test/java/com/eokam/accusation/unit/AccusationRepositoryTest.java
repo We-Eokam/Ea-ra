@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,11 +68,11 @@ public class AccusationRepositoryTest {
 		accusationImageRepository.saveAll(accusationImage);
 
 		// when
-		List<Accusation> accusationList = accusationRepository.findByMemberId(memberId);
+		Page<Accusation> pageAccusation = accusationRepository.findByMemberId(memberId, PageRequest.of(0, 12));
 
 		// then
-		assertThat(accusationList).hasSize(accusationNumber);
-		for (Accusation accusation : accusationList) {
+		assertThat(pageAccusation.getContent()).hasSize(accusationNumber);
+		for (Accusation accusation : pageAccusation.getContent()) {
 			List<AccusationImage> findAccusationImage = accusationImageRepository.findByAccusation_AccusationId(
 				accusation.getAccusationId());
 			assertThat(findAccusationImage).hasSize(1);

@@ -2,7 +2,7 @@ package com.eokam.accusation.presentation.dto;
 
 import java.util.List;
 
-import com.eokam.accusation.application.dto.AccusationDto;
+import com.eokam.accusation.application.dto.PageAccusationDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +13,13 @@ import lombok.Getter;
 @Getter
 public class AccusationListResponse {
 
+	private PageInfoResponse pageInfo;
 	private List<AccusationResponse> accusationList;
 
-	public static AccusationListResponse from(List<AccusationDto> accusationDtoList) {
+	public static AccusationListResponse from(PageAccusationDto pageAccusationDto) {
 		return AccusationListResponse.builder()
-			.accusationList(accusationDtoList.stream().map(AccusationResponse::from).toList())
+			.pageInfo(PageInfoResponse.from(pageAccusationDto.getPageInfo()))
+			.accusationList(pageAccusationDto.getAccusationDtoList().stream().map(AccusationResponse::from).toList())
 			.build();
 	}
 }

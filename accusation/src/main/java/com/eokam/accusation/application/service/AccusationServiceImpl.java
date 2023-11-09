@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.accusation.application.dto.AccusationDto;
+import com.eokam.accusation.application.dto.PageAccusationDto;
+import com.eokam.accusation.application.dto.PageInfoDto;
 import com.eokam.accusation.domain.entity.Accusation;
 import com.eokam.accusation.domain.entity.AccusationImage;
 import com.eokam.accusation.global.error.ErrorCode;
@@ -49,16 +54,20 @@ public class AccusationServiceImpl implements AccusationService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<AccusationDto> getAccusationList(Long memberId) {
+	public PageAccusationDto getAccusationList(Long memberId, Integer page, Integer size) {
 		List<AccusationDto> accusationDtoList = new ArrayList<>();
-		List<Accusation> accusations = accusationRepository.findByMemberId(memberId);
+		Page<Accusation> pageAccusationList = accusationRepository.findByMemberId(memberId, PageRequest.of(page, size,
+			Sort.by("accusationId").descending()));
+		List<Accusation> accusations = pageAccusationList.getContent();
+		PageInfoDto pageInfoDto = PageInfoDto.of(pageAccusationList.isLast(), pageAccusationList.getTotalPages(),
+			pageAccusationList.getTotalElements());
 		for (Accusation accusation : accusations) {
 			List<AccusationImage> accusationImages = accusationImageRepository.findByAccusation_AccusationId(
 				accusation.getAccusationId());
 			List<String> fileUrls = accusationImages.stream().map(AccusationImage::getFileUrl).toList();
 			accusationDtoList.add(AccusationDto.of(accusation, fileUrls));
 		}
-		return accusationDtoList;
+		return PageAccusationDto.of(pageInfoDto, accusationDtoList);
 	}
 
 	@Override
