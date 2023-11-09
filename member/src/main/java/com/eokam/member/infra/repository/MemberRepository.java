@@ -1,4 +1,4 @@
-package com.eokam.member.infra;
+package com.eokam.member.infra.repository;
 
 import java.util.Optional;
 

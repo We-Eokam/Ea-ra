@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.eokam.member.domain.Member;
+import com.eokam.member.infra.repository.MemberRepository;
 
 @EnableJpaAuditing
 @DataJpaTest
