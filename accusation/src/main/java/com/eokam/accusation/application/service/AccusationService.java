@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.accusation.application.dto.AccusationDto;
+import com.eokam.accusation.application.dto.PageAccusationDto;
 
 public interface AccusationService {
 
 	AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile);
 
-	List<AccusationDto> getAccusationList(Long memberId);
+	PageAccusationDto getAccusationList(Long memberId, Integer page, Integer size);
 
 	AccusationDto getAccusationDetail(Long accusationId);
 }
