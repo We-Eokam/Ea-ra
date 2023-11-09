@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.eokam.accusation.application.dto.AccusationDto;
+import com.eokam.accusation.application.dto.PageAccusationDto;
 import com.eokam.accusation.application.service.AccusationService;
 import com.eokam.accusation.presentation.dto.AccusationListResponse;
 import com.eokam.accusation.presentation.dto.AccusationRequest;
@@ -39,11 +40,12 @@ public class AccusationController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getAccusationList(@RequestParam Long memberId) {
-		List<AccusationDto> accusationDtoList = accusationService.getAccusationList(memberId);
-		return ResponseEntity.ok(AccusationListResponse.from(accusationDtoList));
+	public ResponseEntity<?> getAccusationList(@RequestParam Long memberId, @RequestParam Integer page,
+		@RequestParam Integer size) {
+		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(memberId, page, size);
+		return ResponseEntity.ok(AccusationListResponse.from(pageAccusationDto));
 	}
-
+	
 	@GetMapping("/{accusationId}")
 	public ResponseEntity<AccusationResponse> getAccusationDetail(@PathVariable Long accusationId) {
 		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId);
