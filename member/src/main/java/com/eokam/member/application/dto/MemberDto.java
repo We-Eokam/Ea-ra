@@ -19,7 +19,9 @@ public class MemberDto {
 
 	private Integer billCount;
 
-	private String profileImage;
+	private String profileImageUrl;
+
+	private String profileImageFileName;
 
 	public static MemberDto from(Member member){
 		return MemberDto
@@ -29,7 +31,8 @@ public class MemberDto {
 			.groo(member.getGroo())
 			.bill(member.getBill())
 			.billCount(member.getBillCount())
-			.profileImage(member.getProfileImage())
+			.profileImageUrl(member.getProfileImageUrl())
+			.profileImageFileName(member.getProfileImageFileName())
 			.build();
 	}
 }
