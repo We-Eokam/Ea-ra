@@ -24,8 +24,6 @@ interface DataProps {
 export default function TestPage() {
   const [id, setId] = useState(0);
   const [question, setQuestion] = useState<DataProps>(data[0]);
-  // @ts-ignore
-  const [results, setResults] = useState<string[]>([]);
 
   const navigate = useNavigate();
 
@@ -33,7 +31,6 @@ export default function TestPage() {
     setQuestion(data[id]);
 
     if (id === 10) {
-      setResults(JSON.parse(localStorage.getItem("results") || '{}'));
       navigate("/result");
     };
 
