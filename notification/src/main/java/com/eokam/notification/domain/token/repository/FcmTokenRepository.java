@@ -1,11 +1,11 @@
-package com.eokam.notification.domain.repository;
+package com.eokam.notification.domain.token.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.eokam.notification.domain.entity.Token;
+import com.eokam.notification.domain.token.entity.Token;
 
 import lombok.RequiredArgsConstructor;
 

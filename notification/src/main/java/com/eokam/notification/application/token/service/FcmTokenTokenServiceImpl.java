@@ -1,10 +1,10 @@
-package com.eokam.notification.application.service;
+package com.eokam.notification.application.token.service;
 
 import org.springframework.stereotype.Service;
 
-import com.eokam.notification.application.dto.TokenDto;
-import com.eokam.notification.domain.entity.Token;
-import com.eokam.notification.domain.repository.FcmTokenRepository;
+import com.eokam.notification.application.token.dto.TokenDto;
+import com.eokam.notification.domain.token.entity.Token;
+import com.eokam.notification.domain.token.repository.FcmTokenRepository;
 import com.eokam.notification.infrastructure.util.ParseJwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,13 @@ public class FcmTokenTokenServiceImpl implements FcmTokenService {
 	@Override
 	public void delete(String jwt) {
 		fcmTokenRepository.delete(ParseJwtUtil.parseMemberId(jwt));
+	}
+
+	@Override
+	public TokenDto getToken(Long memberId) {
+		Token token = fcmTokenRepository.findTokenByMemberId(memberId)
+			.orElseThrow();
+		return TokenDto.from(token);
 	}
 
 }

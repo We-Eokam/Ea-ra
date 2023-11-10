@@ -1,6 +1,6 @@
-package com.eokam.notification.domain.entity;
+package com.eokam.notification.domain.token.entity;
 
-import com.eokam.notification.application.dto.TokenDto;
+import com.eokam.notification.application.token.dto.TokenDto;
 
 import lombok.Builder;
 

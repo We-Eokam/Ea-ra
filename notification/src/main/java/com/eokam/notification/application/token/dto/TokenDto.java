@@ -1,5 +1,6 @@
-package com.eokam.notification.application.dto;
+package com.eokam.notification.application.token.dto;
 
+import com.eokam.notification.domain.token.entity.Token;
 import com.eokam.notification.infrastructure.util.ParseJwtUtil;
 import com.eokam.notification.presentation.dto.TokenRequest;
 
@@ -15,4 +16,10 @@ public record TokenDto(Long memberId, String token) {
 			.build();
 	}
 
+	public static TokenDto from(Token token) {
+		return TokenDto.builder()
+			.memberId(Long.parseLong(token.memberId()))
+			.token(token.token())
+			.build();
+	}
 }
