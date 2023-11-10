@@ -8,7 +8,6 @@ export default function StartPage() {
   const navigate = useNavigate();
 
   const handleBtnClick = () => {
-    localStorage.setItem("results", "0");
     navigate("/test");
   }
   

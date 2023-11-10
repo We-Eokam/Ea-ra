@@ -3,7 +3,7 @@ import NavBar from "../../components/NavBar/NavBar";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
-import FollowBtn from "../../components/Buttons/FollowButton";
+// import FollowBtn from "../../components/Buttons/FollowButton";
 
 export default function NotiPage() {
   const NoticeExample = [

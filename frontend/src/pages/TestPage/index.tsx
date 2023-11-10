@@ -9,7 +9,7 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import { LongButton } from "../../style";
 
 interface AnswerProps {
-  type: string;
+  type: number;
   thoughts: string;
   action: string;
 }
@@ -24,8 +24,6 @@ interface DataProps {
 export default function TestPage() {
   const [id, setId] = useState(0);
   const [question, setQuestion] = useState<DataProps>(data[0]);
-  // @ts-ignore
-  const [results, setResults] = useState<string[]>([]);
 
   const navigate = useNavigate();
 
@@ -33,15 +31,18 @@ export default function TestPage() {
     setQuestion(data[id]);
 
     if (id === 10) {
-      setResults(JSON.parse(localStorage.getItem("results") || '{}'));
       navigate("/result");
+    };
+
+    if (id === 0) {
+      localStorage.setItem("results", "50000");
     };
   }, [id]);
 
-  const hadleAnswerClick = (type: string) => {
-    if (type === "+") {
-      let count = Number(localStorage.getItem("results")) + 1;
-      localStorage.setItem("results", `${count}`);
+  const hadleAnswerClick = (type: number) => {
+    if (type) {
+      let debt = Number(localStorage.getItem("results")) + type;
+      localStorage.setItem("results", `${debt}`);
     }
     setId(id + 1);
   };
@@ -49,7 +50,7 @@ export default function TestPage() {
   return (
     <>
       <ProgressGreen progress={id * 10} />
-      <MainFrame headbar="yes" navbar="yes" marginsize="large" bgcolor="">
+      <MainFrame headbar="no" navbar="yes" marginsize="large" bgcolor="">
         <QuestionFrame>
           <Situation dangerouslySetInnerHTML={{ __html: question.situation }} />
           <div>{question.question}</div>
@@ -78,15 +79,17 @@ const ProgressGreen = styled.div<{ progress: number }>`
   height: 12px;
   background-color: var(--primary);
   width: ${({ progress }) => `${progress}%`};
-  transition: width 0.26s ease-in-out
+  transition: width 0.26s ease-in-out;
+  z-index: 1;
 `
 
 const QuestionFrame = styled.div`
-  padding: 20px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  justify-content: end;
+  gap: 32px;
+  height: 30%;
   font-size: 22px;
   font-weight: 650;
 `;
@@ -103,30 +106,35 @@ const CharacterFrame = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60%;
-  max-width: 320px;
+  width: 64%;
+  max-width: 300px;
 `;
 
 const BtnFrame = styled.div`
   position: absolute;
-  left: 6.67%;
-  right: 6.67%;
+  left: 6%;
+  right: 6%;
   bottom: 0;
-  padding-bottom: 14%;
+  height: 30%;
+  max-height: 260px;
   z-index: 2;
   background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Button = styled(LongButton)`
   flex-direction: column;
   width: calc(100% - 16px);
+  max-width: 400px;
   font-weight: 300;
-  margin: 20px 4px;
+  margin: 10px 4px;
   padding: 16px 4px;
 `;
 
 const Action = styled.div`
-  font-size: 18px;
+  font-size: 17.4px;
   font-weight: 500;
   padding-top: 8px;
 `;
