@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import { ModalFrame } from "../../components/Modal/ModalFrame";
-import "../../style/kakaomapOverlay.css"
-// import CompanyList from "../../common/act.json"
+import "../../style/kakaomapOverlay.css";
+import actList from "../../common/act.json";
 
 interface CategoryProps {
   isSelected: boolean;
@@ -14,6 +14,20 @@ declare global {
   interface Window {
     kakao: any;
   }
+}
+
+interface Store {
+  company_id: number;
+  company_name: string;
+  branch_name: string;
+  latitude: number;
+  longitude: number;
+  distance: number;
+}
+
+interface Activity {
+  activity_type: string;
+  stores: Store[];
 }
 
 export default function MapPage() {
@@ -30,8 +44,21 @@ export default function MapPage() {
     "폐휴대폰",
   ];
 
+  const categoryInEnglish = [
+    "",
+    "ELECTRONIC_RECEIPT",
+    "TUMBLER",
+    "DISPOSABLE_CUP",
+    "REFILL_STATION",
+    "MULTI_USE_CONTAINER",
+    "HIGH_QUALITY_RECYCLED_PRODUCTS",
+    "ECO_FRIENDLY_PRODUCTS",
+    "EMISSION_FREE_CAR",
+    "DISCARDED_PHONE",
+  ];
+
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
-  
+  var filteredList: Store[];
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -43,41 +70,89 @@ export default function MapPage() {
     }
   };
 
-  const places = [
+  const store_list: Activity[] = [
     {
-      category: "텀블러",
-      company: "스타벅스",
-      name: "스타벅스 학동역점",
-      lat: 37.5146173,
-      lng: 127.0307978,
-      distance: "더미m",
-      time: "더미분",
-      type: 2,
+      activity_type: "EMISSION_FREE_CAR",
+      stores: [
+        {
+          company_id: 3,
+          company_name: "쏘카",
+          branch_name: "땡땡지점",
+          latitude: 127.0282206319216,
+          longitude: 37.51267716377659,
+          distance: 4800,
+        },
+        {
+          company_id: 3,
+          company_name: "CU",
+          branch_name: "역삼캠퍼스",
+          latitude: 127.0307206319216,
+          longitude: 37.51267716377659,
+          distance: 1200,
+        },
+      ],
     },
     {
-      category: "텀블러",
-      company: "스타벅스",
-      name: "스타벅스 논현힐탑점",
-      lat: 37.5114981,
-      lng: 127.0321654,
-      distance: "더미m",
-      time: "도보 더미분",
-      type: 2
+      activity_type: "TUMBLER",
+      stores: [
+        {
+          company_id: 1,
+          company_name: "스타벅스",
+          branch_name: "강남점",
+          latitude: 127.0264206319216,
+          longitude: 37.51267716377659,
+          distance: 100.0,
+        },
+      ],
     },
     {
-      category: "전자영수증",
-      company: "KB국민은행",
-      name: "KB국민은행 학동역",
-      lat: 37.5135422,
-      lng: 127.0305215,
-      distance: "더미m",
-      time: "더미초",
-      type: 2,
-    }
+      activity_type: "ELECTRONIC_RECEIPT",
+      stores: [
+        {
+          company_id: 2,
+          company_name: "메가MGC커피",
+          branch_name: "언주로점",
+          latitude: 127.000001,
+          longitude: 35.0,
+          distance: 110.0,
+        },
+      ],
+    },
   ];
 
-  
+  if (selectedCategoryIndex === 0) {
+    filteredList = store_list.flatMap((item) => item.stores);
+  } else {
+    const selectedType = categoryInEnglish[selectedCategoryIndex];
+    const foundItem = store_list.find(
+      (item) => item.activity_type === selectedType
+    );
+    filteredList = foundItem ? foundItem.stores : [];
+  }
+  filteredList.sort((a, b) => a.distance - b.distance);
+
+  const calculateTime = (distance: number) => {
+    if (distance < 80) {
+      return "1분";
+    } else if (distance < 4800) {
+      return `${Math.round(distance / 80)}분`;
+    } else {
+      return `${Math.floor(distance / 4800)}시간`;
+    }
+  };
+
+  function getLogoPath(companyName: string) {
+    for (let act of actList) {
+      for (let company of act.companies) {
+        if (company.name === companyName) {
+          return company.logo;
+        }
+      }
+    }
+  }
+
   useEffect(() => {
+    // console.log(filteredList);
     let container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
     let options = {
       //지도를 생성할 때 필요한 기본 옵션
@@ -87,7 +162,9 @@ export default function MapPage() {
 
     let map = new window.kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
 
-    
+    map.setMinLevel(1);
+    map.setMaxLevel(8);
+
     const displayMarkers = () => {
       // 지도 영역을 얻어옵니다.
       let bounds = map.getBounds();
@@ -95,42 +172,38 @@ export default function MapPage() {
       let swLatLng = bounds.getSouthWest(); // 남서쪽 좌표를 얻어옵니다.
       // @ts-ignore
       let neLatLng = bounds.getNorthEast(); // 북동쪽 좌표를 얻어옵니다.
-      
-      const selectedCategory = categoryList[selectedCategoryIndex];
-      
-      places.forEach((place) => {
-        if (selectedCategory === "전체보기" || place.category === selectedCategory) {
-          let position = new window.kakao.maps.LatLng(place.lat, place.lng);
-          
-          // 현재 지도 영역 내에 있는지 확인합니다.
-          if (bounds.contain(position)) {
-            // 마커를 생성하고 지도에 표시합니다.
-            // @ts-ignore
-            let marker = new window.kakao.maps.Marker({
-              map: map,
-              position: position,
-            });
 
-            var customContent = `<div class="custom-overlay">${place.name}</div>`
-            
-            // @ts-ignore
-            var customOverlay = new window.kakao.maps.CustomOverlay({
-              map: map,
-              position: position,
-              content: customContent,
-              yAnchor: 2.6,
-            })
+      filteredList.forEach((place) => {
+        let position = new window.kakao.maps.LatLng(
+          place.longitude,
+          place.latitude
+        );
+        // 현재 지도 영역 내에 있는지 확인합니다.
+        if (bounds.contain(position)) {
+          // 마커를 생성하고 지도에 표시합니다.
+          // @ts-ignore
+          let marker = new window.kakao.maps.Marker({
+            map: map,
+            position: position,
+          });
 
-            // let infowindow = new window.kakao.maps.InfoWindow({
-            //   map: map,
-            //   position: position,
-            //   content: place.name,
-            // })
+          var customContent = `<div class="custom-overlay">${place?.company_name} ${place?.branch_name}</div>`;
 
-            // infowindow.open(map, marker)
+          // @ts-ignore
+          var customOverlay = new window.kakao.maps.CustomOverlay({
+            map: map,
+            position: position,
+            content: customContent,
+            yAnchor: 2.6,
+          });
 
-            
-          }
+          // let infowindow = new window.kakao.maps.InfoWindow({
+          //   map: map,
+          //   position: position,
+          //   content: place.name,
+          // })
+
+          // infowindow.open(map, marker)
         }
       });
     };
@@ -144,24 +217,24 @@ export default function MapPage() {
         var lat = position.coords.latitude - 0.00025, // 위도
           lon = position.coords.longitude - 0.0003; // 경도
 
-
-
-        console.log(lat, lon);
-
         var locPosition = new window.kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
 
         // 마커와 인포윈도우를 표시합니다
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new window.kakao.maps.Size(32, 32);
-        var imageOption = {offset : new window.kakao.maps.Point(16,24)};
+        var imageOption = { offset: new window.kakao.maps.Point(16, 24) };
 
-        var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        var markerImage = new window.kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+          imageOption
+        );
 
         var marker = new window.kakao.maps.Marker({
           position: locPosition,
-          image: markerImage
-        })
+          image: markerImage,
+        });
 
         marker.setMap(map);
       });
@@ -169,9 +242,23 @@ export default function MapPage() {
 
     window.kakao.maps.event.addListener(map, "dragend", function () {
       // 지도의 중심 좌표를 얻어옵니다
+
       var center = map.getCenter();
+      var mapLevel = map.getLevel();
+      var radius = 505;
+      if (mapLevel == 1) {
+        radius = 58;
+      } else if (mapLevel == 2) {
+        radius = 112;
+      } else if (mapLevel == 3) {
+        radius = 260;
+      } else if (mapLevel == 4) {
+        radius = 505;
+      } else if (mapLevel > 4) {
+        radius = 995;
+      }
       console.log(
-        `드래그가 끝난 후 중앙 좌표: 위도(${center.getLat()}), 경도(${center.getLng()})`
+        `드래그가 끝난 후 중앙 좌표: 레벨(${mapLevel}), 반경(${radius}) 위도(${center.getLat()}), 경도(${center.getLng()})`
       );
     });
     window.kakao.maps.event.addListener(map, "idle", displayMarkers);
@@ -200,29 +287,33 @@ export default function MapPage() {
           <Map id="map"></Map>
         </MapFrame>
         <MapModal>
-          <CurrencyInfoFrame>
-            <CurrencyInfo>탄소중립포인트&nbsp;&nbsp;&nbsp;그린</CurrencyInfo>
-          </CurrencyInfoFrame>
+          <CurrencyInfoFrame />
 
           <StoreScroll>
-          {places?.length > 0 ? (
-            places
-            .filter((Store) => 
-              selectedCategoryIndex === 0 ||
-              Store.category === categoryList[selectedCategoryIndex]
-            )
-            .map((Store, index) => (
-              <StoreFrame key={index}>
-                <LogoFrame>로고</LogoFrame>
-                <StoreInfoFrame>
-                  <StoreName>{Store?.name}</StoreName>
-                  <StoreInfo>
-                    {Store?.type} &nbsp; {Store?.distance}&nbsp;&nbsp;
-                    <Middot>&middot;</Middot>&nbsp;&nbsp;{Store?.time}
-                  </StoreInfo>
-                </StoreInfoFrame>
-              </StoreFrame>
-            ))) : (<div>dd</div>)}
+            {filteredList?.length > 0 ? (
+              filteredList.map((Store, index: number) => (
+                <StoreFrame key={index}>
+                  <LogoFrame>
+                    <Logo src={getLogoPath(Store.company_name)} />
+                  </LogoFrame>
+                  <StoreInfoFrame>
+                    <StoreName>
+                      {Store?.company_name} {Store?.branch_name}
+                    </StoreName>
+                    <StoreInfo>
+                      {Store?.distance < 1000
+                        ? `${Store?.distance}m`
+                        : `${(Store?.distance / 1000).toFixed(1)}km`}
+                      &nbsp;&nbsp;
+                      <Middot>&middot;</Middot>&nbsp;&nbsp;
+                      {calculateTime(Store?.distance)}
+                    </StoreInfo>
+                  </StoreInfoFrame>
+                </StoreFrame>
+              ))
+            ) : (
+              <div>dd</div>
+            )}
             <HideLastBorder />
           </StoreScroll>
         </MapModal>
@@ -303,28 +394,20 @@ const MapModal = styled(ModalFrame)`
 const CurrencyInfoFrame = styled.div`
   position: relative;
   width: 100%;
-  height: 16px;
-  margin-top: 20px;
-`;
-
-const CurrencyInfo = styled.span`
-  position: absolute;
-  font-size: 9px;
-  right: 0;
-  color: var(--dark-gray);
+  height: 12px;
 `;
 
 const StoreScroll = styled.div`
   position: relative;
   width: 100%;
-  height: calc(100% - 34px);
+  height: calc(100% - 16px);
   overflow-y: scroll;
 `;
 
 const StoreFrame = styled.div`
   position: relative;
   width: 100%;
-  height: 96px;
+  height: 100px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--gray);
@@ -332,13 +415,20 @@ const StoreFrame = styled.div`
 
 const LogoFrame = styled.div`
   position: relative;
-  width: 64px;
-  height: 64px;
-  background-color: var(--background);
+  width: 68px;
+  height: 68px;
+  border: 1px solid var(--gray);
   border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+`;
+
+const Logo = styled.img`
+  position: relative;
+  width: 100%;
+  height: auto;
 `;
 
 const StoreInfoFrame = styled.div`
@@ -352,15 +442,15 @@ const StoreInfoFrame = styled.div`
 
 const StoreName = styled.div`
   position: relative;
-  font-size: 14px;
+  font-size: 15x;
   font-weight: 550;
 `;
 
 const StoreInfo = styled.div`
   position: relative;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 400;
-  margin-top: 5px;
+  margin-top: 6px;
   color: var(--dark-gray);
 `;
 

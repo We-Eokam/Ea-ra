@@ -14,43 +14,88 @@ export default function NtzPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setChartSort(true);
-    }, 280)
+    }, 280);
     return () => clearTimeout(timer);
-  }, [])
+  }, []);
 
   const navigate = useNavigate();
-  const chartData = [
+
+  const categoryList = [
+    "전자영수증",
+    "텀블러",
+    "일회용컵 반환",
+    "리필스테이션",
+    "다회용기",
+    "고품질 재활용품",
+    "친환경제품",
+    "무공해차",
+    "폐휴대폰",
+  ];
+
+  const categoryInEnglish = [
+    "ELECTRONIC_RECEIPT",
+    "TUMBLER",
+    "DISPOSABLE_CUP",
+    "REFILL_STATION",
+    "MULTI_USE_CONTAINER",
+    "HIGH_QUALITY_RECYCLED_PRODUCTS",
+    "ECO_FRIENDLY_PRODUCTS",
+    "EMISSION_FREE_CAR",
+    "DISCARDED_PHONE",
+  ];
+
+  var charData = [];
+
+  const chartColor = [
+    "hsl(29, 96.7%, 75.9%)",
+    "hsl(233, 70%, 50%)",
+    "hsl(214, 51.7%, 45.5%)",
+    "hsl(314, 70%, 50%)",
+    "hsl(80, 70%, 50%)",
+    "hsl(210, 70%, 50%)",
+    "hsl(1, 70%, 50%)",
+    "hsl(169, 57.6%, 74.1%)",
+    "hsl(120, 40.7%, 64.3%)",
+    "hsl(265, 30.6%, 75.7%)",
+  ];
+
+  const summary_list = [
     {
-      id: "전자영수증",
-      label: "전자영수증",
-      value: 18,
-      color: "hsl(233, 70%, 50%)",
+      activity_type: "ELECTRONIC_RECEIPT",
+      point: 1200,
     },
     {
-      id: "텀블러",
-      label: "텀블러",
-      value: 32,
-      color: "hsl(314, 70%, 50%)",
+      activity_type: "TUMBLER",
+      point: 2000,
     },
     {
-      id: "일회용컵",
-      label: "일회용컵",
-      value: 478,
-      color: "hsl(80, 70%, 50%)",
+      activity_type: "DISPOSABLE_CUP",
+      point: 1000,
     },
     {
-      id: "다회용기",
-      label: "다회용기",
-      value: 226,
-      color: "hsl(210, 70%, 50%)",
+      activity_type: "REFILL_STATION",
+      point: 2100,
     },
     {
-      id: "폐휴대폰",
-      label: "폐휴대폰",
-      value: 329,
-      color: "hsl(1, 70%, 50%)",
+      activity_type: "MULTI_USE_CONTAINER",
+      point: 2100,
+    },
+    {
+      activity_type: "HIGH_QUALITY_RECYCLED_PRODUCTS",
+      point: 2100,
     },
   ];
+
+  for (var i = 0; i < summary_list.length; i++) {
+    var cat =
+      categoryList[categoryInEnglish.indexOf(summary_list[i].activity_type)];
+    charData.push({
+      id: cat,
+      label: cat,
+      value: summary_list[i].point,
+      color: chartColor[i],
+    });
+  }
 
   const navigateMap = () => {
     navigate("/netzero/map");
@@ -144,11 +189,10 @@ export default function NtzPage() {
             텀블러 이용하기로 가장 많은 포인트를 얻었어요!
           </TextLine>
           <ChartFrame>
-
             <ChartInner>
               <ResponsivePie
-                data={chartData}
-                margin={{ top: 0, right: 100, bottom: 9, left: 60 }}
+                data={charData}
+                margin={{ top: 16, right: 84, bottom: 10, left: 84 }}
                 innerRadius={0.5}
                 padAngle={1.3}
                 cornerRadius={1}
@@ -168,26 +212,25 @@ export default function NtzPage() {
                 arcLabelsSkipAngle={10}
                 arcLabelsTextColor="#1C1C1C"
                 sortByValue={charSort}
-                legends={[
-                  {
-                    anchor: "right",
-                    direction: "column",
-                    justify: false,
-                    translateX: 112,
-                    translateY: 90,
-                    itemsSpacing: 1,
-                    itemWidth: 100,
-                    itemHeight: 15,
-                    itemTextColor: "#727272",
-                    itemDirection: "left-to-right",
-                    itemOpacity: 1,
-                    symbolSize: 10,
-                    symbolShape: "circle",
-                    effects: [
-                    ],
-                  },
-                ]}
-                />
+                // legends={[
+                //   {
+                //     anchor: "right",
+                //     direction: "column",
+                //     justify: false,
+                //     translateX: 140,
+                //     translateY: 90,
+                //     itemsSpacing: 1,
+                //     itemWidth: 100,
+                //     itemHeight: 15,
+                //     itemTextColor: "#727272",
+                //     itemDirection: "left-to-right",
+                //     itemOpacity: 1,
+                //     symbolSize: 10,
+                //     symbolShape: "circle",
+                //     effects: [],
+                //   },
+                // ]}
+              />
             </ChartInner>
           </ChartFrame>
         </ChartContainer>
@@ -296,10 +339,10 @@ const InfoImage = styled.img`
 `;
 
 const ChartContainer = styled(CPointContainer)`
-  height: 328px;
+  height: 324px;
   margin-top: 8px;
   margin-bottom: 16px;
-`
+`;
 
 const ChartFrame = styled.div`
   position: relative;
@@ -308,7 +351,7 @@ const ChartFrame = styled.div`
   height: 260px;
   display: flex;
   justify-content: center;
-`
+`;
 
 const ChartInner = styled.div`
   position: relative;
@@ -316,4 +359,4 @@ const ChartInner = styled.div`
   max-width: 372px;
   height: 100%;
   /* max-width: 380px; */
-`
+`;
