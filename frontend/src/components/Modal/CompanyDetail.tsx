@@ -15,6 +15,7 @@ interface CompanyInfoProps {
 interface CompanyDetailProps {
   closeModal: () => void;
   companyInfo: CompanyInfoProps;
+  isConnected: boolean;
 }
 
 interface BackgroundProps {
@@ -28,6 +29,7 @@ interface ModalProps {
 export default function CompanyDetail({
   closeModal,
   companyInfo,
+  isConnected,
 }: CompanyDetailProps) {
   const [isclosing, setIsClosing] = useState(false);
 
@@ -36,6 +38,17 @@ export default function CompanyDetail({
     setTimeout(() => {
       closeModal();
     }, 260);
+  };
+
+  const saveAndClose = () => {
+    if (isConnected) {
+      // 연동취소
+    } else {
+      // 연동하기
+    }
+    closeAndAnimate();
+    location.reload();
+
   };
 
   return (
@@ -50,7 +63,11 @@ export default function CompanyDetail({
           <Logo src={companyInfo?.logo} />
           <CompanyName>{companyInfo?.name}</CompanyName>
           <CompanyPoints>{companyInfo?.detail}</CompanyPoints>
-            <ConnectButton>연동하기</ConnectButton>
+          {isConnected ? (
+            <ConnectedButton onClick={saveAndClose}>연동했어요</ConnectedButton>
+          ) : (
+            <ConnectButton onClick={saveAndClose}>연동할래요</ConnectButton>
+          )}
         </InnerContainer>
       </CompanyDetailModal>
     </>
@@ -154,7 +171,7 @@ const ConnectButton = styled(LongButton)`
   font-size: 14px;
 `;
 
-// const ConnectedButton = styled(ConnectButton)`
-//   background-color: var(--gray);
-//   color: var(--black);
-// `;
+const ConnectedButton = styled(ConnectButton)`
+  background-color: var(--gray);
+  color: var(--black);
+`;
