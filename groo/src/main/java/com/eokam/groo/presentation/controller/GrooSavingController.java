@@ -35,9 +35,8 @@ public class GrooSavingController {
 	private final TokenManager tokenManager;
 
 	@PostMapping
-	ResponseEntity<GrooSavingResponse> createGrooSaving(@CookieValue(value = "access-token") String jwt, @RequestBody @Validated(ValidationSequence.class) GrooSavingRequest request) {
-		Long memberId = tokenManager.getMemberId(jwt);
-		GrooSavingDto grooSavingDto = grooSavingService.createGrooSaving(GrooSavingDto.of(request, memberId));
+	ResponseEntity<GrooSavingResponse> createGrooSaving(@RequestBody @Validated(ValidationSequence.class) GrooSavingRequest request) {
+		GrooSavingDto grooSavingDto = grooSavingService.createGrooSaving(GrooSavingDto.from(request));
 		ResponseEntity.created(URI.create("/groo/" + grooSavingDto.savingId())).body(GrooSavingResponse.from(grooSavingDto));
 		return ResponseEntity.created(URI.create("/groo/" + grooSavingDto.savingId())).body(GrooSavingResponse.from(grooSavingDto));
 	}
