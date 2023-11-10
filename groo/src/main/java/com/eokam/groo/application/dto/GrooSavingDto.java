@@ -25,9 +25,9 @@ public record GrooSavingDto(Long savingId, Long memberId, Long amount, Long rema
 			.build();
 	}
 
-	public static GrooSavingDto of(GrooSavingRequest request, Long memberId) {
+	public static GrooSavingDto from(GrooSavingRequest request) {
 		return GrooSavingDto.builder()
-			.memberId(memberId)
+			.memberId(request.getMemberId())
 			.savingType(request.getSavingType())
 			.activityType(request.getActivityType())
 			.proofAccusationId(request.getProofAccusationId())
