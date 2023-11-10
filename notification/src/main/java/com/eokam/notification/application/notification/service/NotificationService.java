@@ -1,7 +1,12 @@
 package com.eokam.notification.application.notification.service;
 
-import com.eokam.notification.application.notification.dto.AccusationDto;
+import java.time.LocalDate;
+import java.util.List;
+
+import com.eokam.notification.application.notification.dto.NotificationDto;
 
 public interface NotificationService {
-	AccusationDto sendAccusation(AccusationDto accusationDto);
+	NotificationDto sendAccusation(NotificationDto notificationDto);
+
+	List<NotificationDto> getNotification(String accessToken, LocalDate startDate, LocalDate endDate);
 }
