@@ -1,1 +1,29 @@
+spring:
+  application:
+    name: notification-service
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PWD}
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    hikari:
+      jdbc-url: jdbc:h2:mem:test
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        show_sql: true
+
+fcm:
+  certification: ${KEY_PATH}
