@@ -14,9 +14,9 @@ export default function ActPage() {
   const [num, setNum] = useState<number>(1);
   const [carouselTransition, setCarouselTransition] = useState('');
   const images = [
-    "src/assets/images/bn1.png",
-    "src/assets/images/bn2.png",
-    "src/assets/images/bn1.png",
+    "/images/bn1.png",
+    "/images/bn2.png",
+    "/images/bn1.png",
   ];
   const cloneImages = [images[images.length - 1], ...images, images[0]];
   const lastImage = cloneImages.length - 1;
