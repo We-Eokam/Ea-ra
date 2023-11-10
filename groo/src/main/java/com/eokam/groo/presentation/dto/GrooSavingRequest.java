@@ -23,6 +23,10 @@ import lombok.NoArgsConstructor;
 @TypeMatchCheck(savingType = "savingType", activityType = "activityType", groups = ValidationGroups.OtherCheckGroup.class)
 public class GrooSavingRequest {
 	@NotNull(groups = ValidationGroups.NotNullGroup.class)
+	@Positive(groups = ValidationGroups.OtherCheckGroup.class)
+	private Long memberId;
+
+	@NotNull(groups = ValidationGroups.NotNullGroup.class)
 	private SavingType savingType;
 
 	@NotNull(groups = ValidationGroups.NotNullGroup.class)

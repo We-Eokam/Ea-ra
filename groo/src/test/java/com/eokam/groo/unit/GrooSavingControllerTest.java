@@ -46,7 +46,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -65,7 +64,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -84,7 +82,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -103,7 +100,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -120,7 +116,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -139,7 +134,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
@@ -158,7 +152,6 @@ public class GrooSavingControllerTest {
 		mockMvc
 			.perform(
 				post("/groo")
-					.cookie(new Cookie("access-token", ACCESS_TOKEN))
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(content)
 					.header("Accept-Language", "en-US"))
