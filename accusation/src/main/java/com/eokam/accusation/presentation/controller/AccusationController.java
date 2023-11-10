@@ -17,9 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.eokam.accusation.application.dto.AccusationDto;
 import com.eokam.accusation.application.dto.PageAccusationDto;
 import com.eokam.accusation.application.service.AccusationService;
+import com.eokam.accusation.global.config.RabbitSender;
 import com.eokam.accusation.presentation.dto.AccusationListResponse;
 import com.eokam.accusation.presentation.dto.AccusationRequest;
 import com.eokam.accusation.presentation.dto.AccusationResponse;
+import com.eokam.accusation.presentation.dto.GrooSavingRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class AccusationController {
 
 	private final AccusationService accusationService;
+	private final RabbitSender rabbitSender;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AccusationResponse> createAccusation(
@@ -36,6 +39,7 @@ public class AccusationController {
 		@RequestPart(value = "content") AccusationRequest request) {
 		AccusationDto accusationDto = accusationService.createAccusation(AccusationDto.of(request), images);
 		AccusationResponse response = AccusationResponse.from(accusationDto);
+		rabbitSender.send(GrooSavingRequest.from(response));
 		return ResponseEntity.created(URI.create("/accusation/" + response.getAccusationId())).body(response);
 	}
 
@@ -45,7 +49,7 @@ public class AccusationController {
 		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(memberId, page, size);
 		return ResponseEntity.ok(AccusationListResponse.from(pageAccusationDto));
 	}
-	
+
 	@GetMapping("/{accusationId}")
 	public ResponseEntity<AccusationResponse> getAccusationDetail(@PathVariable Long accusationId) {
 		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId);
