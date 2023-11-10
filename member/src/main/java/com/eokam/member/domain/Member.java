@@ -29,6 +29,8 @@ public class Member extends BaseEntity {
 
 	private String profileImageFileName;
 
+	private Long socialId;
+
 	private Integer groo = 0;
 
 	private Integer billCount = 0;
@@ -76,11 +78,12 @@ public class Member extends BaseEntity {
 	}
 
 	@Builder
-	public Member(Long id, String nickname, String profileImageUrl, String profileImageFileName) {
+	public Member(Long id, String nickname, String profileImageUrl, String profileImageFileName,Long socialId) {
 		this.id = id;
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
 		this.profileImageFileName = profileImageFileName;
+		this.socialId = socialId;
 		this.groo = 0;
 		this.billCount = 0;
 		this.bill = 0;
