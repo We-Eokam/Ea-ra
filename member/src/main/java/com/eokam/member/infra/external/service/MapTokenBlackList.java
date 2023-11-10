@@ -15,7 +15,7 @@ public class MapTokenBlackList implements TokenBlackList{
 	@Override
 	public void invalidate(String accessToken) {
 		if(!blackList.containsKey(accessToken)) throw new LoginException(ErrorCode.TOKEN_ALREADY_LOGOUT);
-		blackList.remove(accessToken);
+		blackList.put(accessToken,false);
 	}
 
 	@Override
