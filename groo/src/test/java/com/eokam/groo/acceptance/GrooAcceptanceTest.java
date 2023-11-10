@@ -33,7 +33,7 @@ public class GrooAcceptanceTest {
 	void createGrooSavings() throws JsonProcessingException {
 		// when
 		var 적립시간 = LocalDateTime.now();
-		String body = 그루_적립_요청(인증, 텀블러_사용, 활동_ID, 적립시간);
+		String body = 그루_적립_요청(1L, 인증, 텀블러_사용, 활동_ID, 적립시간);
 		var response = 그루_적립_요청함(ACCESS_TOKEN, body);
 
 		// then
