@@ -82,9 +82,10 @@ public class GrooAcceptanceStep {
 		assertThat(response.header("Location")).isNotBlank();
 	}
 
-	public static String 그루_적립_요청(SavingType savingType, ActivityType activityType,Long proofAccusationId, LocalDateTime savedAt) throws
+	public static String 그루_적립_요청(Long memberId, SavingType savingType, ActivityType activityType,Long proofAccusationId, LocalDateTime savedAt) throws
 		JsonProcessingException {
 		GrooSavingRequest grooSavingRequest = GrooSavingRequest.builder()
+			.memberId(memberId)
 			.savingType(savingType)
 			.activityType(activityType)
 			.proofAccusationId(proofAccusationId)
@@ -96,9 +97,8 @@ public class GrooAcceptanceStep {
 		return objectMapper.writeValueAsString(grooSavingRequest);
 	}
 
-	public static ExtractableResponse<Response> 그루_적립_요청함(String accessToken, String request) {
+	public static ExtractableResponse<Response> 그루_적립_요청함(String request) {
 		return given().log().all()
-			.cookie("access-token", accessToken)
 			.contentType(ContentType.JSON)
 			.body(request)
 			.when().post("/groo")
@@ -110,8 +110,8 @@ public class GrooAcceptanceStep {
 		for (int i=0; i<20; i++){
 			int randomNum = new Random().nextInt(50);
 			var 적립시간 = LocalDateTime.of(2023,11,1,1,0).plusDays(randomNum);
-			String request = 그루_적립_요청(savingType, activityType, (long) i+10, 적립시간);
-			var response = 그루_적립_요청함(ACCESS_TOKEN, request);
+			String request = 그루_적립_요청(1L, savingType, activityType, (long) i+10, 적립시간);
+			var response = 그루_적립_요청함(request);
 			if (response.statusCode()==HttpStatus.CREATED.value() && 적립시간.getYear() == YEAR && 적립시간.getMonth().getValue() == MONTH){
 				if (SavingType.PROOF.equals(savingType)) {
 					sumAndCount.put("expectedProofSum", sumAndCount.getOrDefault("expectedProofSum", 0L) + activityType.getSavingAmount());
@@ -129,8 +129,8 @@ public class GrooAcceptanceStep {
 		long expectProofCount = 0;
 		for (int i=0; i<20; i++){
 			var 적립시간 = 랜덤_날짜_생성();
-			var request = 그루_적립_요청(인증, 텀블러_사용, (long) i+10, 적립시간);
-			var response = 그루_적립_요청함(ACCESS_TOKEN, request);
+			var request = 그루_적립_요청(1L, 인증, 텀블러_사용, (long) i+10, 적립시간);
+			var response = 그루_적립_요청함(request);
 			if (response.statusCode()==HttpStatus.CREATED.value() && isDateInRange(적립시간)){
 				expectProofCount++;
 			}
