@@ -23,10 +23,16 @@ spring:
       max-request-size: 10MB
   jackson:
     property-naming-strategy: SNAKE_CASE
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 aws:
   s3:
     access-key: ${S3_KEY}
     secret-key: ${S3_SECRET}
     bucket: ${S3_BUCKET}
-
+server:
+  port: 8081
