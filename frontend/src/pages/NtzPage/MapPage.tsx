@@ -312,7 +312,7 @@ export default function MapPage() {
                 </StoreFrame>
               ))
             ) : (
-              <div>dd</div>
+              <NoStore>주위에 해당하는 매장이 없어요</NoStore>
             )}
             <HideLastBorder />
           </StoreScroll>
@@ -373,7 +373,7 @@ const MapAndModal = styled.div`
 const MapFrame = styled.div`
   position: relative;
   width: 100%;
-  height: 54%;
+  height: 51.2%;
   background-color: var(--white);
 `;
 
@@ -386,7 +386,7 @@ const Map = styled.div`
 const MapModal = styled(ModalFrame)`
   position: absolute;
   bottom: 0;
-  height: 48.6%;
+  height: 51.6%;
   overflow-y: hidden;
   z-index: 3;
 `;
@@ -461,7 +461,17 @@ const Middot = styled.span`
 const HideLastBorder = styled.div`
   position: relative;
   width: 100%;
-  height: 5px;
+  height: 40px;
   background-color: var(--white);
   margin-top: -2.5px;
 `;
+
+const NoStore = styled.div`
+  position: absolute;
+  top: calc(50% - 28px);
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: var(--dark-gray);
+  font-weight: 400;
+`
