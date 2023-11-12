@@ -117,7 +117,7 @@ const Background = styled(ModalBackground)<BackgroundProps>`
 `;
 
 const CompanyDetailModal = styled(ModalFrame)<ModalProps>`
-  height: 372px;
+  padding: 7.2% 5.56% 12%;
   z-index: 4;
   animation: ${({ isclosing }) => (isclosing ? slideOut : slideIn)} 0.35s
     ease-in-out;
@@ -127,7 +127,6 @@ const CloseFrame = styled.div`
   position: relative;
   width: 100%;
   height: 24px;
-  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 `;
@@ -142,18 +141,17 @@ const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: scroll;
 `;
 
 // img로 바꾸기
 const Logo = styled.img`
-  margin-top: 30px;
+  margin-top: 20px;
   height: 92px;
   max-width: 92%;
 `;
 
 const CompanyName = styled.span`
-  margin-top: 20px;
+  margin-top: 24px;
   font-size: 19px;
   font-size: 400;
 `;
