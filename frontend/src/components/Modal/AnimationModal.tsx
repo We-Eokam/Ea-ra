@@ -109,7 +109,7 @@ const ModalContainer = styled.div<ModalProps>`
   overflow-x: hidden;
   z-index: 4;
   width: 88.88%;
-  padding: 10% 5.56% 12%;
+  padding: 8% 5.56% 12%;
   animation: ${({ isOpen }) => (isOpen ? slideIn : slideOut)} 0.35s ease-in-out;
 `;
 

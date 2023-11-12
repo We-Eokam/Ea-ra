@@ -1,12 +1,59 @@
 // import React from 'react'
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainFrame from "../../components/MainFrame/MainFrame";
+import AnimationModal from "../../components/Modal/AnimationModal";
 import { ReactComponent as LoginBackgroundSVG } from "../../assets/icons/login-background.svg";
+import { ReactComponent as Download } from "../../assets/icons/download-icon.svg";
+import { ReactComponent as SafariShare } from "../../assets/icons/safari-share.svg";
+import { ReactComponent as SafariAdd } from "../../assets/icons/safari-add.svg";
+import { LongButton } from "../../style";
 
 export default function LoginPage() {
   const helpURL = "http://pf.kakao.com/_xbxhxgsG";
   const netZeroURL =
-    "https://cpoint.or.kr/netzero/member/nv_memberRegistStep1.do";
+    "https://cpoint.or.kr/netzero/main.do";
+
+  const [supportsPWA, setSupportsPWA] = useState(false);
+  const [promptInstall, setPromptInstall] = useState(null);
+
+  const [isIOS, setIsIOS] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const isDeviceIOS = /iPad|iPhone|iPod/.test(window.navigator.userAgent);
+    setIsIOS(isDeviceIOS);
+
+    const handler = (e: any) => {
+      e.preventDefault();
+      setSupportsPWA(true);
+      setPromptInstall(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => window.removeEventListener("transitionend", handler);
+  }, []);
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const installApp = (event: any) => {
+    if (isIOS) {
+      setModalOpen(true);
+    } else {
+      event.preventDefault();
+      if (!promptInstall) {
+        return;
+      }
+      // @ts-ignore
+      promptInstall.prompt();
+
+      if (!supportsPWA) {
+        return null;
+      }
+    }
+  };
 
   return (
     <>
@@ -14,21 +61,24 @@ export default function LoginPage() {
         <BackgroundFrame>
           <LoginBackground />
         </BackgroundFrame>
-        <EARA>
-          <EARABold>어 - 라?</EARABold>
-          <br />
-          어느 날 갑자기
-          <br />
-          지구가 당신을
-          <br />
-          고소한다면?
-        </EARA>
-        {/* <LogoImage src="/images/logo-nobackground.png"/> */}
         <ButtonsFrame>
+          <EARA>
+            <EARABold>어 - 라?</EARABold>
+            <br />
+            어느 날 갑자기
+            <br />
+            지구가 당신을
+            <br />
+            고소한다면?
+          </EARA>
           <KakaoButton>
             카카오로 시작하기
-            <KakaoLogo src="images/kakao-logo.png" />
+            <ButtonLogo src="images/kakao-logo.png" />
           </KakaoButton>
+          <InstallButton onClick={installApp}>
+            어플리케이션 설치
+            <DownloadIcon />
+          </InstallButton>
           <HelpButtonsFrame>
             <HelpButton
               onClick={() => {
@@ -45,13 +95,28 @@ export default function LoginPage() {
               탄소중립포인트제도
             </HelpButton>
           </HelpButtonsFrame>
-          <Terms>
-            회원가입 시 어라의 개인정보 처리방침 및 이용약관에
-            <br />
-            동의하는 것으로 간주합니다
-          </Terms>
         </ButtonsFrame>
       </MainFrame>
+      <AnimationModal
+        isOpen={modalOpen}
+        closeModal={closeModal}
+        closeBtn={true}
+      >
+        <IOSInfoLine style={{marginTop: '28px'}}>
+          Safari&nbsp;<span>중앙 하단</span>의 &nbsp;
+          <SafariShare />
+          &nbsp;에서
+        </IOSInfoLine>
+        <IOSInfoLine>
+          <span>홈 화면에 추가</span> &nbsp;
+          <SafariAdd />
+          &nbsp;를
+        </IOSInfoLine>
+        <IOSInfoLine>
+          클릭해 어플리케이션을&nbsp;<span>설치</span>하세요
+        </IOSInfoLine>
+        <ConfirmButton onClick={closeModal}>확인</ConfirmButton>
+      </AnimationModal>
     </>
   );
 }
@@ -72,7 +137,7 @@ const LoginBackground = styled(LoginBackgroundSVG)`
 `;
 
 const EARA = styled.div`
-  margin-top: 40px;
+  margin-bottom: 48px;
   font-size: 1.625em;
   font-weight: 400;
   line-height: 1.4em;
@@ -94,11 +159,10 @@ const EARABold = styled.span`
 
 const ButtonsFrame = styled.div`
   position: absolute;
-  height: 220px;
-  background-color: var(--white);
   left: 0;
   right: 0;
   bottom: 0;
+  max-height: 60%;
 `;
 
 const KakaoButton = styled.div`
@@ -115,13 +179,24 @@ const KakaoButton = styled.div`
   font-weight: 550;
   font-size: 14px;
   color: var(--kakao-black);
-  margin-top: 24px;
 `;
 
-const KakaoLogo = styled.img`
+const InstallButton = styled(KakaoButton)`
+  background-color: var(--black);
+  color: var(--white);
+  font-weight: 450;
+  margin-top: 16px;
+`;
+
+const ButtonLogo = styled.img`
   position: absolute;
   left: 18px;
   width: 28px;
+`;
+
+const DownloadIcon = styled(Download)`
+  position: absolute;
+  left: 18px;
 `;
 
 const HelpButtonsFrame = styled.div`
@@ -133,6 +208,7 @@ const HelpButtonsFrame = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-bottom: 26px;
 `;
 
 const HelpButton = styled.div`
@@ -141,11 +217,21 @@ const HelpButton = styled.div`
   font-weight: 500;
 `;
 
-const Terms = styled.div`
-  left: 0;
-  right: 0;
-  margin-top: 14px;
-  text-align: center;
-  font-size: 11.5px;
-  font-weight: 300;
+const IOSInfoLine = styled.div`
+  display: flex;
+  height: 32px;
+  margin-top: 12px;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 400;
+
+  span {
+    font-weight: 500;
+  }
+`;
+
+const ConfirmButton = styled(LongButton)`
+  width: 86.25%;
+  height: 40px;
+  margin-top: 40px;
 `;
