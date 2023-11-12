@@ -1,6 +1,5 @@
-package com.eokam.notification.infrastructure.accusation.dto;
+package com.eokam.notification.presentation.dto.accusation;
 
-import com.eokam.notification.infrastructure.accusation.constant.AccusationType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
