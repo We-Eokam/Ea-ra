@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
-import { ModalFrame } from "../../components/Modal/ModalFrame";
+import { ModalFrame } from "../../style/ModalFrame";
 import "../../style/kakaomapOverlay.css";
 import actList from "../../common/act.json";
 

@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
-import { ModalBackground } from "../../components/Modal/ModalBackground";
+import { ModalBackground } from "../../style/ModalFrame";
 import DetailInput from "../../components/Input/DetailInput";
 
 import { ReactComponent as AddSvg } from "../../assets/icons/add-icon.svg";
