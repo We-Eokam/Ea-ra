@@ -5,8 +5,9 @@ import java.time.LocalDateTime;
 import com.eokam.notification.application.constant.NotificationType;
 import com.eokam.notification.domain.notification.document.AccusationNotification;
 import com.eokam.notification.domain.notification.document.Notification;
-import com.eokam.notification.infrastructure.accusation.constant.AccusationType;
-import com.eokam.notification.infrastructure.accusation.dto.AccusationRequest;
+import com.eokam.notification.presentation.dto.accusation.AccusationRequest;
+import com.eokam.notification.presentation.dto.accusation.AccusationType;
+import com.eokam.notification.presentation.dto.follow.FollowRequest;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,22 @@ public class NotificationDto {
 			.sender(accusationRequest.sender())
 			.receiver(accusationRequest.receiver())
 			.accusationType(accusationRequest.accusationType())
+			.build();
+	}
+
+	public static NotificationDto follow(FollowRequest followRequest) {
+		return NotificationDto.builder()
+			.notificationType(NotificationType.FOLLOW_REQUEST)
+			.sender(followRequest.sender())
+			.receiver(followRequest.receiver())
+			.build();
+	}
+
+	public static NotificationDto followAccept(FollowRequest followRequest) {
+		return NotificationDto.builder()
+			.notificationType(NotificationType.FOLLOW_ACCEPT)
+			.sender(followRequest.sender())
+			.receiver(followRequest.receiver())
 			.build();
 	}
 

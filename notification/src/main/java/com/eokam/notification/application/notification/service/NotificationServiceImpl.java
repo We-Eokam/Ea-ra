@@ -20,7 +20,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationRepository notificationRepository;
 
 	@Override
-	public NotificationDto sendAccusation(NotificationDto notificationDto) {
+	public NotificationDto saveNotification(NotificationDto notificationDto) {
 		Notification notification = notificationRepository.save(AccusationNotification.from(notificationDto));
 		return NotificationDto.from(notification);
 	}
@@ -34,4 +34,5 @@ public class NotificationServiceImpl implements NotificationService {
 			.map(NotificationDto::from)
 			.toList();
 	}
+
 }

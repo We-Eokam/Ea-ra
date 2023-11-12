@@ -17,11 +17,12 @@ import com.eokam.notification.application.notification.dto.NotificationDto;
 import com.eokam.notification.application.notification.service.NotificationService;
 import com.eokam.notification.application.token.dto.TokenDto;
 import com.eokam.notification.application.token.service.FcmTokenService;
-import com.eokam.notification.infrastructure.accusation.dto.AccusationRequest;
 import com.eokam.notification.infrastructure.fcm.service.FcmMessageService;
 import com.eokam.notification.infrastructure.util.ParseJwtUtil;
 import com.eokam.notification.presentation.dto.NotificationResponseList;
 import com.eokam.notification.presentation.dto.TokenRequest;
+import com.eokam.notification.presentation.dto.accusation.AccusationRequest;
+import com.eokam.notification.presentation.dto.follow.FollowRequest;
 import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,46 @@ public class FcmController {
 		return ResponseEntity.ok(NotificationResponseList.from(notifications));
 	}
 
+	@PostMapping("/follow")
+	public ResponseEntity<NotificationResponseList> sendFollow(
+		@RequestHeader("Authorization") final String accessToken,
+		@RequestBody FollowRequest followRequest) throws FirebaseMessagingException {
+		if (!ParseJwtUtil.parseMemberId(accessToken).equals(followRequest.sender())) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		NotificationDto notificationDto = notificationService.saveNotification(
+			NotificationDto.follow(followRequest));
+
+		fcmMessageService.sendMessageTo(
+			fcmService.getToken(notificationDto.getReceiver()).token(),
+			"친구 요청",
+			notificationDto.getContent()
+		);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/follow-accept")
+	public ResponseEntity<NotificationResponseList> acceptFollow(
+		@RequestHeader("Authorization") final String accessToken,
+		@RequestBody FollowRequest followRequest) throws FirebaseMessagingException {
+		if (!ParseJwtUtil.parseMemberId(accessToken).equals(followRequest.sender())) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		NotificationDto notificationDto = notificationService.saveNotification(
+			NotificationDto.followAccept(followRequest));
+
+		fcmMessageService.sendMessageTo(
+			fcmService.getToken(notificationDto.getReceiver()).token(),
+			"친구 요청 수락",
+			notificationDto.getContent()
+		);
+
+		return ResponseEntity.ok().build();
+	}
+
 	@PostMapping("/accusation")
 	public ResponseEntity<Void> sendAccusation(@RequestHeader("Authorization") final String accessToken,
 		@RequestBody AccusationRequest accusationRequest) throws FirebaseMessagingException {
@@ -66,7 +107,7 @@ public class FcmController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		NotificationDto notificationDto = notificationService.sendAccusation(
+		NotificationDto notificationDto = notificationService.saveNotification(
 			NotificationDto.accusation(accusationRequest));
 
 		fcmMessageService.sendMessageTo(

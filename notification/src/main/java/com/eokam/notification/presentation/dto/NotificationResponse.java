@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.eokam.notification.application.constant.NotificationType;
 import com.eokam.notification.application.notification.dto.NotificationDto;
-import com.eokam.notification.infrastructure.accusation.constant.AccusationType;
+import com.eokam.notification.presentation.dto.accusation.AccusationType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 

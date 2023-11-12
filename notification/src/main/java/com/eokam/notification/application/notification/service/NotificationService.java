@@ -6,7 +6,7 @@ import java.util.List;
 import com.eokam.notification.application.notification.dto.NotificationDto;
 
 public interface NotificationService {
-	NotificationDto sendAccusation(NotificationDto notificationDto);
+	NotificationDto saveNotification(NotificationDto notificationDto);
 
 	List<NotificationDto> getNotification(String accessToken, LocalDate startDate, LocalDate endDate);
 }
