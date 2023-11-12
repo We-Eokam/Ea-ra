@@ -45,7 +45,7 @@ public class FcmController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Void> registerToken(@RequestHeader("Authorization") final String accessToken) {
+	public ResponseEntity<Void> deleteToken(@RequestHeader("Authorization") final String accessToken) {
 		fcmService.delete(accessToken);
 
 		return ResponseEntity.ok().build();
