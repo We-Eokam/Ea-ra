@@ -1,8 +1,8 @@
 // import React from "react";
 import { useState } from "react";
-import { ModalFrame } from "./ModalFrame";
+import { ModalFrame, ModalBackground } from "../../style/ModalFrame";
 import styled, { keyframes } from "styled-components";
-import { ModalBackground } from "./ModalBackground";
+// import { ModalBackground } from "./ModalBackground";
 import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 import { LongButton } from "../../style";
 

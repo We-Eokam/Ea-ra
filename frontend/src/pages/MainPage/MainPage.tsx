@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
-import { ModalFrame } from "../../components/Modal/ModalFrame";
+import { ModalFrame } from "../../style/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
 import { useNavigate } from "react-router-dom";
