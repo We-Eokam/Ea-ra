@@ -325,7 +325,7 @@ export default function MapPage() {
 const Categories = styled.div`
   position: absolute;
   z-index: 3;
-  margin-top: 96px;
+  margin-top: max(47px, calc(47px + env(safe-area-inset-top)));
   width: 100%;
   height: 52px;
   background-color: var(--white);
@@ -366,8 +366,8 @@ const Category = styled.div<CategoryProps>`
 const MapAndModal = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(100% - 146px);
-  margin-top: 146px;
+  height: calc(100% - 52px - 48px - env(safe-area-inset-top));
+  margin-top: calc(48px + env(safe-area-inset-top) + 51px);
 `;
 
 const MapFrame = styled.div`

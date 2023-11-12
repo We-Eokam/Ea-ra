@@ -188,7 +188,7 @@ export default function CompanyPage() {
 const Categories = styled.div`
   position: absolute;
   z-index: 3;
-  margin-top: 96px;
+  margin-top: max(47px, calc(47px + env(safe-area-inset-top)));
   width: 100%;
   height: 52px;
   background-color: var(--white);

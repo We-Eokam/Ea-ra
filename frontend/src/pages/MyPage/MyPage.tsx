@@ -143,19 +143,18 @@ export default function MyPage() {
 const HeadFrame = styled.div`
   position: absolute;
   width: 100%;
-  height: 96px;
-  top: 0;
+  height: calc(48px + env(safe-area-inset-top));
+  top: env(safe-area-inset-top);
   left: 0;
   border-bottom: 1px solid var(--gray);
-  top: env(safe-area-inset-top);
   /* border: 1px black solid; */
-
   z-index: 2;
+
 `;
 
 const HeadContext = styled.div`
   position: relative;
-  margin-top: 60px;
+  height: 100%;
   padding-left: 12px;
   font-size: 21px;
   font-weight: 650;
