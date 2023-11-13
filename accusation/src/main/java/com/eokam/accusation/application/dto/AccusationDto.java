@@ -12,10 +12,10 @@ import lombok.Builder;
 @Builder
 public record AccusationDto(Long accusationId, Long witnessId, Long memberId, ActivityType activityType,
 							String activityDetail, List<String> imageList, LocalDateTime createdAt) {
-	public static AccusationDto of(AccusationRequest request) {
+	public static AccusationDto of(AccusationRequest request, Long memberId) {
 		return AccusationDto.builder()
-			.witnessId(request.getWitnessId())
-			.memberId(request.getMemberId())
+			.witnessId(memberId)
+			.memberId(request.getTargetId())
 			.activityType(request.getActivityType())
 			.activityDetail(request.getActivityDetail())
 			.build();

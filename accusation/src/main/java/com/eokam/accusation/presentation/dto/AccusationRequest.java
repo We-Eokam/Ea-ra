@@ -13,9 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccusationRequest {
-	private Long witnessId;
 
-	private Long memberId;
+	private Long targetId;
 
 	private ActivityType activityType;
 
