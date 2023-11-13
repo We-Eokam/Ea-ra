@@ -27,7 +27,7 @@ public class LoginController {
 
 	private final OauthProvider oauthProvider;
 
-	@Value("{server.domain}")
+	@Value("{cookie.domain}")
 	private String domain;
 
 	@GetMapping("/login")
@@ -50,11 +50,10 @@ public class LoginController {
 			.secure(true)
 			.path("/")
 			.maxAge(180000)
-			.domain("localhost")
+			.domain(domain)
 			.build();
-		return ResponseEntity.ok()
-			.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-			.build();
+		return new ResponseEntity<>(oauthProvider
+			.retrieveClientRedirectHeader(responseCookie.toString()),HttpStatus.MOVED_PERMANENTLY);
 	}
 
 	@GetMapping("/logout")

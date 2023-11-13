@@ -21,6 +21,9 @@ spring:
     console:
       enabled=true:
 
+cookie:
+  domain: ea-ra.com
+
 jwt:
   secret-key: ${JWT_SECRET_KEY}
 
@@ -41,6 +44,7 @@ auth:
     login-uri: ${KAKAO_LOGIN_URI}
     unlink-uri: ${KAKAO_UNLINK_URI}
     client-secret: ${KAKAO_CLIENT_SECRET}
+    client-uri: ${KAKAO_CLIENT_URI}
 
 eureka:
   client:
