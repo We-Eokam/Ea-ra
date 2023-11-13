@@ -53,7 +53,7 @@ public class NotificationDto {
 			.sender(notification.getSender())
 			.receiver(notification.getReceiver())
 			.content(notification.getContent())
-			.createdAt(notification.getCreatedAt().plusHours(9L))
+			.createdAt(notification.getCreatedAt())
 			.accusationType(notification instanceof AccusationNotification ?
 				((AccusationNotification)notification).getAccusationType() : null)
 			.build();
