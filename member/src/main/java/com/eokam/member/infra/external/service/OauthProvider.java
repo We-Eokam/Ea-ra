@@ -43,6 +43,9 @@ public class OauthProvider {
 	@Value("${auth.kakao.client-id}")
 	private String clientId;
 
+	@Value("${auth.kakao.client-secret}")
+	private String clientSecret;
+
 	@Value("${auth.kakao.redirect-uri}")
 	private String redirectUri;
 
@@ -87,6 +90,7 @@ public class OauthProvider {
 			body.add("client_id", clientId);
 			body.add("redirect_uri", redirectUri);
 			body.add("code", authorizationCode);
+			body.add("client_secret", clientSecret);
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
