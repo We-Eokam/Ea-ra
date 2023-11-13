@@ -18,6 +18,8 @@ import com.eokam.accusation.domain.entity.Accusation;
 import com.eokam.accusation.domain.entity.AccusationImage;
 import com.eokam.accusation.global.error.ErrorCode;
 import com.eokam.accusation.global.error.exception.BusinessException;
+import com.eokam.accusation.infrastructure.client.MemberServiceClient;
+import com.eokam.accusation.infrastructure.client.dto.MemberClientRequest;
 import com.eokam.accusation.infrastructure.repository.AccusationImageRepository;
 import com.eokam.accusation.infrastructure.repository.AccusationRepository;
 import com.eokam.accusation.infrastructure.service.S3Service;
@@ -32,10 +34,15 @@ public class AccusationServiceImpl implements AccusationService {
 	private final AccusationImageRepository accusationImageRepository;
 
 	private final S3Service s3UploadService;
+	private final MemberServiceClient memberServiceClient;
 
 	@Override
 	@Transactional
 	public AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile) {
+		if (accusationDto.witnessId().equals(accusationDto.memberId())) {
+			throw new BusinessException(ErrorCode.SELF_ACCUSATION_RESTRICTED);
+		}
+		memberServiceClient.isValidRequest(MemberClientRequest.from(accusationDto));
 		List<String> fileUrls = getFileUrls(multipartFile);
 		Accusation accusation = accusationRepository.save(Accusation.from(accusationDto));
 		for (String fileUrl : fileUrls) {
@@ -54,10 +61,18 @@ public class AccusationServiceImpl implements AccusationService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public PageAccusationDto getAccusationList(Long memberId, Integer page, Integer size) {
+	public PageAccusationDto getAccusationList(Long targetId, Long memberId, Integer page, Integer size) {
+		Page<Accusation> pageAccusationList = null;
+		if (targetId.equals(memberId)) {
+			pageAccusationList = accusationRepository.findByMemberId(targetId,
+				PageRequest.of(page, size,
+					Sort.by("accusationId").descending()));
+		} else {
+			pageAccusationList = accusationRepository.findByMemberIdAndWitnessId(targetId, memberId,
+				PageRequest.of(page, size,
+					Sort.by("accusationId").descending()));
+		}
 		List<AccusationDto> accusationDtoList = new ArrayList<>();
-		Page<Accusation> pageAccusationList = accusationRepository.findByMemberId(memberId, PageRequest.of(page, size,
-			Sort.by("accusationId").descending()));
 		List<Accusation> accusations = pageAccusationList.getContent();
 		PageInfoDto pageInfoDto = PageInfoDto.of(pageAccusationList.isLast(), pageAccusationList.getTotalPages(),
 			pageAccusationList.getTotalElements());
@@ -71,11 +86,15 @@ public class AccusationServiceImpl implements AccusationService {
 	}
 
 	@Override
-	public AccusationDto getAccusationDetail(Long accusationId) {
+	public AccusationDto getAccusationDetail(Long accusationId, Long memberId) {
 		Accusation accusation = accusationRepository.findByAccusationId(accusationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCUSATION_NOT_EXIST));
+		if (!memberId.equals(accusation.getMemberId()) && !memberId.equals(accusation.getWitnessId())) {
+			throw new BusinessException(ErrorCode.READ_PERMISSION_DENIED);
+		}
 		List<AccusationImage> accusationImages = accusationImageRepository.findByAccusation_AccusationId(accusationId);
 		List<String> fileUrls = accusationImages.stream().map(AccusationImage::getFileUrl).toList();
 		return AccusationDto.of(accusation, fileUrls);
 	}
+
 }
