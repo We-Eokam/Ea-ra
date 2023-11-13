@@ -37,7 +37,7 @@ public class JwtTokenProvider {
 	private SecretKey secretKey;
 
 	private final TokenBlackList tokenBlackList;
-	private int tokenExpirationMsec = 1800000;  // 만료시간 30분
+	private int tokenExpirationMsec = 18000000;  // 만료시간 5시간
 
 	@PostConstruct
 	public void init(){
