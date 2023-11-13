@@ -18,8 +18,10 @@ spring:
   h2:
     console:
       enabled=true:
+
 jwt:
-  secret-key: songheungminbongjunhoyangjeonghoonletsgo
+  secret-key: ${JWT_SECRET_KEY}
+
 cloud:
   aws:
     credentials:
@@ -38,3 +40,4 @@ auth:
     redirect-uri: ${KAKAO_REDIRECT_URI}
     login-uri: ${KAKAO_LOGIN_URI}
     unlink-uri: ${KAKAO_UNLINK_URI}
+    client-secret: ${KAKAO_CLIENT_SECRET}

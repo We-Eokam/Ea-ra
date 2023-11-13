@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:~/test
-    username: user
-    password: userpassword
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/ssafy?characterEncoding=UTF-8
+    username: root
+    password: ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -19,7 +19,8 @@ spring:
       enabled=true:
 
 jwt:
-  secret-key: songheungminbongjunhoyangjeonghoonletsgo
+  secret-key: ${JWT_SECRET_KEY}
+
 cloud:
   aws:
     credentials:
@@ -36,3 +37,4 @@ auth:
     redirect-uri: ${KAKAO_REDIRECT_URI}
     login-uri: ${KAKAO_LOGIN_URI}
     unlink-uri: ${KAKAO_UNLINK_URI}
+    client-secret: ${KAKAO_CLIENT_SECRET}
