@@ -14,7 +14,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import com.eokam.member.domain.Member;
 import com.eokam.member.infra.repository.MemberRepository;
 
-@EnableJpaAuditing
 @DataJpaTest
 @SuppressWarnings("NonAsciiCharacters")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)

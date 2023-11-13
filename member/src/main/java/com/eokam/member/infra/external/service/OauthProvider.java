@@ -1,5 +1,6 @@
 package com.eokam.member.infra.external.service;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.eokam.member.global.ErrorCode;
 import com.eokam.member.global.exception.LoginException;
@@ -41,11 +43,15 @@ public class OauthProvider {
 	@Value("${auth.kakao.client-id}")
 	private String clientId;
 
-	@Value("${auth.kakao.admin-id}")
-	private String adminId;
+	@Value("${auth.kakao.client-secret}")
+	private String clientSecret;
 
 	@Value("${auth.kakao.redirect-uri}")
 	private String redirectUri;
+
+
+	@Value("${auth.kakao.login-uri}")
+	private String loginUri;
 
 	@Value("${auth.kakao.unlink-uri}")
 	private String unLinkUri;
@@ -84,6 +90,7 @@ public class OauthProvider {
 			body.add("client_id", clientId);
 			body.add("redirect_uri", redirectUri);
 			body.add("code", authorizationCode);
+			body.add("client_secret", clientSecret);
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
@@ -94,5 +101,19 @@ public class OauthProvider {
 		} catch (HttpServerErrorException e) {
 			throw new LoginException(ErrorCode.KAKAO_SERVER_ERROR);
 		}
+	}
+
+	public HttpHeaders retrieveLoginRedirectHeader(){
+		HttpHeaders httpHeaders = new HttpHeaders();
+		UriComponentsBuilder uriComponentsBuilder =
+			UriComponentsBuilder.
+				fromUriString(loginUri).
+				queryParam("client_id",clientId).
+				queryParam("redirect_uri",redirectUri).
+				queryParam("response_type","code").
+				queryParam("prompt","login");
+		URI responseRedirectUri = uriComponentsBuilder.build().toUri();
+		httpHeaders.setLocation(responseRedirectUri);
+		return httpHeaders;
 	}
 }

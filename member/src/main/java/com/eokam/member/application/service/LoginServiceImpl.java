@@ -10,9 +10,11 @@ import com.eokam.member.application.dto.MemberDto;
 import com.eokam.member.domain.Member;
 import com.eokam.member.global.ErrorCode;
 import com.eokam.member.global.exception.JwtParseException;
+import com.eokam.member.global.exception.LoginException;
 import com.eokam.member.global.exception.MemberNotFoundException;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.infra.dto.KakaoAccessTokenResponse;
+import com.eokam.member.infra.dto.KakaoAccountResponse;
 import com.eokam.member.infra.dto.KakaoMemberResponse;
 import com.eokam.member.infra.external.service.JwtTokenProvider;
 import com.eokam.member.infra.external.service.OauthProvider;
@@ -44,7 +46,7 @@ public class LoginServiceImpl implements LoginService{
 
 	@Override
 	@Transactional
-	public MemberDto login(String authorizationCode) {
+	public String login(String authorizationCode) {
 		KakaoAccessTokenResponse accessTokenResponse =
 			oauthProvider.getAccessToken(authorizationCode);
 
@@ -54,18 +56,18 @@ public class LoginServiceImpl implements LoginService{
 		Optional<Member> member = memberRepository.findMemberBySocialId(kakaoMemberResponse.getId());
 
 		if(member.isPresent()){
-			return MemberDto.from(member.get());
+			return tokenProvider.provideToken(new JwtMemberDto(member.get().getId()));
 		}
 
 		Member newMember = Member.builder()
-			.nickname(kakaoMemberResponse.getKakaoAccount().getNickname())
+			.nickname(kakaoMemberResponse.getKakaoAccount().getProfile().getNickname())
 			.profileImageFileName("초기프로필.jpg")
-			.profileImageUrl(kakaoMemberResponse.getKakaoAccount().getProfileImageUrl())
+			.profileImageUrl(kakaoMemberResponse.getKakaoAccount().getProfile().getProfileImageUrl())
 			.socialId(kakaoMemberResponse.getId())
 			.build();
 
 		memberRepository.save(newMember);
-		return MemberDto.from(newMember);
+		return tokenProvider.provideToken(new JwtMemberDto(newMember.getId()));
 	}
 
 	@Override
@@ -73,4 +75,5 @@ public class LoginServiceImpl implements LoginService{
 	public void logout(String accessToken) {
 		tokenProvider.invalidateToken(accessToken);
 	}
+
 }

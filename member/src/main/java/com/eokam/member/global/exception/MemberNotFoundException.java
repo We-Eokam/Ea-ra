@@ -5,12 +5,12 @@ import com.eokam.member.global.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class MemberNotFoundException extends RuntimeException{
+public class MemberNotFoundException extends BusinessException{
 
 	private final ErrorCode errorCode;
 
 	public MemberNotFoundException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
+		super(errorCode);
 		this.errorCode = errorCode;
 	}
 

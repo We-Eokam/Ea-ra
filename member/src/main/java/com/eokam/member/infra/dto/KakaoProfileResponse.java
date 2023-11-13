@@ -1,8 +1,5 @@
 package com.eokam.member.infra.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -16,9 +13,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class KakaoAccountResponse {
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class KakaoProfileResponse {
 
-	@JsonProperty("profile")
-	KakaoProfileResponse profile;
+	private String nickname;
 
+	private String profileImageUrl;
 }

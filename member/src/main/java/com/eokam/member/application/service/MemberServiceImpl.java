@@ -1,4 +1,4 @@
-package com.eokam.member.application.service;
+ package com.eokam.member.application.service;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import com.eokam.member.global.ErrorCode;
 import com.eokam.member.global.exception.MemberNotFoundException;
 import com.eokam.member.global.exception.NicknameAlreadyExistException;
 import com.eokam.member.global.exception.NoBillException;
+import com.eokam.member.global.exception.TestException;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.infra.external.S3FileDetail;
 import com.eokam.member.infra.external.service.S3Service;
@@ -41,8 +42,9 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public MemberDto retrieveMemberInfo(JwtMemberDto memberDto) {
-		return MemberDto.from(memberRepository.findById(memberDto.getMemberId())
-			.orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)));
+		Member member = memberRepository.findById(memberDto.getMemberId())
+			.orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+		return MemberDto.from(member);
 	}
 
 	@Override
@@ -92,7 +94,7 @@ public class MemberServiceImpl implements MemberService {
 		Member member = memberRepository
 			.findById(jwtMemberDto.getMemberId()).orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
-		member.changeNickname(nickname);
+		if(checkDuplicateNickname(nickname)) member.changeNickname(nickname);
 		return MemberDto.from(member);
 	}
 
@@ -103,6 +105,16 @@ public class MemberServiceImpl implements MemberService {
 			.findById(jwtMemberDto.getMemberId()).orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 		S3FileDetail s3FileDetail = s3Service.save(multipartFile);
 		member.changeProfileImage(s3FileDetail.getFileName(),s3FileDetail.getUrl());
+		return MemberDto.from(member);
+	}
+	@Override
+	@Transactional
+	public MemberDto finishTest(JwtMemberDto jwtMemberDto,Integer groo) {
+		Member member = memberRepository
+			.findById(jwtMemberDto.getMemberId()).orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+		if(!member.finishTest(groo)){
+			throw new TestException(ErrorCode.TEST_ALREADY_DONE);
+		}
 		return MemberDto.from(member);
 	}
 

@@ -1,20 +1,19 @@
 spring:
   datasource:
-    url: jdbc:h2:~/test;MODE=MySQL
-    username: user
-    password: userpassword
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/ssafy?characterEncoding=UTF-8
+    username: root
+    password: ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
     show-sql: true
     open-in-view: false
-
   h2:
     console:
       enabled=true:
@@ -29,8 +28,6 @@ cloud:
       secret-key: ${S3_SECRET}
     s3:
       bucket: ${S3_BUCKET}
-
-
 
 auth:
   kakao:

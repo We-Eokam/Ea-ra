@@ -27,12 +27,6 @@ public class S3Service {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	public List<S3FileDetail> saveList(List<MultipartFile> multipartFile) {
-		return multipartFile.stream()
-			.map(this::save)
-			.toList();
-	}
-
 	public S3FileDetail save(MultipartFile multipartFile) {
 		String originalFileName =
 			LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + UUID.randomUUID();
