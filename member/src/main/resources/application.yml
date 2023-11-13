@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ssafy?characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3310/ssafy?characterEncoding=UTF-8
     username: root
     password: ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,3 +38,10 @@ auth:
     login-uri: ${KAKAO_LOGIN_URI}
     unlink-uri: ${KAKAO_UNLINK_URI}
     client-secret: ${KAKAO_CLIENT_SECRET}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
