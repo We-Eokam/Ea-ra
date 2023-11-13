@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -103,8 +105,9 @@ public class GrooSavingServiceTest {
 	@DisplayName("일주일간 일별 인증 횟수를 조회할 수 있다.")
 	void getProofCountByWeek(){
 		// given
-		LocalDate startDate = LocalDate.of(2023, 11, 5);
-		LocalDate endDate = LocalDate.of(2023, 11, 11);
+		LocalDate today = LocalDate.now();
+		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 		List<WeeklyProofCountDto> expectedWeeklyProofCountDtoList = getWeeklyProofCountDtoList(startDate);
 		given(grooSavingRepository.getDailyProofCount(1L, startDate, endDate)).willReturn(expectedWeeklyProofCountDtoList);
 
