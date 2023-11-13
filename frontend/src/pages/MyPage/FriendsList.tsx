@@ -3,17 +3,16 @@ import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
-
+import { ReactComponent as ReportSend } from "../../assets/icons/report-send-icon.svg";
+import { ReactComponent as PersonCancel } from "../../assets/icons/person_cancel.svg";
+import OptionModal from "../../components/Modal/OptionModal";
+import { useState } from "react";
 interface User {
   profileImg: string;
   nickname: string;
   gru: number;
 }
 export default function FriendsList() {
-  const handleReportBtn = (user: User) => {
-    console.log(user.nickname+"에게 경고하자");
-  }
-
   const users:User[] = [
     {
       profileImg: "",
@@ -37,6 +36,22 @@ export default function FriendsList() {
     },
   ];
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+
+  const handleReportBtn = (user: User) => {
+    console.log(user.nickname+"에게 경고하자");
+  }
+
+  const showModal = (user: User) => {
+    setModalContent("정말로 " + user.nickname + "님과 친구를 끊으시겠습니까?")
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <>
       <HeadBar pagename="친구 목록" bgcolor="white" backbutton="yes" center={true} />
@@ -48,10 +63,15 @@ export default function FriendsList() {
               {user.nickname}
               <SubText>{user.gru}그루</SubText>
             </TextBox>
-            <ReportBtn onClick={() => handleReportBtn(user)}> 경고하기 </ReportBtn>
+            <IconContainer>
+              <ReportSend onClick={() => handleReportBtn(user)} />
+              <PersonCancel onClick={() => showModal(user)}/>
+            </IconContainer>
           </UserInfoContainer>
         ))}
       </MainFrame>
+
+      <OptionModal title="친구 끊기" content={modalContent}  btnText="삭제" isOpen={modalOpen} closeModal={closeModal} />
       <NavBar />
     </>
   )
@@ -64,8 +84,8 @@ const UserInfoContainer = styled.div`
 `;
 
 const ProfileImg = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;
@@ -85,18 +105,9 @@ const SubText = styled.div`
   color: var(--dark-gray);
 `;
 
-const ReportBtn = styled.div`
+const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 32px;
-  /* background-color: var(--gray);
-  color: var(--black); */
-  background-color: var(--primary);
-  color: var(--white);
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
+  gap: 16px;
 `;

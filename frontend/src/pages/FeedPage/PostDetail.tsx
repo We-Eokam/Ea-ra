@@ -42,7 +42,7 @@ export default function PostDetail() {
 
   return (
     <>
-      <HeadBar pagename="환경 활동" bgcolor="white" backbutton="yes" center={true} />
+      <HeadBar pagename="활동 인증" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <PostFrame>
           <WriterContainer>
@@ -79,7 +79,7 @@ export default function PostDetail() {
         </PostInfoFrame>
       </MainFrame>
 
-      <OptionModal isOpen={modalOpen} closeModal={closeModal} />
+      <OptionModal title="게시물 삭제" content="정말로 인증 내역을 삭제하시겠습니까?" btnText="삭제" isOpen={modalOpen} closeModal={closeModal} />
       <NavBar />
     </>
   )
