@@ -60,9 +60,9 @@ public class LoginServiceImpl implements LoginService{
 		}
 
 		Member newMember = Member.builder()
-			.nickname(kakaoMemberResponse.getKakaoAccount().getNickname())
+			.nickname(kakaoMemberResponse.getKakaoAccount().getProfile().getNickname())
 			.profileImageFileName("초기프로필.jpg")
-			.profileImageUrl(kakaoMemberResponse.getKakaoAccount().getProfileImageUrl())
+			.profileImageUrl(kakaoMemberResponse.getKakaoAccount().getProfile().getProfileImageUrl())
 			.socialId(kakaoMemberResponse.getId())
 			.build();
 
