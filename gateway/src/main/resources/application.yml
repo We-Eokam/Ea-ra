@@ -40,6 +40,12 @@ spring:
             - Path=/notification/**
           filters:
             - CustomAuthFilter
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member/**,/login/**,/logout/**
+          filters:
+            - CustomAuthFilter
 
 jwt:
   key: ${JWT_KEY}
