@@ -29,6 +29,9 @@ spring:
     username: guest
     password: guest
 
+  application:
+    name: accusation-service
+
 aws:
   s3:
     access-key: ${S3_KEY}
@@ -36,3 +39,12 @@ aws:
     bucket: ${S3_BUCKET}
 server:
   port: 8081
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
