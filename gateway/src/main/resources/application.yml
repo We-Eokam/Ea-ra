@@ -46,8 +46,8 @@ spring:
             - Path=/member/**,/logout/**
           filters:
             - CustomAuthFilter
-        - id: login-service
-          uri: lb://LOGIN-SERVICE
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/login/**
 
