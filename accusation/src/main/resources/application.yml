@@ -46,3 +46,12 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-server:8761/eureka
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+logging:
+  level:
+    com.eokam.accusation.infrastructure.client: DEBUG
