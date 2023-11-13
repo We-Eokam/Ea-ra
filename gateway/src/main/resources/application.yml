@@ -43,13 +43,7 @@ spring:
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
-            - Path=/member/**,/logout/**
-          filters:
-            - CustomAuthFilter
-        - id: member-service
-          uri: lb://MEMBER-SERVICE
-          predicates:
-            - Path=/login/**
+            - Path=/member/**,/logout/**,/login/**
 
 jwt:
   key: ${JWT_KEY}
