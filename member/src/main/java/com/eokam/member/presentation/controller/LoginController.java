@@ -27,7 +27,7 @@ public class LoginController {
 
 	private final OauthProvider oauthProvider;
 
-	@Value("{cookie.domain}")
+	@Value("${cookie.domain}")
 	private String domain;
 
 	@GetMapping("/login")

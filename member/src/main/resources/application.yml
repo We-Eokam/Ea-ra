@@ -17,9 +17,6 @@ spring:
         default_batch_fetch_size: 100
     show-sql: true
     open-in-view: false
-  h2:
-    console:
-      enabled=true:
 
 cookie:
   domain: ea-ra.com
