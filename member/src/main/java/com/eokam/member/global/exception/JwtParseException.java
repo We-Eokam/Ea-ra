@@ -2,13 +2,16 @@ package com.eokam.member.global.exception;
 
 import com.eokam.member.global.ErrorCode;
 
-public class JwtParseException extends RuntimeException{
+import lombok.Getter;
+
+@Getter
+public class JwtParseException extends BusinessException{
 
 	private ErrorCode errorCode;
 
 
 	public JwtParseException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
+		super(errorCode);
 		this.errorCode = errorCode;
 	}
 }
