@@ -11,6 +11,8 @@ import com.eokam.accusation.domain.entity.Accusation;
 public interface AccusationRepository extends JpaRepository<Accusation, Long> {
 	Page<Accusation> findByMemberId(Long memberId, Pageable pageable);
 
+	Page<Accusation> findByMemberIdAndWitnessId(Long memberId, Long witnessId, Pageable pageable);
+
 	Optional<Accusation> findByAccusationId(Long accusationId);
 
 }
