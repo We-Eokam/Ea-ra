@@ -23,6 +23,8 @@ public class MemberDto {
 
 	private String profileImageFileName;
 
+	private Boolean isTestDone;
+
 	public static MemberDto from(Member member){
 		return MemberDto
 			.builder()
@@ -33,6 +35,7 @@ public class MemberDto {
 			.billCount(member.getBillCount())
 			.profileImageUrl(member.getProfileImageUrl())
 			.profileImageFileName(member.getProfileImageFileName())
+			.isTestDone(member.getIsTestDone())
 			.build();
 	}
 }
