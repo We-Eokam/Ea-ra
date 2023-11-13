@@ -149,18 +149,20 @@ const HeadFrame = styled.div`
   border-bottom: 1px solid var(--gray);
   /* border: 1px black solid; */
   z-index: 2;
+  display: flex;
+  align-items: flex-end;
 
 `;
 
 const HeadContext = styled.div`
   position: relative;
-  height: 100%;
+  width: 100%;
   padding-left: 12px;
   font-size: 21px;
   font-weight: 650;
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  margin-bottom: 12px;
 `;
 
 const IconContainer = styled.div`

@@ -126,6 +126,23 @@ export default function NtzPage() {
     });
   };
 
+  const highestActivity = () => {
+    const highestScoring = summary_list.reduce(
+      (max, item) => (item.point > max.point ? item : max),
+      summary_list[0]
+    );
+    const index = categoryInEnglish.indexOf(highestScoring.activity_type);
+    const arr = [0, 2, 3, 5, 6, 8];
+    const activity =
+      categoryList[categoryInEnglish.indexOf(highestScoring.activity_type)];
+
+    if (arr.includes(index)) {
+      return `${activity}으`;
+    } else {
+      return activity;
+    }
+  };
+
   return (
     <>
       {/* <HeadBar pagename="예시" bgcolor="white" backbutton="yes"/> */}
@@ -186,7 +203,7 @@ export default function NtzPage() {
             <Bold>나의 활동 요약</Bold>
           </TextLine>
           <TextLine style={{ fontSize: "14px", marginTop: "6px" }}>
-            텀블러 이용하기로 가장 많은 포인트를 얻었어요!
+            {highestActivity()}로 가장 많은 포인트를 얻었어요!
           </TextLine>
           <ChartFrame>
             <ChartInner>
@@ -359,4 +376,9 @@ const ChartInner = styled.div`
   max-width: 372px;
   height: 100%;
   /* max-width: 380px; */
+
+  div {
+    font-size: 14px;
+    color: var(--black);
+  }
 `;
