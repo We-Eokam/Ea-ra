@@ -6,8 +6,7 @@ import io.jsonwebtoken.Jwts;
 public class ParseJwtUtil {
 
 	public static Claims getTokenClaims(String token) {
-		String accessToken = token.split(" ")[1];
-		String[] splitToken = accessToken.split("\\.");
+		String[] splitToken = token.split("\\.");
 		String unsignedToken = splitToken[0] + "." + splitToken[1] + ".";
 		return Jwts.parser().parseClaimsJwt(unsignedToken).getBody();
 	}
