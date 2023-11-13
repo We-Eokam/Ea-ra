@@ -22,6 +22,18 @@ spring:
             - Path=/proof/**
           filters:
             - CustomAuthFilter
+        - id: accusation-service
+          uri: lb://ACCUSATION-SERVICE
+          predicates:
+            - Path=/accusation/**
+          filters:
+            - CustomAuthFilter
+        - id: groo-service
+          uri: lb://GROO-SERVICE
+          predicates:
+            - Path=/groo/**
+          filters:
+            - CustomAuthFilter
 
 jwt:
   key: ${JWT_KEY}
