@@ -34,6 +34,12 @@ spring:
             - Path=/groo/**
           filters:
             - CustomAuthFilter
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notification/**
+          filters:
+            - CustomAuthFilter
 
 jwt:
   key: ${JWT_KEY}
