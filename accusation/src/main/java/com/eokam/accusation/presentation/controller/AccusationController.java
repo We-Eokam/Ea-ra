@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import com.eokam.accusation.application.dto.AccusationDto;
 import com.eokam.accusation.application.dto.PageAccusationDto;
 import com.eokam.accusation.application.service.AccusationService;
 import com.eokam.accusation.global.config.RabbitSender;
+import com.eokam.accusation.infrastructure.jwt.TokenManager;
 import com.eokam.accusation.presentation.dto.AccusationListResponse;
 import com.eokam.accusation.presentation.dto.AccusationRequest;
 import com.eokam.accusation.presentation.dto.AccusationResponse;
@@ -32,27 +34,33 @@ public class AccusationController {
 
 	private final AccusationService accusationService;
 	private final RabbitSender rabbitSender;
+	private final TokenManager tokenManager;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AccusationResponse> createAccusation(
+	public ResponseEntity<AccusationResponse> createAccusation(@CookieValue(value = "access-token") String jwt,
 		@RequestPart(value = "file", required = false) List<MultipartFile> images,
 		@RequestPart(value = "content") AccusationRequest request) {
-		AccusationDto accusationDto = accusationService.createAccusation(AccusationDto.of(request), images);
+		Long memberId = tokenManager.getMemberId(jwt);
+		AccusationDto accusationDto = accusationService.createAccusation(AccusationDto.of(request, memberId), images);
 		AccusationResponse response = AccusationResponse.from(accusationDto);
 		rabbitSender.send(GrooSavingRequest.from(response));
 		return ResponseEntity.created(URI.create("/accusation/" + response.getAccusationId())).body(response);
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getAccusationList(@RequestParam Long memberId, @RequestParam Integer page,
+	public ResponseEntity<?> getAccusationList(@CookieValue(value = "access-token") String jwt,
+		@RequestParam Long targetId, @RequestParam Integer page,
 		@RequestParam Integer size) {
-		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(memberId, page, size);
+		Long memberId = tokenManager.getMemberId(jwt);
+		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(targetId, memberId, page, size);
 		return ResponseEntity.ok(AccusationListResponse.from(pageAccusationDto));
 	}
 
 	@GetMapping("/{accusationId}")
-	public ResponseEntity<AccusationResponse> getAccusationDetail(@PathVariable Long accusationId) {
-		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId);
+	public ResponseEntity<AccusationResponse> getAccusationDetail(@CookieValue(value = "access-token") String jwt,
+		@PathVariable Long accusationId) {
+		Long memberId = tokenManager.getMemberId(jwt);
+		AccusationDto accusationDto = accusationService.getAccusationDetail(accusationId, memberId);
 		return ResponseEntity.ok(AccusationResponse.from(accusationDto));
 	}
 }
