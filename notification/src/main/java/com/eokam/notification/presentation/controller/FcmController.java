@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -37,7 +37,7 @@ public class FcmController {
 	private final NotificationService notificationService;
 
 	@PostMapping
-	public ResponseEntity<Void> registerToken(@RequestHeader("Authorization") final String accessToken,
+	public ResponseEntity<Void> registerToken(@CookieValue("access-token") final String accessToken,
 		@RequestBody final TokenRequest tokenRequest) {
 		fcmService.register(TokenDto.of(accessToken, tokenRequest));
 
@@ -45,7 +45,7 @@ public class FcmController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Void> deleteToken(@RequestHeader("Authorization") final String accessToken) {
+	public ResponseEntity<Void> deleteToken(@CookieValue("access-token") final String accessToken) {
 		fcmService.delete(accessToken);
 
 		return ResponseEntity.ok().build();
@@ -53,7 +53,7 @@ public class FcmController {
 
 	@GetMapping
 	public ResponseEntity<NotificationResponseList> getNotification(
-		@RequestHeader("Authorization") final String accessToken,
+		@CookieValue("access-token") final String accessToken,
 		@RequestParam final LocalDate startDate, @RequestParam final LocalDate endDate) {
 		List<NotificationDto> notifications = notificationService.getNotification(accessToken, startDate, endDate);
 
@@ -62,7 +62,7 @@ public class FcmController {
 
 	@PostMapping("/follow")
 	public ResponseEntity<NotificationResponseList> sendFollow(
-		@RequestHeader("Authorization") final String accessToken,
+		@CookieValue("access-token") final String accessToken,
 		@RequestBody FollowRequest followRequest) throws FirebaseMessagingException {
 		if (!ParseJwtUtil.parseMemberId(accessToken).equals(followRequest.sender())) {
 			return ResponseEntity.badRequest().build();
@@ -82,7 +82,7 @@ public class FcmController {
 
 	@PostMapping("/follow-accept")
 	public ResponseEntity<NotificationResponseList> acceptFollow(
-		@RequestHeader("Authorization") final String accessToken,
+		@CookieValue("access-token") final String accessToken,
 		@RequestBody FollowRequest followRequest) throws FirebaseMessagingException {
 		if (!ParseJwtUtil.parseMemberId(accessToken).equals(followRequest.sender())) {
 			return ResponseEntity.badRequest().build();
@@ -101,7 +101,7 @@ public class FcmController {
 	}
 
 	@PostMapping("/accusation")
-	public ResponseEntity<Void> sendAccusation(@RequestHeader("Authorization") final String accessToken,
+	public ResponseEntity<Void> sendAccusation(@CookieValue("access-token") final String accessToken,
 		@RequestBody AccusationRequest accusationRequest) throws FirebaseMessagingException {
 		if (!ParseJwtUtil.parseMemberId(accessToken).equals(accusationRequest.sender())) {
 			return ResponseEntity.badRequest().build();
