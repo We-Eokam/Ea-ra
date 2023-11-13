@@ -5,6 +5,9 @@ spring:
     password: ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  application:
+    name: member-service
+
   jpa:
     hibernate:
       ddl-auto: update
