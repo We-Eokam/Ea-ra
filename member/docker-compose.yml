@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+  mariadb:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ssafy
+      MYSQL_DATABASE: ssafy
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ssafy
+      TZ: Asia/Seoul
+    ports:
+      - "3310:3306"
+
