@@ -25,8 +25,11 @@ public class AcceptanceAccusationStep {
 	private static final long MEMBER_ID = 2L;
 	private static final ActivityType ACTIVITY_TYPE = ActivityType.PLASTIC;
 
+	public static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MX0.b9AyXTApiN9ii7WMT1GO8h_wjWgGG5hsW11hXT3RXXk";
+
 	public static ExtractableResponse<Response> 고발장_생성_요청(String content, MockMultipartFile file) throws IOException {
 		return given().log().all()
+			.cookie("access-token", ACCESS_TOKEN)
 			.contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
 			.multiPart("file", file.getOriginalFilename(), file.getBytes(),
 				file.getContentType())
@@ -42,7 +45,8 @@ public class AcceptanceAccusationStep {
 
 	public static ExtractableResponse<Response> 받은_고발장_목록_조회_요청() throws IOException {
 		return given().log().all()
-			.queryParam("memberId", MEMBER_ID)
+			.cookie("access-token", ACCESS_TOKEN)
+			.queryParam("targetId", MEMBER_ID)
 			.queryParam("page", 0)
 			.queryParam("size", 12)
 			.when().get("/accusation")
@@ -52,6 +56,7 @@ public class AcceptanceAccusationStep {
 
 	public static ExtractableResponse<Response> 받은_고발장_목록_상세_요청(Long accusationId) {
 		return given().log().all()
+			.cookie("access-token", ACCESS_TOKEN)
 			.pathParam("accusationId", accusationId)
 			.when().get("/accusation/{accusationId}")
 			.then().log().all()
@@ -60,8 +65,7 @@ public class AcceptanceAccusationStep {
 
 	public static String 고발장_요청_JSON() throws JsonProcessingException {
 		AccusationRequest accusationRequest = AccusationRequest.builder()
-			.witnessId(WITNESS_ID)
-			.memberId(MEMBER_ID)
+			.targetId(MEMBER_ID)
 			.activityType(ACTIVITY_TYPE)
 			.build();
 		ObjectMapper objectMapper = new ObjectMapper();
