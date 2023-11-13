@@ -95,7 +95,7 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
     }
     // 일단 임시 데이터 넣어놓음
     setEntire(users);
-  });
+  }, []);
 
   const handleFocus = () => {
     setIsFocused(true);
