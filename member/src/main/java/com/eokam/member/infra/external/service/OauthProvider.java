@@ -56,6 +56,9 @@ public class OauthProvider {
 	@Value("${auth.kakao.unlink-uri}")
 	private String unLinkUri;
 
+	@Value("${auth.kakao.client-uri}")
+	private String clientRedirectUri;
+
 	private final RestTemplate restTemplate;
 
 	public OauthProvider(@Autowired RestTemplateBuilder restTemplateBuilder){
@@ -114,6 +117,17 @@ public class OauthProvider {
 				queryParam("prompt","login");
 		URI responseRedirectUri = uriComponentsBuilder.build().toUri();
 		httpHeaders.setLocation(responseRedirectUri);
+		return httpHeaders;
+	}
+
+	public HttpHeaders retrieveClientRedirectHeader(String accessToken){
+		HttpHeaders httpHeaders = new HttpHeaders();
+		UriComponentsBuilder uriComponentsBuilder =
+			UriComponentsBuilder.
+				fromUriString(clientRedirectUri);
+		URI clientRedirect = uriComponentsBuilder.build().toUri();
+		httpHeaders.setLocation(clientRedirect);
+		httpHeaders.set(HttpHeaders.SET_COOKIE,accessToken);
 		return httpHeaders;
 	}
 }
