@@ -9,8 +9,8 @@ interface ScoreBarProps {
 }
 
 export const ScoreBar = ({title, score} : ScoreBarProps) => {
-  const filledCircles = Array(score).fill(null).map((_, index) => <FillSvg key={index} />);
-  const borderCircles = Array(5 - score).fill(null).map((_, index) => <EmptySvg key={index} />);
+  const filledCircles = Array(score).fill(null).map((_, index) => <FillLeap key={index} />);
+  const borderCircles = Array(5 - score).fill(null).map((_, index) => <EmptyLeap key={index} />);
 
   return (
     <AnalysisFrame>
@@ -25,7 +25,7 @@ export const ScoreBar = ({title, score} : ScoreBarProps) => {
 
 const AnalysisFrame = styled.div`
   width: 100%;
-  margin: 12px 0;
+  margin: 10px 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -39,8 +39,18 @@ const AnalysisFrame = styled.div`
   span {
     width: 25%;
     text-align: center;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 500;
     color: var(--primary);
   }
+`;
+
+const FillLeap = styled(FillSvg)`
+  width: 28px;
+  height: 28px;
+`;
+
+const EmptyLeap = styled(EmptySvg)`
+  width: 28px;
+  height: 28px;
 `;

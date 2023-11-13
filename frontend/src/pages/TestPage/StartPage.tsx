@@ -168,7 +168,7 @@ const NavBarFrame = styled.div`
 
 const ModalFrame = styled.div`
   position: absolute;
-  top: env(safe-area-inset-top);
+  top: calc(5% + env(safe-area-inset-top));
   left: 0;
   width: 80%;
   padding: 20% 10%;
@@ -204,5 +204,6 @@ const LottieStyled = styled.div<{isClick: boolean}>`
 `;
 
 const LetterDetail = styled.div`
+  padding-top: 16px;
   animation: ${bounce} 1s cubic-bezier(0.5, 0, 0.5, 1) forwards;
 `;
