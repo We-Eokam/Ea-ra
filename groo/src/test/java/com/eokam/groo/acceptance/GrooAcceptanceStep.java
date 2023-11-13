@@ -3,7 +3,10 @@ package com.eokam.groo.acceptance;
 import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +35,6 @@ public class GrooAcceptanceStep {
 	public static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MX0.b9AyXTApiN9ii7WMT1GO8h_wjWgGG5hsW11hXT3RXXk";
 	public static final Integer YEAR = 2023;
 	public static final Integer MONTH = 11;
-	private static final int FIRST_DAY_OF_WEEK = 5;
-	private static final int END_DAY_OF_WEEK = 11;
 
 	public static void 월별_그린_적립내역_조회됨(ExtractableResponse<Response> response, Map<String, Long> map) {
 		long 이번달_얻은_그루_합 = response.jsonPath().getLong("proof_sum");
@@ -146,13 +147,16 @@ public class GrooAcceptanceStep {
 	}
 
 	private static boolean isDateInRange(LocalDateTime localDateTime){
-		if (localDateTime.getYear() != YEAR){
+		LocalDate today = LocalDate.now();
+		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+		if (localDateTime.getYear() != today.getYear()){
 			return false;
 		}
-		if (localDateTime.getMonthValue() != MONTH) {
+		if (localDateTime.getMonthValue() != today.getMonthValue()) {
 			return false;
 		}
-		if (localDateTime.getDayOfMonth() < FIRST_DAY_OF_WEEK || localDateTime.getDayOfMonth() > END_DAY_OF_WEEK){
+		if (localDateTime.getDayOfMonth() < startDate.getDayOfMonth() || localDateTime.getDayOfMonth() > endDate.getDayOfMonth()){
 			return false;
 		}
 		return true;
