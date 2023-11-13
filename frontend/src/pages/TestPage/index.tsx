@@ -9,13 +9,14 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import { LongButton } from "../../style";
 
 interface AnswerProps {
-  type: number;
+  cost: number;
   thoughts: string;
   action: string;
 }
 
 interface DataProps {
   id: number;
+  type: number;
   situation: string;
   question: string;
   answers: AnswerProps[];
@@ -24,25 +25,31 @@ interface DataProps {
 export default function TestPage() {
   const [id, setId] = useState(0);
   const [question, setQuestion] = useState<DataProps>(data[0]);
+  const [type, setType] = useState<number[]>([0, 0]);
+  const [debt, setDebt] = useState(38);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(debt)
     setQuestion(data[id]);
+    localStorage.setItem("answer", `${id}`);
 
     if (id === 10) {
-      navigate("/result");
+      navigate(`/result/${type[0]}${debt}${type[1]}`);
     };
 
-    if (id === 0) {
-      localStorage.setItem("results", "50000");
-    };
   }, [id]);
 
-  const hadleAnswerClick = (type: number) => {
-    if (type) {
-      let debt = Number(localStorage.getItem("results")) + type;
-      localStorage.setItem("results", `${debt}`);
+  const hadleAnswerClick = (cost: number) => {
+    if (cost) {
+      setDebt((prev) => prev + cost)
+    } else {
+      setType((prevType) => {
+        const updatedType = [...prevType];
+        updatedType[question.type] += 1;
+        return updatedType;
+      });
     }
     setId(id + 1);
   };
@@ -62,7 +69,7 @@ export default function TestPage() {
       <BtnFrame>
         {question.answers.map((ans) => {
           return (
-            <Button onClick={() => hadleAnswerClick(ans.type)}>
+            <Button onClick={() => hadleAnswerClick(ans.cost)}>
               {ans.thoughts}
               <Action>{ans.action}</Action>
             </Button>

@@ -1,5 +1,5 @@
 // import React from 'react'
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLottie } from 'lottie-react';
 import Letter from "../../assets/lottie/letter.json"
@@ -28,7 +28,7 @@ export default function StartPage() {
 
     const timer = setTimeout(() => {
       setIsModalOpen(false);
-    }, 3800); 
+    }, 3200); 
     
     const timer2 = setTimeout(() => {
       setIsShow(true);
@@ -168,11 +168,10 @@ const NavBarFrame = styled.div`
 
 const ModalFrame = styled.div`
   position: absolute;
-  top: 0;
+  top: env(safe-area-inset-top);
   left: 0;
   width: 80%;
   padding: 20% 10%;
-  height: 80%;
   background-color: var(--white);
   z-index: 3;
 `;
