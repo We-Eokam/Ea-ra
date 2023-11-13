@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.eokam.notification.application.notification.dto.NotificationDto;
 import com.eokam.notification.domain.notification.document.AccusationNotification;
+import com.eokam.notification.domain.notification.document.FollowAcceptNotification;
+import com.eokam.notification.domain.notification.document.FollowNotification;
 import com.eokam.notification.domain.notification.document.Notification;
 import com.eokam.notification.domain.notification.repository.NotificationRepository;
 import com.eokam.notification.infrastructure.util.ParseJwtUtil;
@@ -20,8 +22,20 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationRepository notificationRepository;
 
 	@Override
-	public NotificationDto saveNotification(NotificationDto notificationDto) {
+	public NotificationDto saveAccusationNotification(NotificationDto notificationDto) {
 		Notification notification = notificationRepository.save(AccusationNotification.from(notificationDto));
+		return NotificationDto.from(notification);
+	}
+
+	@Override
+	public NotificationDto saveFollowNotification(NotificationDto notificationDto) {
+		Notification notification = notificationRepository.save(FollowNotification.from(notificationDto));
+		return NotificationDto.from(notification);
+	}
+
+	@Override
+	public NotificationDto saveFollowAcceptNotification(NotificationDto notificationDto) {
+		Notification notification = notificationRepository.save(FollowAcceptNotification.from(notificationDto));
 		return NotificationDto.from(notification);
 	}
 

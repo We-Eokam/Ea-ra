@@ -68,7 +68,7 @@ public class FcmController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		NotificationDto notificationDto = notificationService.saveNotification(
+		NotificationDto notificationDto = notificationService.saveFollowNotification(
 			NotificationDto.follow(followRequest));
 
 		fcmMessageService.sendMessageTo(
@@ -88,7 +88,7 @@ public class FcmController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		NotificationDto notificationDto = notificationService.saveNotification(
+		NotificationDto notificationDto = notificationService.saveFollowAcceptNotification(
 			NotificationDto.followAccept(followRequest));
 
 		fcmMessageService.sendMessageTo(
@@ -107,7 +107,7 @@ public class FcmController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		NotificationDto notificationDto = notificationService.saveNotification(
+		NotificationDto notificationDto = notificationService.saveAccusationNotification(
 			NotificationDto.accusation(accusationRequest));
 
 		fcmMessageService.sendMessageTo(
