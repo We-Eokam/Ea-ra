@@ -23,4 +23,15 @@ spring:
     port: 5672
     username: guest
     password: guest
+  application:
+    name: groo-service
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
 
