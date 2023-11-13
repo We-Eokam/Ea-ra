@@ -11,19 +11,21 @@ import com.eokam.member.infra.dto.JwtMemberDto;
 
 public interface MemberService {
 
-	public List<MemberDto> retrieveMemberProfile(List<Long> memberIdList);
+	List<MemberDto> retrieveMemberProfile(List<Long> memberIdList);
 
-	public MemberDto retrieveMemberInfo(JwtMemberDto memberDto);
+	MemberDto retrieveMemberInfo(JwtMemberDto memberDto);
 
-	public MemberDto repayGroo(Long memberId, SavingType savingType, Integer groo);
+	MemberDto repayGroo(Long memberId, SavingType savingType, Integer groo);
 
-	public Boolean addBillCount(Long memberId);
+	Boolean addBillCount(Long memberId);
 
-	public Boolean useBill(Long memberId);
+	Boolean useBill(Long memberId);
 
-	public MemberDto updateNickname(JwtMemberDto jwtMemberDto, String nickname);
+	MemberDto updateNickname(JwtMemberDto jwtMemberDto, String nickname);
 
-	public MemberDto updateProfileImage(JwtMemberDto jwtMemberDto, MultipartFile multipartFile);
+	MemberDto updateProfileImage(JwtMemberDto jwtMemberDto, MultipartFile multipartFile);
 
-	public Boolean checkDuplicateNickname(String nickname);
+	Boolean checkDuplicateNickname(String nickname);
+
+	MemberDto finishTest(JwtMemberDto jwtMemberDto,Integer groo);
 }
