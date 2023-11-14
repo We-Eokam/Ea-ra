@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eokam.accusation.infrastructure.client.dto.MemberClientRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,7 +42,7 @@ public class AccusationServiceImpl implements AccusationService {
 		if (accusationDto.witnessId().equals(accusationDto.memberId())) {
 			throw new BusinessException(ErrorCode.SELF_ACCUSATION_RESTRICTED);
 		}
-		// memberServiceClient.isValidRequest(MemberClientRequest.from(accusationDto));
+		memberServiceClient.isValidRequest(MemberClientRequest.from(accusationDto));
 		List<String> fileUrls = getFileUrls(multipartFile);
 		Accusation accusation = accusationRepository.save(Accusation.from(accusationDto));
 		for (String fileUrl : fileUrls) {
