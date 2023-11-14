@@ -12,6 +12,8 @@ import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
 import { ReactComponent as Article } from "../../assets/icons/article-icon.svg";
 import { ReactComponent as Logout } from "../../assets/icons/logout-icon.svg";
 import { ReactComponent as Trash } from "../../assets/icons/Trash-icon.svg";
+import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
+import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -53,15 +55,20 @@ export default function MyPage() {
     reportCnt: 2,
   };
 
-  const PostExample = [
-    {
-      coverImg: "",
-    },
-  ];
+  const PostExample: { coverImg: string }[] = [];
 
   const ReportExample = [
     {
-      coverImg: "",
+      coverImg: "/images/template1.png",
+    },
+    {
+      coverImg: "/images/template1.png",
+    },
+    {
+      coverImg: "/images/template1.png",
+    },
+    {
+      coverImg: "/images/template1.png",
     },
   ];
 
@@ -100,17 +107,31 @@ export default function MyPage() {
           <ActiveTab offsetX={offsetX} />
         </SliderFrame>
         <PostsFrame>
-          {activeTab === "인증"
-            ? PostExample.map((post) => (
-              <Post>
-                <CoverImg src={post.coverImg} />
-              </Post>
-            ))
-            : ReportExample.map((post) => (
-              <Post>
-                <CoverImg src={post.coverImg} />
-              </Post>
-            ))}
+          {activeTab === "인증" ? (
+            PostExample.length === 0 ? (
+              <NoPost>
+                <NoAct />활동 인증 없음
+              </NoPost>
+            ) : (
+              PostExample.map((post) => (
+                <Post>
+                  <CoverImg src={post.coverImg} />
+                </Post>
+              ))
+            )
+          ) : (
+            ReportExample.length === 0 ? (
+              <NoPost>
+                <NoReport />받은 경고장 없음
+              </NoPost>
+            ) : (
+              ReportExample.map((post) => (
+                <Post>
+                  <CoverImg src={post.coverImg} />
+                </Post>
+              ))
+            )
+          )}
         </PostsFrame>
       </MainFrame>
 
@@ -276,6 +297,23 @@ const CoverImg = styled.img`
   left: 0;
   width: 100%;
   object-fit: cover;
+`;
+
+const NoPost = styled.div`
+  height: calc(100% - 230px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 96px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--nav-gray);
 `;
 
 const OptionFrame = styled.div`

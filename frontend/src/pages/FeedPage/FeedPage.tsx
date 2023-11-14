@@ -6,10 +6,8 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.svg";
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg";
-import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg";
 import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg";
 import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg";
-import OptionModal from "../../components/Modal/OptionModal";
 
 export default function FeedPage() {
   const PostExample = [
@@ -38,7 +36,6 @@ export default function FeedPage() {
   ];
 
   const [isLiked, setIsLiked] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
 
   // userId 바뀌면 해당 유저의 프로필 페이지로
@@ -50,14 +47,6 @@ export default function FeedPage() {
 
   const toggleLeaf = () => {
     setIsLiked(!isLiked);
-  };
-
-  const showModal = () => {
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
   };
 
   return (
@@ -80,7 +69,6 @@ export default function FeedPage() {
                   <RewardText>{post.gru} 그루 갚음</RewardText>
                 </RewardContainer>
               </TextBox>
-              <BallMenu onClick={showModal} />
             </WriterContainer>
             <ContentContainer>
               <ActImg src={post.img} />
@@ -100,7 +88,6 @@ export default function FeedPage() {
         <BottomMargin />
       </MainFrame>
 
-      <OptionModal isOpen={modalOpen} closeModal={closeModal} />
       <NavBar />
     </>
   );

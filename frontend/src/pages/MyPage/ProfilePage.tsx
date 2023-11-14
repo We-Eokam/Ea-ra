@@ -7,6 +7,9 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import FollowBtn from "../../components/Buttons/FollowButton";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import NavBar from "../../components/NavBar/NavBar";
+import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
+import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
+import { ReactComponent as ReportSend } from "../../assets/icons/report-send-icon.svg";
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -43,6 +46,10 @@ export default function ProfilePage() {
   const handleSlider = (tabName: string) => {
     setActiveTab(tabName);
   };
+
+  const handleReportBtn = () => {
+    console.log(user.nickname+"에게 경고하자");
+  }
 
   const user = {
     profileImg: "",
@@ -85,7 +92,7 @@ export default function ProfilePage() {
               {user.nickname}
               <SubText>{user.gru}그루</SubText>
             </TextBox>
-            <FollowBtn status={status} setStatus={setStatus}/>
+            <FollowBtn status={status} setStatus={setStatus} />
           </UserInfoContainer>
           <ProgressBar progress={user.progress} greeninit={user.greenInit} />
         </UserFrame>
@@ -101,19 +108,44 @@ export default function ProfilePage() {
           ))}
           <ActiveTab offsetX={offsetX} />
         </SliderFrame>
+
+        {status === "follow" && activeTab !== "인증" && (
+          <SendFrame onClick={() => handleReportBtn(user)}>
+            <ReportSend />
+            <SendTexts>
+              <SendBold>경고장보내기</SendBold>
+              <SendText>환경 파괴 현장을 목격하면 제보해주세요!</SendText>
+            </SendTexts>
+          </SendFrame>
+        )}
+        
         {status === "follow" ? (
           <PostsFrame>
-            {activeTab === "인증"
-              ? PostExample.map((post) => (
+            {activeTab === "인증" ? (
+              PostExample.length === 0 ? (
+                <NoPost>
+                  <NoAct />활동 인증 없음
+                </NoPost>
+              ) : (
+                PostExample.map((post) => (
                   <Post>
                     <CoverImg src={post.coverImg} />
                   </Post>
                 ))
-              : ReportExample.map((post) => (
+              )
+            ) : (
+              ReportExample.length === 0 ? (
+                <NoPost hasSendFrame={true}>
+                  <NoReport />보낸 경고장 없음
+                </NoPost>
+              ) : (
+                ReportExample.map((post) => (
                   <Post>
                     <CoverImg src={post.coverImg} />
                   </Post>
-                ))}
+                ))
+              )
+            )}
           </PostsFrame>
         ) : (
           <Text>
@@ -126,7 +158,7 @@ export default function ProfilePage() {
             {status === "nothing" && (
               "친구 신청을 보내보세요!"
             )}
-            <br/>{user.nickname}님의 활동을 볼 수 있어요
+            <br />{user.nickname}님의 활동을 볼 수 있어요
           </Text>
         )}
       </MainFrame>
@@ -204,6 +236,33 @@ const ActiveTab = styled.div<{ offsetX: number }>`
   transform: translateX(${(props) => props.offsetX}%);
 `;
 
+const SendFrame = styled.div`
+  display: flex;
+  margin: 20px 4.44%;
+  padding: 16px 4.44%;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  border-radius: 10px;
+  background: var(--background);
+  cursor: pointer;
+`;
+
+const SendTexts = styled.div`
+  width: 100%;
+`;
+
+const SendBold = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+`;
+
+const SendText = styled.div`
+  font-size: 13px;
+  color: var(--dark-gray);
+`;
+
 const PostsFrame = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -226,6 +285,23 @@ const CoverImg = styled.img`
   left: 0;
   width: 100%;
   object-fit: cover;
+`;
+
+const NoPost = styled.div<{ hasSendFrame?: boolean }>`
+  height: ${props => props.hasSendFrame ? 'calc(100% - 318px)' : 'calc(100% - 230px)'}; 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 96px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--nav-gray);
 `;
 
 const Text = styled.div`
