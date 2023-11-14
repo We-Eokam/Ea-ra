@@ -14,7 +14,7 @@ const report = {
   targetNickname: "환경구해",
   time: "2023년 10월 24일",
   act: "다회용기 이용",
-  img_list: [ "../src/assets/images/templete1.png", "../src/assets/images/templete2.png" ],
+  img_list: ["/images/template1.png", "/images/template2.png"],
   likedUser: "일회용품뿌셔",
   fine: 300,
 };
@@ -172,12 +172,12 @@ const BigGruCircle = styled(GruCircle)`
 
 const ReactionText = styled.div`
   margin-left: 4px;
-  font-size: 12px;
+  font-size: 14px;
 `;
 
 const ActText = styled.div`
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
 `;

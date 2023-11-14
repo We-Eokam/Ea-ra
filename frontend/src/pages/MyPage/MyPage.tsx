@@ -86,7 +86,7 @@ export default function MyPage() {
       <HeadFrame>
         <HeadContext>
           <IconContainer>
-            <Add />
+            <Add onClick={() => navigate("/act/post")}/>
             <Setting onClick={showModal} />
           </IconContainer>
         </HeadContext>
