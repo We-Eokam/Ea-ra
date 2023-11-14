@@ -8,8 +8,10 @@ import ChuEarth from "../../assets/lottie/chu-earth.json";
 import CryEarth from "../../assets/lottie/cry-earth.json";
 import MeltingEarth from "../../assets/lottie/melting-earth.json";
 import WowEarth from "../../assets/lottie/wow-earth.json";
+import Judge from "../../assets/lottie/judge.json";
 import data from "../../common/result.json"
 import { ScoreBar } from "../../components/ProgressBar/ScoreBar";
+import { ReactComponent as CopySvg } from "../../assets/icons/copy_icon.svg";
 
 interface ResultDataProps {
   name: string;
@@ -22,7 +24,7 @@ const available = [38, 43, 48, 53, 58, 63, 68, 73, 78, 83, 88];
 export default function ResultPage() {
   const { code } = useParams<{ code: string }>();
   const [analysisValue, setAnalysisValue] = useState([0, 0]);
-  const [debt, setDebt] = useState(10000);
+  const [debt, setDebt] = useState("10,000");
   const [earth, setEarth] = useState(AngryEarth);
   const [earthType, setEarthType] = useState<ResultDataProps>(data["앵그리"]);
   const navigate = useNavigate();
@@ -40,7 +42,7 @@ export default function ResultPage() {
 
       const testValue = parseInt(code.slice(1, 3), 10);
       if (available.includes(testValue)) {
-        setDebt((testValue + 12) * 1000);
+        setDebt(String(testValue + 12) + ",000");
 
         if (testValue < 44) {
           setEarth(WowEarth);
@@ -74,8 +76,8 @@ export default function ResultPage() {
     window.Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
-        title: "테스트 결과",
-        description: `xx님의 테스트 결과를 확인해보세요`,
+        title: "지구 재판",
+        description: `xx님의 재판 결과를 확인해보세요`,
         imageUrl:
           "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
         link: {
@@ -92,7 +94,10 @@ export default function ResultPage() {
       <Panel className="top">
         <Title>xx님의</Title>
       </Panel>
+      <HideUnderClock />
+      <HideBottomBar />
       <ResultFrame>
+        <MarginBox />
         <ResultInner>
           <TypeName>당신은 .. <br/><span>{earthType.name}</span></TypeName>
           <EarthFrame>
@@ -100,20 +105,44 @@ export default function ResultPage() {
           </EarthFrame>
           <Gray dangerouslySetInnerHTML={{ __html: earthType.detail }}/>
           <AnalysisBox>
-            <SubTitle>재판 결과 분석</SubTitle>
+            <SubTitle>진술 내역 요약</SubTitle>
             <ScoreBar title="실행력" score={analysisValue[0]}/>
             <ScoreBar title="관심도" score={analysisValue[1]}/>
           </AnalysisBox>
+        </ResultInner>
+        <MarginBox />
+        <ResultInner>
           <TypeName>
             당신의 <span style={{ color: "var(--red)" }}>벌금</span>은?
-            <br/><span style={{ fontSize: "30px" }}>{debt} 그루</span>
+            <EarthFrame>
+              <Lottie animationData={Judge}/>
+            </EarthFrame>
+            <span style={{ fontSize: "30px" }}>{debt} 그루</span>
           </TypeName>
-          <Gray>진술한 내용을 바탕으로 벌금을 산정했어요.</Gray>
-
-          <button onClick={() => navigate('/signup')}>회원가입하기</button>
-          내 결과 공유하기
-          <button onClick={shareKakao}>카카오로 공유하기</button>
+          <Gray
+            dangerouslySetInnerHTML={{__html: earthType.content}}
+            style={{ marginBottom: "12px"}}  
+          />
+          <SmallText>* 진술한 내용을 바탕으로 벌금을 산정했어요.</SmallText>
+          <EaraExplain>
+            <SubTitle>일상생활 속 환경보호, 어려우신가요?</SubTitle>
+            <HighLight>친구와 함께</HighLight> 실천하고 공유하며<br/>
+            동기부여가 되도록 <span>'어라'</span>가 도와줄게요<br/>
+            탄소 중립<HighLight> 혜택 정보, 내 주변 가게</HighLight> 등<br/>
+            다양한 정보도 놓치지 마세요 ~<br/>
+            <SignUpBtn onClick={() => navigate('/signup')}>어라 회원가입하기</SignUpBtn>
+          </EaraExplain>
+          <SubTitle>내 결과 공유하기</SubTitle>
+          <ShareBox>
+            <ShareBtn>
+              <img src="/images/kakao-logo.png" onClick={shareKakao}/>
+            </ShareBtn>
+            <ShareBtn style={{backgroundColor: "var(--gray)"}}>
+              <CopySvg />
+            </ShareBtn>
+          </ShareBox>
         </ResultInner>
+        <MarginBox />
       </ResultFrame>
       <Panel className="bottom">
         <Title>지구재판 결과는?</Title>
@@ -123,19 +152,31 @@ export default function ResultPage() {
 }
 
 const slideUp = keyframes`
-  33.3% {transform: translateY(0);}
-  100% {transform: translateY(-100%);}
+  33.3% {
+    transform: translateY(0);
+  }
+  99% {
+    opacity: 1;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 0;
+  }
 `;
 
 const slideDwon = keyframes`
-  33.3% {transform: translateY(0);}
-  100% {transform: translateY(100%);}
+  33.3% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 `;
 
 const MainFrame = styled.div`
-  margin-top: env(safe-area-inset-top);
   width: 100%;
   height: 100%;
+  overflow-x: hide;
 `;
 
 const Panel = styled.div`
@@ -147,7 +188,6 @@ const Panel = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: end;
-
   &.top {
     animation: ${slideUp} 3s ease-out forwards;
   }
@@ -167,21 +207,48 @@ const Title = styled.div`
 
 const ResultFrame = styled.div`
   position: absolute;
+  top: env(safe-area-inset-top);
+  left: 0;
   width: 100%;
-  height: 84%;
-  top: calc(12% + env(safe-area-inset-top));
+  height: calc(100% - env(safe-area-inset-top));
   overflow-y: scroll;
 `;
 
+const HideUnderClock = styled.div`
+  position: fixed;
+  left: 0;
+  width: 100%;
+  top: env(safe-area-inset-top);
+  height: env(safe-area-inset-top);
+  background-color: var(--white);
+  z-index: 3;
+`
+
+const HideBottomBar = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: env(safe-area-inset-bottom);
+  background-color: var(--white);
+  z-index: 3;
+`
+
+const MarginBox = styled.div`
+  position: relative;
+  width: 100%;
+  height: 12%;
+`
+
 const ResultInner = styled.div`
-  padding: 2% 10% 12%;
+  padding: 0 10%;
+  text-align: center;
 `;
 
 const TypeName = styled.div`
-  text-align: center;
   font-size: 32px;
   font-weight: 650;
   margin-bottom: 24px;
+  line-height: 48px;
   span {
     color: var(--primary);
     font-size: 36px;
@@ -194,10 +261,9 @@ const EarthFrame = styled.div`
 `;
 
 const Gray = styled.div`
-  font-size: 18px;
+  font-size: 16.5px;
   margin: 28px 0;
   color: var(--dark-gray);
-  text-align: center;
   span {
     font-weight: 450;
     color: var(--red);
@@ -207,15 +273,63 @@ const Gray = styled.div`
 const AnalysisBox = styled.div`
   width: calc(100% - 44px);
   padding: 4px 20px;
-  margin-bottom: 52px;
   border: 2px solid var(--primary);
   border-radius: 12px;
 `;
 
 const SubTitle = styled.div`
-  text-align: center;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  color: var(--black);
-  padding: 12px 0 4px;
+  padding: 12px 0 8px;
+`;
+
+const SmallText = styled.div`
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--red);
+`;
+
+const EaraExplain = styled.div`
+  margin: 40px 0 32px;
+  font-size: 17px;
+  line-height: 26px;
+  span {
+    font-weight: 500;
+    color: var(--primary);
+  }
+  `;
+const HighLight = styled.span`
+  background: linear-gradient(0deg, rgb(129, 222, 173, 0.3), transparent 75%);
+  color: var(--black) !important;
+`;
+
+const SignUpBtn = styled.div`
+  border-radius: 20px;
+  background-color: var(--third);
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 550;
+  cursor: pointer;
+  margin-top: 20px;
+  padding: 8px 0;
+`;
+
+const ShareBox = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+`;
+
+const ShareBtn = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--kakao-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img{
+    width: 24px;
+  }
 `;
