@@ -1,28 +1,23 @@
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import Lottie from "lottie-react";
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../style/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
-import { useNavigate } from "react-router-dom";
 
 import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
+// import AngryEarth from "../../assets/lottie/angry-earth.json";
+// import ChuEarth from "../../assets/lottie/chu-earth.json";
+// import CryEarth from "../../assets/lottie/cry-earth.json";
+// import MeltingEarth from "../../assets/lottie/melting-earth.json";
+import WowEarth from "../../assets/lottie/wow-earth.json";
 
 export default function MainPage() {
   const navigate = useNavigate();
 
-  const toLogin = () => {
-    navigate("/login")
-  }
-  
-  const toSignup = () => {
-    navigate("/signup")
-  }
-  
-  const toWelcome = () => {
-    navigate("/welcome")
-  }
-  
   const toNotification = () => {
     navigate("/notice");
   };
@@ -34,6 +29,11 @@ export default function MainPage() {
   const toAct = () => {
     navigate("/act");
   };
+
+  const date = new Date();
+  const month = Number(moment(date).format("MM"));
+  const day = Number(moment(date).format("DD"));
+  const dateString = `${month}월 ${day}일`;
 
   function getCurrentWeek() {
     const day = new Date();
@@ -66,34 +66,34 @@ export default function MainPage() {
 
   const groo_saving_list = [
     {
-        "date": "2023-11-5",
-        "proof_count": 1
+      date: "2023-11-5",
+      proof_count: 1,
     },
     {
-        "date": "2023-11-6",
-        "proof_count": 0
+      date: "2023-11-6",
+      proof_count: 0,
     },
     {
-        "date": "2023-11-7",
-        "proof_count": 2
+      date: "2023-11-7",
+      proof_count: 2,
     },
     {
-        "date": "2023-11-8",
-        "proof_count": 0
+      date: "2023-11-8",
+      proof_count: 0,
     },
     {
-        "date": "2023-11-9",
-        "proof_count": 4
+      date: "2023-11-9",
+      proof_count: 4,
     },
     {
-        "date": "2023-11-10",
-        "proof_count": 1
+      date: "2023-11-10",
+      proof_count: 1,
     },
     {
-        "date": "2023-11-11",
-        "proof_count": 2
-    }
-]
+      date: "2023-11-11",
+      proof_count: 2,
+    },
+  ];
 
   const getCountColor = (count: number): string => {
     if (count === 0) {
@@ -110,13 +110,23 @@ export default function MainPage() {
   return (
     <>
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
-    <br/><br/><br/><br/><br/><br/><br/>
-      <div onClick={toLogin}>로그인 페이지</div><br/><br/>
-      <div onClick={toSignup}>회원가입 페이지</div><br/><br/>
-      <div onClick={toWelcome}>테스트 페이지</div><br/><br/>
-        <NotificationIcon onClick={toNotification} />
+        <NotiBar>
+          <NotificationIcon onClick={toNotification} />
+          {/* <div onClick={() => navigate("/login")}>로그인 페이지</div>
+          <div onClick={() => navigate("/signup")}>회원가입 페이지</div>
+          <div onClick={() => navigate("/welcome")}>테스트 페이지</div> */}
+        </NotiBar>
+        <EarthFrame>
+          <TodayEarth>
+            오늘의 지구
+            <div>활동을 통해 지구 상태를 바꿔보세요!</div>
+          </TodayEarth>
+          <EarthLottie>
+            <Lottie animationData={WowEarth}/>
+          </EarthLottie>
+        </EarthFrame>
         <HomeFrame>
-          <ShowDate>10월 23일 기준</ShowDate>
+          <ShowDate>{dateString} 기준</ShowDate>
           <NicknameLine>
             <Bold>환경구해</Bold>님의 남은 빚
           </NicknameLine>
@@ -141,7 +151,9 @@ export default function MainPage() {
             {onlyDay.map((day, index) => (
               <OneDay>
                 <DayNumber>{day}</DayNumber>
-                <DayProgress count={getCountColor(groo_saving_list[index].proof_count)} />
+                <DayProgress
+                  count={getCountColor(groo_saving_list[index].proof_count)}
+                />
               </OneDay>
             ))}
           </WeekdayFrame>
@@ -163,11 +175,45 @@ export default function MainPage() {
   );
 }
 
+const NotiBar = styled.div`
+  position: relative;
+  height: 26px;
+  width: 100%;
+  margin-top: max(calc(env(safe-area-inset-top) + 4px), 28px);
+  margin-bottom: 20px;
+`;
+
 const NotificationIcon = styled(Notification)`
   position: absolute;
   right: 5.56%;
-  top: max(calc(env(safe-area-inset-top) + 4px), 28px);
   filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.12));
+`;
+
+const EarthFrame = styled.div`
+  width: 100%;
+  min-height: calc(43.6% - 74px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TodayEarth = styled.div`
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: var(--primary);
+  div {
+    font-size: 16px;
+    color: var(--dark-gray);
+    font-weight: 400;
+  }
+`;
+
+const EarthLottie = styled.div`
+  width: 60%;
+  padding-top: 12px;
 `;
 
 const HomeFrame = styled(ModalFrame)`
