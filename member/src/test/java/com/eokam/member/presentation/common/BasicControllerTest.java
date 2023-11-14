@@ -21,8 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eokam.member.config.RestDocsConfig;
 import com.eokam.member.domain.Member;
+import com.eokam.member.domain.MemberFollow;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.infra.external.service.JwtTokenProvider;
+import com.eokam.member.infra.repository.MemberFollowRepository;
 import com.eokam.member.infra.repository.MemberRepository;
 import com.eokam.member.util.DatabaseCleanupExtension;
 
@@ -41,6 +43,10 @@ public class BasicControllerTest {
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private MemberFollowRepository memberFollowRepository;
+
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
@@ -117,6 +123,14 @@ public class BasicControllerTest {
 		Member member = memberRepository.findById(memberId).get();
 		member.finishTest(0);
 		memberRepository.save(member);
+	}
+
+	protected void A유저가B유저에게_팔로우(Long memberAId,Long memberBId){
+		Member memberA = memberRepository.findById(memberAId).get();
+		Member memberB = memberRepository.findById(memberBId).get();
+
+		MemberFollow memberFollow = MemberFollow.builder().requestor(memberA).receiver(memberB).build();
+		memberFollowRepository.save(memberFollow);
 	}
 
 	protected String 해당유저_JWT쿠키생성(Long memberId){
