@@ -19,6 +19,7 @@ import MapPage from "../pages/NtzPage/MapPage";
 import CompanyPage from "../pages/NtzPage/CompanyPage";
 
 import PostDetail from "../pages/FeedPage/PostDetail";
+import ReportDetail from "../pages/FeedPage/ReportDetail";
 import FriendsList from "../pages/MyPage/FriendsList";
 import ProfilePage from "../pages/MyPage/ProfilePage";
 
@@ -35,10 +36,11 @@ export default function Router() {
         <Route path="/calendar" element={<CalendarPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>
         <Route path="/feed" element={<FeedPage />}></Route>
-        <Route path="/feed/detail" element={<PostDetail />}></Route>
         <Route path="/act" element={<ActPage />}></Route>
         <Route path="/act/post" element={<PostPage />}></Route>
+        <Route path="/post/:id" element={<PostDetail />}></Route>
         <Route path="/act/report" element={<ReportPage />}></Route>
+        <Route path="/report/:id" element={<ReportDetail/>}></Route>
         <Route path="/netzero" element={<NtzPage />}></Route>
         <Route path="/netzero/subsidy" element={<Subsidy />}></Route>
         <Route path="/netzero/map" element={<MapPage />}></Route>

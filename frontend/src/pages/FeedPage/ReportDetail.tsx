@@ -1,5 +1,6 @@
 // import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -7,19 +8,24 @@ import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg";
 import { ReactComponent as DropRight } from "../../assets/icons/drop-right-icon.svg";
 
-export default function FeedDetail() {
-  const report = {
-    writerProfileImg: "../src/assets/images/templete1.png",
-    writerNickname: "지구구해",
-    targetNickname: "환경구해",
-    time: "2023년 10월 24일",
-    act: "다회용기 이용",
-    img_list: [ "../src/assets/images/templete1.png", "../src/assets/images/templete2.png" ],
-    likedUser: "일회용품뿌셔",
-    fine: 300,
-  };
+const report = {
+  writerProfileImg: "../src/assets/images/templete1.png",
+  writerNickname: "지구구해",
+  targetNickname: "환경구해",
+  time: "2023년 10월 24일",
+  act: "다회용기 이용",
+  img_list: [ "../src/assets/images/templete1.png", "../src/assets/images/templete2.png" ],
+  likedUser: "일회용품뿌셔",
+  fine: 300,
+};
 
+export default function FeedDetail() {
+  const { id } = useParams<{ id: string }>();
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+
+  useEffect(() => {
+    // id로 요청보내고 report 데이터 바꾸기
+  }, [id]);
 
   const handleImageChangeByDot = (index: number) => {
     setCurrentImgIndex(index);
