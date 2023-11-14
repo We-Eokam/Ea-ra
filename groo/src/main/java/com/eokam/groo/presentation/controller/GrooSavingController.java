@@ -17,11 +17,13 @@ import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.application.service.GrooSavingService;
 import com.eokam.groo.global.validation.ValidationSequence;
+import com.eokam.groo.infrastructure.dto.GrooTodayCountDto;
 import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.jwt.TokenManager;
 import com.eokam.groo.presentation.dto.GrooSavingMonthResponse;
 import com.eokam.groo.presentation.dto.GrooSavingRequest;
 import com.eokam.groo.presentation.dto.GrooSavingResponse;
+import com.eokam.groo.presentation.dto.TodayGrooSavingResponse;
 import com.eokam.groo.presentation.dto.WeeklyProofCountResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -53,5 +55,12 @@ public class GrooSavingController {
 		Long memberId = tokenManager.getMemberId(jwt);
 		List<WeeklyProofCountDto> weeklyProofCountDtos = grooSavingService.getDailyProofCountByWeek(memberId);
 		return ResponseEntity.ok().body(WeeklyProofCountResponse.from(weeklyProofCountDtos));
+	}
+
+	@GetMapping("/today")
+	ResponseEntity<TodayGrooSavingResponse> getProofAccusationCountByToday(@CookieValue(value = "access-token") String jwt){
+		Long memberId = tokenManager.getMemberId(jwt);
+		GrooTodayCountDto todayCount = grooSavingService.getTodayCount(memberId);
+		return ResponseEntity.ok().body(TodayGrooSavingResponse.from(todayCount));
 	}
 }
