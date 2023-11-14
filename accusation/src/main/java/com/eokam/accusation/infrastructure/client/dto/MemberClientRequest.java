@@ -13,20 +13,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class MemberClientRequest {
-	private Long witnessId;
 	private Long memberId;
+	private Long targetId;
 
 	public static MemberClientRequest from(AccusationDto accusationDto) {
 		return MemberClientRequest.builder()
-			.witnessId(accusationDto.witnessId())
-			.memberId(accusationDto.memberId())
+			.memberId(accusationDto.witnessId())
+			.targetId(accusationDto.memberId())
 			.build();
 	}
 
 	public static MemberClientRequest of(Long targetId, Long memberId) {
 		return MemberClientRequest.builder()
-			.witnessId(memberId)
-			.memberId(targetId)
+			.memberId(memberId)
+			.targetId(targetId)
 			.build();
 
 	}
