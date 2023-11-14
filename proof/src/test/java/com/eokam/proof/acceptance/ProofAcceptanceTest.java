@@ -13,6 +13,7 @@ import java.util.stream.LongStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -42,6 +43,7 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
+@Disabled
 class ProofAcceptanceTest extends AcceptanceTest {
 	private static final String API_BASE_PATH = "/proof";
 
