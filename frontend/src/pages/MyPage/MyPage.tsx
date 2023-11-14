@@ -46,6 +46,10 @@ export default function MyPage() {
     setModalOpen(false);
   };
 
+  const handleNavigate = (where: string, id: number) => {
+    navigate(`/${where}/${id}`);
+  }
+
   const user = {
     profileImg: "",
     nickname: "어쩌라고라고어쩌라고",
@@ -55,20 +59,25 @@ export default function MyPage() {
     reportCnt: 2,
   };
 
-  const PostExample: { coverImg: string }[] = [];
+  const PostExample = [
+    {
+      postId: 1,
+      coverImg: "/images/template1.png",
+    },
+  ];
 
   const ReportExample = [
     {
-      coverImg: "/images/template1.png",
+      reportId: 1,
+      coverImg: "/images/template4.png",
     },
     {
-      coverImg: "/images/template1.png",
+      reportId: 2,
+      coverImg: "/images/template2.png",
     },
     {
-      coverImg: "/images/template1.png",
-    },
-    {
-      coverImg: "/images/template1.png",
+      reportId: 3,
+      coverImg: "/images/template3.png",
     },
   ];
 
@@ -114,7 +123,7 @@ export default function MyPage() {
               </NoPost>
             ) : (
               PostExample.map((post) => (
-                <Post>
+                <Post onClick={() => {handleNavigate("post", post.postId)}}>
                   <CoverImg src={post.coverImg} />
                 </Post>
               ))
@@ -126,7 +135,7 @@ export default function MyPage() {
               </NoPost>
             ) : (
               ReportExample.map((post) => (
-                <Post>
+                <Post onClick={() => {handleNavigate("report", post.reportId)}}>
                   <CoverImg src={post.coverImg} />
                 </Post>
               ))

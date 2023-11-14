@@ -1,6 +1,6 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // userId로 axios 보내서 user 정보 가져오기
@@ -48,10 +50,16 @@ export default function ProfilePage() {
   };
 
   const handleReportBtn = () => {
-    console.log(user.nickname+"에게 경고하자");
+    // console.log(user.nickname+"에게 경고하자");
+    navigate(`/act/report?target=${user.id}`)
+  }
+
+  const handleNavigate = (where: string, id: number) => {
+    navigate(`/${where}/${id}`);
   }
 
   const user = {
+    id: 1,
     profileImg: "",
     nickname: "어쩌라고라고어쩌라고",
     gru: 25000,
@@ -60,23 +68,23 @@ export default function ProfilePage() {
     // status: true,
   };
 
-  const PostExample = [
-    {
-      coverImg: "",
-    },
-  ];
+  const PostExample: { postId: number,coverImg: string }[] = [];
 
   const ReportExample = [
     {
+      reportId: 5,
       coverImg: "/images/template6.png",
     },
     {
+      reportId: 6,
       coverImg: "/images/template6.png",
     },
     {
+      reportId: 7,
       coverImg: "/images/template5.png",
     },
     {
+      reportId: 8,
       coverImg: "/images/template2.png",
     },
   ];
@@ -128,7 +136,7 @@ export default function ProfilePage() {
                 </NoPost>
               ) : (
                 PostExample.map((post) => (
-                  <Post>
+                  <Post onClick={() => {handleNavigate("post", post.postId)}}>
                     <CoverImg src={post.coverImg} />
                   </Post>
                 ))
@@ -140,7 +148,7 @@ export default function ProfilePage() {
                 </NoPost>
               ) : (
                 ReportExample.map((post) => (
-                  <Post>
+                  <Post onClick={() => {handleNavigate("report", post.reportId)}}>
                     <CoverImg src={post.coverImg} />
                   </Post>
                 ))
