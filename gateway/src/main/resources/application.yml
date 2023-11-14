@@ -44,6 +44,20 @@ spring:
           uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/member/**,/logout/**,/login/**
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+          cors-configurations:
+            '[/**]':
+              allowedOrigins: ${ALLOWED_ORIGINS}
+              allow-credentials: true
+              allowedHeaders: '*'
+              allowedMethods:
+                - PUT
+                - GET
+                - POST
+                - DELETE
+                - OPTIONS
 
 jwt:
   key: ${JWT_KEY}
