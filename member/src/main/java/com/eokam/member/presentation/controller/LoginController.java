@@ -51,7 +51,6 @@ public class LoginController {
 			.secure(true)
 			.path("/")
 			.maxAge(180000)
-			.domain(domain)
 			.build();
 		return new ResponseEntity<>(oauthProvider
 			.retrieveClientRedirectHeader(responseCookie.toString()),HttpStatus.MOVED_PERMANENTLY);
