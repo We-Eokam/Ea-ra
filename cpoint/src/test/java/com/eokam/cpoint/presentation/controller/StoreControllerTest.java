@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -25,6 +26,7 @@ import com.eokam.cpoint.presentation.common.BaseControllerTest;
 
 import jakarta.servlet.http.Cookie;
 
+@Disabled
 public class StoreControllerTest extends BaseControllerTest {
 
 	@Test

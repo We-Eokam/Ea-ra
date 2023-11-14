@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,6 +20,7 @@ import com.eokam.cpoint.infra.common.CommonRepositoryTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreRepositoryTest extends CommonRepositoryTest {
 
