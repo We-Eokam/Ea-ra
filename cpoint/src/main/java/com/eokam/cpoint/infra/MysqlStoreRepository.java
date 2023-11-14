@@ -15,7 +15,7 @@ public interface MysqlStoreRepository extends StoreRepository {
 		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(longitude, latitude)) AS distance,"
 		+ " latitude,"
 		+ " longitude"
-		+ " FROM Store "
+		+ " FROM \"Store\" "
 		+ " WHERE ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(longitude, latitude)) <= :radius"
 		+ " ORDER BY distance", nativeQuery = true)
 	public List<StoreDto> getStoresListByCurrentPositionAndRadius(Double latitude, Double longitude,
@@ -26,8 +26,8 @@ public interface MysqlStoreRepository extends StoreRepository {
 		+ " ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(s.longitude, s.latitude)) AS distance,"
 		+ " s.latitude as latitude,"
 		+ " s.longitude as longitude"
-		+ " FROM Store as s"
-		+ " INNER JOIN Company_Policy as cp"
+		+ " FROM \"Store\" as s"
+		+ " INNER JOIN \"Company_Policy\" as cp"
 		+ " ON cp.company_id = s.company_id"
 		+ " AND cp.activity_type = :#{#activityType.name()}"
 		+ " WHERE ST_Distance_Sphere(POINT(:longitude,:latitude), POINT(s.longitude, s.latitude)) <= :radius"
