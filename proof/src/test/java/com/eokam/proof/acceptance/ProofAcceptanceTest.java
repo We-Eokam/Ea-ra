@@ -103,8 +103,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 		// given
 		LongStream.range(1, 6).forEach(this::인증_더미_데이터_생성);
 
-		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(2L, true));
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), anyLong()))
+			.willReturn(new FollowStatus(2L, "ACCEPT"));
 
 		// when
 		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
@@ -137,8 +137,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 	@DisplayName(("친구 인증 내역 조회 시 컨텐츠 없음을 반환한다."))
 	void 친구_인증_내역_조회_컨텐츠없음() {
 		// when
-		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(2L, true));
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), anyLong()))
+			.willReturn(new FollowStatus(2L, "ACCEPT"));
 
 		ExtractableResponse<Response> response = 친구_인증_내역_조회(2L, 0L, 5L);
 
@@ -235,8 +235,8 @@ class ProofAcceptanceTest extends AcceptanceTest {
 			.proof(proof)
 			.build());
 
-		BDDMockito.given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(2L, true));
+		BDDMockito.given(followServiceFeign.isFollow(anyString(), anyLong()))
+			.willReturn(new FollowStatus(2L, "ACCEPT"));
 
 		// when
 		ExtractableResponse<Response> response = 인증_조회(proof.getProofId());

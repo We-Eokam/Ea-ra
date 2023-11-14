@@ -70,6 +70,8 @@ public class ProofServiceImpl implements ProofService {
 
 		s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
 
+		followServiceFeign.increaseAccusationCount(jwt, IsFollowRequest.from(proofCreateDto.memberId()));
+
 		return ProofDto.of(savedProof, s3SavedList);
 	}
 
@@ -109,11 +111,11 @@ public class ProofServiceImpl implements ProofService {
 			return true;
 		}
 
-		return followServiceFeign.isFollow(jwt, new IsFollowRequest(otherId)).isFollow();
+		return followServiceFeign.isFollow(jwt, otherId).followStatus().equals("ACCEPT");
 	}
 
 	private boolean isFriend(String jwt, Long memberId) {
-		return followServiceFeign.isFollow(jwt, new IsFollowRequest(memberId)).isFollow();
+		return followServiceFeign.isFollow(jwt, memberId).followStatus().equals("ACCEPT");
 	}
 
 	private FollowList getFriends(String jwt) {
