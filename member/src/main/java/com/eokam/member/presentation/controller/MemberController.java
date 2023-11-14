@@ -62,6 +62,16 @@ public class MemberController {
 		return ResponseEntity.ok(memberProfileListReponse);
 	}
 
+	@GetMapping("/list")
+	public ResponseEntity<MemberProfileListReponse> retrieveMembers(){
+		MemberProfileListReponse memberProfileListReponse =
+			MemberProfileListReponse.builder().memberList(
+				memberService.retrieveAllMember()
+					.stream().map(memberDto -> MemberProfileResponse.from(memberDto)).toList()
+			).build();
+		return ResponseEntity.ok(memberProfileListReponse);
+	}
+
 	@PostMapping("/groo")
 	public ResponseEntity<MemberDetailResponse> saveGroo(@RequestBody @Valid RepayGrooRequest repayGrooRequest){
 		MemberDetailResponse memberDetailResponse =

@@ -42,4 +42,6 @@ public interface MemberService {
 	FollowStatus denyOrCancelFollowRequest(Long requestorId,Long receiverId);
 
 	FollowStatus acceptFollowRequest(Long requestorId,Long receiverId);
+
+	List<MemberDto> retrieveAllMember();
 }

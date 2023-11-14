@@ -239,4 +239,9 @@ public class MemberServiceImpl implements MemberService {
 		memberFollowRepository.save(newMemberFollow);
 		return checkFollowStatus(requestorId,receiverId);
 	}
+
+	@Override
+	public List<MemberDto> retrieveAllMember() {
+		return memberRepository.findAll().stream().map(member -> MemberDto.from(member)).toList();
+	}
 }
