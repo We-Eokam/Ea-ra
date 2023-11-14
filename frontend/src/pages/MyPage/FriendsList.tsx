@@ -1,4 +1,5 @@
 // import React from 'react'
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -7,40 +8,49 @@ import { ReactComponent as ReportSend } from "../../assets/icons/report-send-ico
 import { ReactComponent as PersonCancel } from "../../assets/icons/person_cancel.svg";
 import OptionModal from "../../components/Modal/OptionModal";
 import { useState } from "react";
+
 interface User {
+  id: number;
   profileImg: string;
   nickname: string;
   gru: number;
 }
-export default function FriendsList() {
-  const users:User[] = [
-    {
-      profileImg: "",
-      nickname: "어쩌라고라고어쩌라고",
-      gru: 25000,
-    },
-    {
-      profileImg: "",
-      nickname: "어쩌라고",
-      gru: 25000,
-    },
-    {
-      profileImg: "",
-      nickname: "어쩌",
-      gru: 25000,
-    },
-    {
-      profileImg: "",
-      nickname: "지구 지킴",
-      gru: 25000,
-    },
-  ];
 
+const users:User[] = [
+  {
+    id: 1,
+    profileImg: "",
+    nickname: "어쩌라고라고어쩌라고",
+    gru: 25000,
+  },
+  {
+    id: 2,
+    profileImg: "",
+    nickname: "어쩌라고",
+    gru: 25000,
+  },
+  {
+    id: 3,
+    profileImg: "",
+    nickname: "어쩌",
+    gru: 25000,
+  },
+  {
+    id: 4,
+    profileImg: "",
+    nickname: "지구 지킴",
+    gru: 25000,
+  },
+];
+
+export default function FriendsList() {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState("");
 
-  const handleReportBtn = (user: User) => {
-    console.log(user.nickname+"에게 경고하자");
+  const handleReportBtn = (userId: number) => {
+    // console.log(user.nickname+"에게 경고하자");
+    navigate(`/act/report?target=${userId}`);
   }
 
   const showModal = (user: User) => {
@@ -58,13 +68,15 @@ export default function FriendsList() {
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="medium">
         {users.map((user) => (
           <UserInfoContainer>
-            <ProfileImg src={user.profileImg} />
+            <ProfileImg src={user.profileImg} onClick={() => navigate(`/profile/${user.id}`)}/>
             <TextBox>
-              {user.nickname}
+              <span onClick={() => navigate(`/profile/${user.id}`)}>
+                {user.nickname}
+              </span>
               <SubText>{user.gru}그루</SubText>
             </TextBox>
             <IconContainer>
-              <ReportSend onClick={() => handleReportBtn(user)} />
+              <ReportSend onClick={() => handleReportBtn(user.id)} />
               <PersonCancel onClick={() => showModal(user)}/>
             </IconContainer>
           </UserInfoContainer>
