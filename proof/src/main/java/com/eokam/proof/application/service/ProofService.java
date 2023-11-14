@@ -19,4 +19,6 @@ public interface ProofService {
 	ProofDto getProofDetail(String jwt, Long proofId);
 
 	Page<ProofDto> getFeed(String jwt, PageRequest pageRequest);
+
+	void deleteProof(String jwt, Long proofId);
 }

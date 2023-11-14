@@ -103,6 +103,18 @@ public class ProofServiceImpl implements ProofService {
 		return ProofDto.toDtoPage(proofPage);
 	}
 
+	@Override
+	public void deleteProof(String jwt, Long proofId) {
+		Proof proof = proofRepository.findByProofId(proofId).orElseThrow(()
+			-> new ProofException(ErrorCode.PROOF_NOT_EXIST));
+
+		if (!proof.getMemberId().equals(ParseJwtUtil.parseMemberId(jwt))) {
+			throw new ProofException(ErrorCode.PROOF_UNAUTHORIZED);
+		}
+
+		proofRepository.delete(proof);
+	}
+
 	private boolean isMeOrFriend(String jwt, Proof proof) {
 		Long myId = ParseJwtUtil.parseMemberId(jwt);
 		Long otherId = proof.getMemberId();
