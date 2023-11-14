@@ -17,16 +17,21 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.eokam.member.application.dto.MemberDto;
 import com.eokam.member.application.service.MemberService;
+import com.eokam.member.infra.dto.FollowStatus;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.presentation.annotation.JwtUser;
 import com.eokam.member.presentation.dto.BillRequest;
 import com.eokam.member.presentation.dto.MemberDetailResponse;
+import com.eokam.member.presentation.dto.MemberFollowRequest;
+import com.eokam.member.presentation.dto.MemberFollowStatusResponse;
 import com.eokam.member.presentation.dto.MemberNicknameUpdateRequest;
 import com.eokam.member.presentation.dto.MemberProfileListReponse;
 import com.eokam.member.presentation.dto.MemberProfileResponse;
 import com.eokam.member.presentation.dto.MemberTestDoneRequest;
 import com.eokam.member.presentation.dto.RepayGrooRequest;
+import com.eokam.member.presentation.dto.UseBillRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +78,12 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/accusation")
+	public ResponseEntity<?> useBillByTarget(@RequestBody @Valid UseBillRequest useBillRequest){
+		memberService.useBillByTarget(useBillRequest.getMemberId(), useBillRequest.getTargetId());
+		return ResponseEntity.ok().build();
+	}
+
 	@PostMapping("/accusation/count")
 	public ResponseEntity<?> addBillCount(@RequestBody @Valid BillRequest billRequest){
 		memberService.addBillCount(billRequest.getMemberId());
@@ -107,6 +118,52 @@ public class MemberController {
 		MemberDetailResponse memberDetailResponse =
 			MemberDetailResponse.from(memberService.updateProfileImage(jwtMemberDto,multipartFile));
 		return ResponseEntity.ok(memberDetailResponse);
+	}
+
+	@GetMapping("/follow")
+	public ResponseEntity<MemberFollowStatusResponse> checkFollow(@JwtUser JwtMemberDto jwtMemberDto,
+		@RequestParam("memberId")Long memberId){
+		FollowStatus followStatus =
+			memberService.checkFollowStatus(jwtMemberDto.getMemberId(),memberId);
+		return ResponseEntity.ok(MemberFollowStatusResponse
+			.builder().followStatus(followStatus).memberId(memberId).build());
+	}
+
+	@PostMapping("/follow")
+	public ResponseEntity<MemberFollowStatusResponse> followMember(@JwtUser JwtMemberDto jwtMemberDto,
+		@RequestBody MemberFollowRequest memberFollowRequest){
+		FollowStatus followStatus =
+			memberService.followMember(jwtMemberDto.getMemberId(),memberFollowRequest.getTargetId());
+		return ResponseEntity.ok(MemberFollowStatusResponse
+			.builder().followStatus(followStatus).memberId(memberFollowRequest.getTargetId()).build());
+	}
+
+	@GetMapping("/follow/list")
+	public ResponseEntity<MemberProfileListReponse> retreiveFriendList(@JwtUser JwtMemberDto jwtMemberDto){
+		MemberProfileListReponse memberProfileListReponse =
+			MemberProfileListReponse.builder().memberList(
+				memberService.retrieveFriendMemberList(jwtMemberDto.getMemberId())
+					.stream().map(memberDto -> MemberProfileResponse.from(memberDto)).toList()
+			).build();
+		return ResponseEntity.ok(memberProfileListReponse);
+	}
+
+	@DeleteMapping("/follow")
+	public ResponseEntity<MemberFollowStatusResponse> cancelFollow(@JwtUser JwtMemberDto jwtMemberDto,
+		@RequestParam("targetId") Long targetId){
+		FollowStatus followStatus = memberService.denyOrCancelFollowRequest(jwtMemberDto.getMemberId(),targetId);
+		return ResponseEntity.ok(MemberFollowStatusResponse.builder()
+			.memberId(jwtMemberDto.getMemberId()).followStatus(followStatus).build()
+		);
+	}
+
+	@PostMapping("/follow/accept")
+	public ResponseEntity<MemberFollowStatusResponse> acceptFollowRequest(@JwtUser JwtMemberDto jwtMemberDto,
+		@RequestBody MemberFollowRequest memberFollowRequest){
+		FollowStatus followStatus = memberService.acceptFollowRequest(memberFollowRequest.getTargetId(), jwtMemberDto.getMemberId());
+		return ResponseEntity.ok(MemberFollowStatusResponse.builder()
+			.memberId(jwtMemberDto.getMemberId()).followStatus(followStatus).build()
+		);
 	}
 
 }
