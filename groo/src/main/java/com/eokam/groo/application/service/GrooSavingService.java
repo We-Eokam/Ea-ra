@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
+import com.eokam.groo.infrastructure.dto.GrooTodayCountDto;
 import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 
 public interface GrooSavingService {
@@ -13,4 +14,6 @@ public interface GrooSavingService {
 	GrooMonthDto getDailySavingAmountByMonth(Long memberId, Integer year, Integer month);
 
 	List<WeeklyProofCountDto> getDailyProofCountByWeek(Long memberId);
+
+	GrooTodayCountDto getTodayCount(Long memberId);
 }
