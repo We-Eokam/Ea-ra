@@ -50,16 +50,4 @@ public class JwtServiceImpl implements JwtService {
 		return false;
 	}
 
-	@Override
-	public Object parseClaims(String accessToken) {
-		try {
-			return Jwts.parser()
-				.verifyWith(this.generateKey())
-				.build()
-				.parse(accessToken).getPayload();
-		} catch (ExpiredJwtException ex) {
-			return ex.getClaims();
-		}
-	}
-
 }

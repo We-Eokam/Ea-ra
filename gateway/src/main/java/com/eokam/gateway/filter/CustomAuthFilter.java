@@ -24,7 +24,6 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 	private CookieUtil cookieUtil;
 
 	private static final String ACCESS_TOKEN = "access-token";
-	private static final String REFRESH_TOKEN = "refresh-token";
 
 	public CustomAuthFilter() {
 		super(Config.class);
@@ -42,7 +41,6 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 			ServerHttpRequest request = exchange.getRequest();
 
 			Optional<String> optionalAccessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
-			Optional<String> optionalRefreshToken = cookieUtil.getCookie(request, REFRESH_TOKEN);
 
 			if (optionalAccessToken.isEmpty()) {
 				log.warn("Access Token Not Exist");
