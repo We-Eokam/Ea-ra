@@ -110,7 +110,7 @@ export default function ProfilePage() {
         </SliderFrame>
 
         {status === "follow" && activeTab !== "인증" && (
-          <SendFrame onClick={() => handleReportBtn(user)}>
+          <SendFrame onClick={() => handleReportBtn()}>
             <ReportSend />
             <SendTexts>
               <SendBold>경고장보내기</SendBold>
