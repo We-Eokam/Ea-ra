@@ -56,6 +56,26 @@ operation::member-controller-test/고소장_사용[snippets='http-request,reques
 
 operation::member-controller-test/고소장_사용_고소장없음[snippets='http-request,http-response']
 
+[[고발장올인원]]
+=== 고발장 올인원 사용 성공
+
+operation::member-controller-test/고발장_사용_올인원[snippets='http-request,request-fields,http-response']
+
+[[고발장올인원실패멤버없]]
+=== 고발장 올인원 사용 실패 (멤버존재하지않음)
+
+operation::member-controller-test/고발장_사용_올인원_실패_멤버존재하지않음[snippets='http-request,request-fields,http-response']
+
+[[고발장올인원실패고발장없]]
+=== 고발장 올인원 사용 실패 (고발장없음)
+
+operation::member-controller-test/고발장_사용_올인원_실패_고발장없음[snippets='http-request,request-fields,http-response']
+
+[[고발장올인원실패팔로우안함]]
+=== 고발장 올인원 사용 실패 (친구사이아님)
+
+operation::member-controller-test/고발장_사용_올인원_실패_서로팔로우안함[snippets='http-request,request-fields,http-response']
+
 [[고소장카운트증가]]
 === 고소장 카운트 증가
 
@@ -100,3 +120,71 @@ operation::member-controller-test/테스트완료[snippets='httpie-request,reque
 === 테스트 완료 실패 (이미 테스트 완료한 사용자)
 
 operation::member-controller-test/테스트완료실패_이미테스트완료[snippets='httpie-request,request-fields,http-response']
+
+[[팔로우체크여부성공_서로팔로우안함]]
+=== 팔로우 체크 (서로 팔로우 안한 상태)
+
+operation::member-controller-test/팔로우여부체크성공_서로팔로우안함[snippets='http-request,query-parameters,http-response,response-fields']
+
+
+[[팔로우체크여부성공_나만팔로우]]
+=== 팔로우 체크 (나만 상대 팔로우 - 신청상태)
+
+operation::member-controller-test/팔로우여부체크성공_나만팔로우함[snippets='http-request,query-parameters,http-response,response-fields']
+
+
+
+[[팔로우체크여부성공_상대만팔로우]]
+=== 팔로우 체크 (상대가 나만 팔로우 - 신청상태)
+
+operation::member-controller-test/팔로우여부체크성공_상대만팔로우함[snippets='http-request,query-parameters,http-response,response-fields']
+
+
+[[팔로우체크여부성공_아무사이아님]]
+=== 팔로우 체크 (팔로우없음 - 아무사이아님)
+
+operation::member-controller-test/팔로우여부체크성공_서로팔로우안함[snippets='http-request,query-parameters,http-response,response-fields']
+
+
+[[상대팔로우하기성공]]
+=== 상대 팔로우하기 성공
+
+operation::member-controller-test/상대_팔로우하기[snippets='http-request,request-fields,http-response,response-fields']
+
+
+[[상대팔로우하기실패이미팔로우]]
+=== 상대 팔로우하기 실패 (이미 팔로우함)
+
+operation::member-controller-test/상대_팔로우하기_실패_이미상대팔로우함[snippets='http-request,request-fields,http-response']
+
+
+[[상대팔로우하기실패멤버없]]
+=== 상대 팔로우하기 실패 (해당하는 멤버 없음)
+
+operation::member-controller-test/상대_팔로우하기_실패_존재하지않는멤버[snippets='http-request,request-fields,http-response']
+
+
+[[나랑친구인사람리스트가져오기]]
+=== 나랑 친구인 사람 프로필 리스트 가져오기
+
+operation::member-controller-test/나랑_친구인사람_리스트가져오기[snippets='http-request,http-response,response-fields']
+
+[[팔롱우수락]]
+=== 팔로우 수락 성공 (상대가 나 팔로우 신청한 상태)
+
+operation::member-controller-test/팔로우수락_친구됨[snippets='http-request,request-fields,http-response,response-fields']
+
+[[팔로우수락실패상대]]
+=== 팔로우 수락 실패 (상대가 보낸 팔로우가 없음)
+
+operation::member-controller-test/팔로우수락실패_상대가보낸팔로우없음[snippets='http-request,request-fields,http-response']
+
+[[팔로우수락실패이미]]
+=== 팔로우 수락 실패 (이미 상대 팔로우중)
+
+operation::member-controller-test/팔로우수락실패_이미상대팔로우중[snippets='http-request,request-fields,http-response']
+
+[[팔로우취소]]
+=== 팔로우 취소 (상대 팔로우 신청이든 내가 한 팔로우 신청이든 다 끊김)
+
+operation::member-controller-test/팔로우취소_상대도취소됨[snippets='http-request,query-parameters,http-response']

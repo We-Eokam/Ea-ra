@@ -31,6 +31,7 @@ import com.eokam.member.presentation.dto.MemberNicknameUpdateRequest;
 import com.eokam.member.presentation.dto.MemberProfileResponse;
 import com.eokam.member.presentation.dto.MemberTestDoneRequest;
 import com.eokam.member.presentation.dto.RepayGrooRequest;
+import com.eokam.member.presentation.dto.UseBillRequest;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -298,6 +299,135 @@ public class MemberControllerTest extends BasicControllerTest {
 		//when & then
 		var 결과 = useBill.when()
 			.delete("/member/accusation")
+			.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+
+	@Test
+	void 고발장_사용_올인원(){
+		//given
+		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+		해당유저_고소장1개증가(memberId);
+		Long targetId = 닉네임이나는문어인_프로필사진이펭귄인유저생성();
+
+		A유저가B유저에게_팔로우(memberId,targetId);
+		A유저가B유저에게_팔로우(targetId,memberId);
+
+		UseBillRequest useBillRequest = UseBillRequest.builder().memberId(memberId).targetId(targetId).build();
+
+
+		RequestSpecification useBill = RestAssured.given(documentationSpec)
+			.body(useBillRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 ID"),
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("고발 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = useBill.when()
+			.post("/member/accusation")
+			.then()
+			.statusCode(HttpStatus.OK.value());
+	}
+
+	@Test
+	void 고발장_사용_올인원_실패_멤버존재하지않음(){
+		//given
+		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+		해당유저_고소장1개증가(memberId);
+		Long targetId = 10000L;
+
+		UseBillRequest useBillRequest = UseBillRequest.builder().memberId(memberId).targetId(targetId).build();
+
+
+		RequestSpecification useBill = RestAssured.given(documentationSpec)
+			.body(useBillRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 ID"),
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("고발 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = useBill.when()
+			.post("/member/accusation")
+			.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+
+	@Test
+	void 고발장_사용_올인원_실패_서로팔로우안함(){
+		//given
+		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+		해당유저_고소장1개증가(memberId);
+		Long targetId = 닉네임이나는문어인_프로필사진이펭귄인유저생성();
+
+
+		UseBillRequest useBillRequest = UseBillRequest.builder().memberId(memberId).targetId(targetId).build();
+
+
+		RequestSpecification useBill = RestAssured.given(documentationSpec)
+			.body(useBillRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 ID"),
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("고발 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = useBill.when()
+			.post("/member/accusation")
+			.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+
+	@Test
+	void 고발장_사용_올인원_실패_고발장없음(){
+		//given
+		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+		Long targetId = 닉네임이나는문어인_프로필사진이펭귄인유저생성();
+		A유저가B유저에게_팔로우(memberId,targetId);
+
+
+		UseBillRequest useBillRequest = UseBillRequest.builder().memberId(memberId).targetId(targetId).build();
+
+
+		RequestSpecification useBill = RestAssured.given(documentationSpec)
+			.body(useBillRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 ID"),
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("고발 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = useBill.when()
+			.post("/member/accusation")
 			.then()
 			.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
@@ -804,7 +934,69 @@ public class MemberControllerTest extends BasicControllerTest {
 	}
 
 	@Test
-	void 나랑_친구인사람_리스트가져오기() throws IOException {
+	void 상대_팔로우하기_실패_존재하지않는멤버() {
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 10000L;
+
+		MemberFollowRequest memberFollowRequest = MemberFollowRequest.builder().targetId(memberBId).build();
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.contentType(ContentType.JSON)
+			.body(memberFollowRequest)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("팔로우할 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.post("/member/follow")
+			.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+
+	@Test
+	void 상대_팔로우하기_실패_이미상대팔로우함() {
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 닉네임이어캄인_프로필사진이범고래인유저생성();
+
+		A유저가B유저에게_팔로우(memberAId,memberBId);
+
+		MemberFollowRequest memberFollowRequest = MemberFollowRequest.builder().targetId(memberBId).build();
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.contentType(ContentType.JSON)
+			.body(memberFollowRequest)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("팔로우할 상대 ID")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.post("/member/follow")
+			.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+
+	@Test
+	void 나랑_친구인사람_리스트가져오기(){
 		//given
 		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
 
@@ -848,5 +1040,147 @@ public class MemberControllerTest extends BasicControllerTest {
 			.jsonPath();
 
 		assertThat(결과.getList("member_list")).hasSize(3);
+		assertThat(결과.getList("member_list")).extracting("member_id")
+			.contains(memberBId.intValue(),memberCId.intValue(),memberDId.intValue());
+	}
+	@Test
+	void 팔로우취소_상대도취소됨(){
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 닉네임이어캄인_프로필사진이범고래인유저생성();
+
+		A유저가B유저에게_팔로우(memberAId,memberBId);
+		A유저가B유저에게_팔로우(memberBId,memberAId);
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.queryParam("targetId",memberBId)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				queryParameters(
+					parameterWithName("targetId").description("팔로우 취소할 상대 멤버 PK")
+				),
+				responseFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("상대 멤버 ID"),
+					fieldWithPath("follow_status").type(JsonFieldType.STRING).description("상대와의 팔로우 상태")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.delete("/member/follow")
+			.then()
+			.statusCode(HttpStatus.OK.value())
+			.extract()
+			.jsonPath();
+
+		assertThat(결과.getLong("member_id")).isEqualTo(memberBId);
+		assertThat(결과.getString("follow_status")).isEqualTo(FollowStatus.NOTHING.toString());
+	}
+	@Test
+	void 팔로우수락_친구됨(){
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 닉네임이어캄인_프로필사진이범고래인유저생성();
+
+		A유저가B유저에게_팔로우(memberBId,memberAId);
+
+		MemberFollowRequest memberFollowRequest = MemberFollowRequest.builder().targetId(memberBId).build();
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.body(memberFollowRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("팔로우 취소할 상대 멤버 PK")
+				),
+				responseFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("상대 멤버 ID"),
+					fieldWithPath("follow_status").type(JsonFieldType.STRING).description("상대와의 팔로우 상태")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.post("/member/follow/accept")
+			.then()
+			.statusCode(HttpStatus.OK.value())
+			.extract()
+			.jsonPath();
+
+		assertThat(결과.getLong("member_id")).isEqualTo(memberBId);
+		assertThat(결과.getString("follow_status")).isEqualTo(FollowStatus.FRIEND.toString());
+	}
+
+	@Test
+	void 팔로우수락실패_상대가보낸팔로우없음() {
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 닉네임이어캄인_프로필사진이범고래인유저생성();
+
+		MemberFollowRequest memberFollowRequest = MemberFollowRequest.builder().targetId(memberBId).build();
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.body(memberFollowRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("팔로우 취소할 상대 멤버 PK")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.post("/member/follow/accept")
+			.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+
+	@Test
+	void 팔로우수락실패_이미상대팔로우중() {
+		//given
+		Long memberAId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+
+		Long memberBId = 닉네임이어캄인_프로필사진이범고래인유저생성();
+
+		A유저가B유저에게_팔로우(memberAId,memberBId);
+
+		MemberFollowRequest memberFollowRequest = MemberFollowRequest.builder().targetId(memberBId).build();
+
+		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberAId))
+			.body(memberFollowRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("target_id").type(JsonFieldType.NUMBER).description("팔로우 취소할 상대 멤버 PK")
+				)
+			));
+
+		//when & then
+		var 결과 = updateNickname.when()
+			.post("/member/follow/accept")
+			.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
 }

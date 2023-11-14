@@ -21,9 +21,9 @@ import com.eokam.member.domain.Member;
 import com.eokam.member.domain.SavingType;
 import com.eokam.member.global.ErrorCode;
 import com.eokam.member.global.exception.AmazonS3Exception;
+import com.eokam.member.global.exception.BusinessException;
 import com.eokam.member.global.exception.MemberNotFoundException;
 import com.eokam.member.global.exception.NicknameAlreadyExistException;
-import com.eokam.member.global.exception.NoBillException;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.infra.external.S3FileDetail;
 import com.eokam.member.infra.external.service.S3Service;
@@ -436,7 +436,7 @@ public class MemberServiceTest extends BaseServiceTest {
 			assertThatThrownBy(()->{
 				memberService.useBill(멤버A_ID);
 			})
-				.isExactlyInstanceOf(NoBillException.class)
+				.isExactlyInstanceOf(BusinessException.class)
 				.hasFieldOrPropertyWithValue("errorCode",ErrorCode.BILL_NOT_ENOUGH);
 		}
 	}

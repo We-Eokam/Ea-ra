@@ -82,7 +82,7 @@ public class MemberServiceImpl implements MemberService {
 			.findById(memberId).orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
 		if(!member.useBill()){
-			throw new NoBillException(ErrorCode.BILL_NOT_ENOUGH);
+			throw new BusinessException(ErrorCode.BILL_NOT_ENOUGH);
 		}
 		return true;
 	}
@@ -101,7 +101,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		if(!member.useBill()){
-			throw new NoBillException(ErrorCode.BILL_NOT_ENOUGH);
+			throw new BusinessException(ErrorCode.BILL_NOT_ENOUGH);
 		}
 		return true;
 	}
@@ -206,17 +206,21 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public FollowStatus denyOrCancelFollowRequest(Long requestorId, Long receiverId) {
-		MemberFollow memberFollow = memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(requestorId,receiverId)
-			.orElseThrow(()->new BusinessException(ErrorCode.NO_FOLLOW_REQUEST));
+		Optional<MemberFollow> memberFollow =
+			memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(requestorId,receiverId);
+		if(memberFollow.isPresent()) memberFollowRepository.delete(memberFollow.get());
 
-		memberFollowRepository.delete(memberFollow);
+		Optional<MemberFollow> friendFollow = memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(receiverId,requestorId);
+
+		if(friendFollow.isPresent()) memberFollowRepository.delete(friendFollow.get());
+
 		return checkFollowStatus(requestorId,receiverId);
 	}
 
 	@Override
 	@Transactional
 	public FollowStatus acceptFollowRequest(Long requestorId, Long receiverId) {
-		MemberFollow memberFollow = memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(requestorId,receiverId)
+		memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(requestorId,receiverId)
 			.orElseThrow(()->new BusinessException(ErrorCode.NO_FOLLOW_REQUEST));
 
 		Member requestor = memberRepository.findById(requestorId)
@@ -224,6 +228,11 @@ public class MemberServiceImpl implements MemberService {
 
 		Member receiver = memberRepository.findById(receiverId)
 			.orElseThrow(()->new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+		Optional<MemberFollow> memberFollow = memberFollowRepository
+			.findMemberFollowByRequestorIdAndReceiverId(receiverId,requestorId);
+
+		if(memberFollow.isPresent()) throw new BusinessException(ErrorCode.ALREADY_FOLLOW);
 
 		//팔로우 수락이므로 requestor receiver가 바뀌어야함
 		MemberFollow newMemberFollow = MemberFollow.builder().requestor(receiver).receiver(requestor).build();

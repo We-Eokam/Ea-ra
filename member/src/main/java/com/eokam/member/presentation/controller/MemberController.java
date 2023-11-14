@@ -150,10 +150,10 @@ public class MemberController {
 
 	@DeleteMapping("/follow")
 	public ResponseEntity<MemberFollowStatusResponse> cancelFollow(@JwtUser JwtMemberDto jwtMemberDto,
-		@RequestParam("targetId") Long targetId){
+		@RequestParam("targetId")Long targetId){
 		FollowStatus followStatus = memberService.denyOrCancelFollowRequest(jwtMemberDto.getMemberId(),targetId);
 		return ResponseEntity.ok(MemberFollowStatusResponse.builder()
-			.memberId(jwtMemberDto.getMemberId()).followStatus(followStatus).build()
+			.memberId(targetId).followStatus(followStatus).build()
 		);
 	}
 
@@ -162,7 +162,7 @@ public class MemberController {
 		@RequestBody MemberFollowRequest memberFollowRequest){
 		FollowStatus followStatus = memberService.acceptFollowRequest(memberFollowRequest.getTargetId(), jwtMemberDto.getMemberId());
 		return ResponseEntity.ok(MemberFollowStatusResponse.builder()
-			.memberId(jwtMemberDto.getMemberId()).followStatus(followStatus).build()
+			.memberId(memberFollowRequest.getTargetId()).followStatus(followStatus).build()
 		);
 	}
 
