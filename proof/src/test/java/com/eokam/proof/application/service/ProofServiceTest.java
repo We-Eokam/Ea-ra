@@ -113,8 +113,8 @@ class ProofServiceTest extends BaseServiceTest {
 		Page<Proof> proofPage = new PageImpl<>(EXPECTED_FRIENDS_PROOF_LIST.subList(start, end), pageRequest,
 			EXPECTED_FRIENDS_PROOF_LIST.size());
 
-		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class)))
-			.willReturn(new FollowStatus(2L, true));
+		given(followServiceFeign.isFollow(anyString(), anyLong()))
+			.willReturn(new FollowStatus(2L, "ACCEPT"));
 		given(proofRepository.findAllByMemberId(anyLong(), any(PageRequest.class)))
 			.willReturn(proofPage);
 
@@ -284,8 +284,8 @@ class ProofServiceTest extends BaseServiceTest {
 			.build();
 
 		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
-		given(followServiceFeign.isFollow(anyString(), any(IsFollowRequest.class))).willReturn(
-			new FollowStatus(2L, true));
+		given(followServiceFeign.isFollow(anyString(), anyLong())).willReturn(
+			new FollowStatus(2L, "ACCEPT"));
 
 		// when
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
