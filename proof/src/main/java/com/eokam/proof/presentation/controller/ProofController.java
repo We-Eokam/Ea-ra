@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +75,15 @@ public class ProofController {
 		ProofDto response = proofService.getProofDetail(accessToken, proofId);
 
 		return ResponseEntity.ok().body(ProofResponse.from(response));
+	}
+
+	@DeleteMapping("/{proofId}")
+	public ResponseEntity<Void> deleteProof(
+		@CookieValue("access-token") final String accessToken,
+		@PathVariable Long proofId) {
+		proofService.deleteProof(accessToken, proofId);
+
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping
