@@ -1,6 +1,7 @@
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import Lottie from "lottie-react";
+import { useLottie } from "lottie-react";
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -14,6 +15,34 @@ import { ReactComponent as Notification } from "../../assets/icons/notification-
 // import CryEarth from "../../assets/lottie/cry-earth.json";
 // import MeltingEarth from "../../assets/lottie/melting-earth.json";
 import WowEarth from "../../assets/lottie/wow-earth.json";
+
+function getCurrentWeek() {
+  const day = new Date();
+  const sunday = day.getTime() - 86400000 * day.getDay();
+
+  day.setTime(sunday);
+
+  const result = [day.toISOString().slice(0, 10)];
+
+  for (let i = 1; i < 7; i++) {
+    day.setTime(day.getTime() + 86400000);
+    result.push(day.toISOString().slice(0, 10));
+  }
+
+  return result;
+}
+
+const getCountColor = (count: number): string => {
+  if (count === 0) {
+    return "var(--white)";
+  } else if (count <= 1) {
+    return "var(--third)";
+  } else if (count <= 2) {
+    return "var(--secondary)";
+  } else {
+    return "var(--primary)";
+  }
+};
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -30,26 +59,23 @@ export default function MainPage() {
     navigate("/act");
   };
 
+  const options = {
+    animationData: WowEarth,
+    loop: false,
+    autoplay: true,
+  };
+
+  const { View, play, stop } = useLottie(options);
+  
+  const handleAnimationClick = () => {
+    stop();
+    play();
+  };
+
   const date = new Date();
   const month = Number(moment(date).format("MM"));
   const day = Number(moment(date).format("DD"));
   const dateString = `${month}월 ${day}일`;
-
-  function getCurrentWeek() {
-    const day = new Date();
-    const sunday = day.getTime() - 86400000 * day.getDay();
-
-    day.setTime(sunday);
-
-    const result = [day.toISOString().slice(0, 10)];
-
-    for (let i = 1; i < 7; i++) {
-      day.setTime(day.getTime() + 86400000);
-      result.push(day.toISOString().slice(0, 10));
-    }
-
-    return result;
-  }
 
   const currentWeek = getCurrentWeek();
 
@@ -95,18 +121,6 @@ export default function MainPage() {
     },
   ];
 
-  const getCountColor = (count: number): string => {
-    if (count === 0) {
-      return "var(--white)";
-    } else if (count <= 1) {
-      return "var(--third)";
-    } else if (count <= 2) {
-      return "var(--secondary)";
-    } else {
-      return "var(--primary)";
-    }
-  };
-
   return (
     <>
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
@@ -121,8 +135,8 @@ export default function MainPage() {
             오늘의 지구
             <div>활동을 통해 지구 상태를 바꿔보세요!</div>
           </TodayEarth>
-          <EarthLottie>
-            <Lottie animationData={WowEarth}/>
+          <EarthLottie onClick={handleAnimationClick}>
+            {View}
           </EarthLottie>
         </EarthFrame>
         <HomeFrame>
@@ -192,17 +206,17 @@ const NotificationIcon = styled(Notification)`
 const EarthFrame = styled.div`
   width: 100%;
   min-height: calc(43.6% - 74px);
+  height: 40%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 `;
 
 const TodayEarth = styled.div`
   text-align: center;
   font-size: 24px;
-  font-weight: 500;
-  line-height: 32px;
+  font-weight: 550;
+  line-height: 30px;
   color: var(--primary);
   div {
     font-size: 16px;
@@ -212,8 +226,9 @@ const TodayEarth = styled.div`
 `;
 
 const EarthLottie = styled.div`
-  width: 60%;
-  padding-top: 12px;
+  width: 52%;
+  padding-top: 8px;
+  cursor: pointer;
 `;
 
 const HomeFrame = styled(ModalFrame)`
