@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.domain.entity.GrooSaving;
+import com.eokam.groo.infrastructure.dto.GrooTodayCountDto;
 import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.dto.GrooDailySumAmountDto;
 import com.eokam.groo.infrastructure.dto.GrooMonthSumAmountDto;
@@ -47,5 +48,11 @@ public class GrooSavingServiceImpl implements GrooSavingService{
 		LocalDate startDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
 		LocalDate endDate = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 		return grooSavingRepository.getDailyProofCount(memberId, startDate, endDate);
+	}
+
+	@Override
+	public GrooTodayCountDto getTodayCount(Long memberId) {
+		LocalDate today = LocalDate.now();
+		return grooSavingRepository.getProofAccusationCountByToday(memberId, today);
 	}
 }
