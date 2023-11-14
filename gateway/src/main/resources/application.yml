@@ -45,7 +45,7 @@ spring:
           predicates:
             - Path=/member/**,/logout/**,/login/**
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       globalcors:
           cors-configurations:
             '[/**]':
