@@ -225,7 +225,6 @@ const Button = styled(ShortButton)<{ isSelected: boolean }>`
   margin-top: 8px;
   &:hover {
     font-size: 14px;
-    color: var(--black);
   }
 `;
 

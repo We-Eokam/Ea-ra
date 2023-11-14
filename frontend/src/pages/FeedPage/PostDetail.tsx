@@ -1,36 +1,42 @@
 // import React from 'react'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.svg"
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg"
-import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
-import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
+// import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg"
+// import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
 import OptionModal from "../../components/Modal/OptionModal";
 
-export default function PostDetail() {
-  const post = {
-    writerProfileImg: "",
-    writerNickname: "지구구해",
-    time: "2023년 10월 24일",
-    act: "다회용기 이용",
-    company: "",
-    point: "1,000",
-    gru: "200",
-    img: "",
-    likedUser: "일회용품뿌셔",
-    liked: 24
-  }
+const post = {
+  writerProfileImg: "",
+  writerNickname: "지구구해",
+  time: "2023년 10월 24일",
+  act: "다회용기 이용",
+  company: "회사이름",
+  point: "1,000",
+  gru: "200",
+  img: "/images/template2.png",
+  likedUser: "일회용품뿌셔",
+  liked: 24
+}
 
-  const [isLiked, setIsLiked] = useState(false);
+export default function PostDetail() {
+  const { id } = useParams<{ id: string }>();
+  // const [isLiked, setIsLiked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const toggleLeaf = () => {
-    setIsLiked(!isLiked);
-  }
+  useEffect(() => {
+    // id로 요청보내고 post정보 바꾸기
+  }, [id]);
+
+  // const toggleLeaf = () => {
+  //   setIsLiked(!isLiked);
+  // }
 
   const showModal = () => {
     setModalOpen(true);
@@ -54,29 +60,27 @@ export default function PostDetail() {
             <BallMenu onClick={showModal} />
           </WriterContainer>
           <ActImg src={post.img} />
-          <ReactionContainer>
+          {/* <ReactionContainer>
             {isLiked ? <LeafFill onClick={toggleLeaf} /> : <LeafEmpty onClick={toggleLeaf} />}
             <ReactionText><Bold>{post.likedUser}</Bold>님 외 {post.liked}명이 좋아해요</ReactionText>
-          </ReactionContainer>
+          </ReactionContainer> */}
         </PostFrame>
-        <MiddleMargin></MiddleMargin>
-        <PostInfoFrame>
-          <RewardContainer>
-            <PointCircle />
-            <RewardText>{post.point} 포인트 적립</RewardText>
-            <GruCircle />
-            <RewardText>{post.gru} 그루 갚음</RewardText>
-          </RewardContainer>
+        <RewardContainer>
+          <PointCircle />
+          <RewardText>{post.point} 포인트 적립</RewardText>
+          <GruCircle />
+          <RewardText>{post.gru} 그루 갚음</RewardText>
+        </RewardContainer>
+        <MiddleMargin/>
+        <ActContainer>
+          <ActText>활동</ActText>
+          <ActText>{post.act}</ActText>
+        </ActContainer>
+        {post.company &&
           <ActContainer>
-            <ActText>활동</ActText>
-            <ActText>{post.act}</ActText>
-          </ActContainer>
-          {post.company &&
-            <ActContainer>
-              <ActText>기업</ActText>
-              <ActText>{post.company}</ActText>
-            </ActContainer>}
-        </PostInfoFrame>
+            <ActText>기업</ActText>
+            <ActText>{post.company}</ActText>
+          </ActContainer>}
       </MainFrame>
 
       <OptionModal title="게시물 삭제" content="정말로 인증 내역을 삭제하시겠습니까?" btnText="삭제" isOpen={modalOpen} closeModal={closeModal} />
@@ -130,39 +134,35 @@ const ActImg = styled.img`
   transform: translateX(-50%);
 `;
 
-const ReactionContainer = styled.div`
-  margin-top: 8px;
+// const ReactionContainer = styled.div`
+//   margin-top: 8px;
+//   display: flex;
+//   align-items: center;
+// `;
+
+// const ReactionText = styled.div`
+//   margin-left: 4px;
+//   font-size: 12px;
+// `;
+
+const RewardContainer = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
+  margin-bottom: 14px;
 `;
 
-const ReactionText = styled.div`
-  margin-left: 4px;
-  font-size: 12px;
+const RewardText = styled.div`
+  margin-left: 8px;
+  margin-right: 3%;
+  font-size: 14px;
+  color: var(--dark-gray);
 `;
 
 const MiddleMargin = styled.div`
   width: calc(100% + 32px);
   height: 8px;
-  margin: 0 -16px;
   background-color: var(--background);
-`;
-
-const PostInfoFrame = styled.div`
-  position: relative;
-  padding: 16px 0px;
-`;
-
-const RewardContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const RewardText = styled.div`
-  margin-left: 4px;
-  margin-right: 2.5%;
-  font-size: 12px;
-  color: var(--dark-gray);
 `;
 
 const ActContainer = styled.div`
@@ -171,7 +171,7 @@ const ActContainer = styled.div`
 `;
 
 const ActText = styled.div`
-  font-size: 14px;
+  font-size: 16px;
   word-wrap: break-word;
   &:not(:last-child) {
     color: var(--dark-gray);

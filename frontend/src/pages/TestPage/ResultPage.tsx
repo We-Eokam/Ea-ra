@@ -155,12 +155,8 @@ const slideUp = keyframes`
   33.3% {
     transform: translateY(0);
   }
-  99% {
-    opacity: 1;
-    transform: translateY(-100%);
-  }
   100% {
-    opacity: 0;
+    transform: translateY(-100%);
   }
 `;
 
@@ -310,7 +306,7 @@ const SignUpBtn = styled.div`
   font-size: 18px;
   font-weight: 550;
   cursor: pointer;
-  margin-top: 20px;
+  margin-top: 28px;
   padding: 8px 0;
 `;
 
