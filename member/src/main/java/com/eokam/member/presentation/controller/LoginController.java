@@ -46,6 +46,7 @@ public class LoginController {
 	public ResponseEntity<?> loginDone(@RequestParam(value = "code", required = false) String authorizeCode){
 		String accessToken = loginService.login(authorizeCode);
 		ResponseCookie responseCookie = ResponseCookie.from("access-token",accessToken)
+		    .samesite("None")
 			.httpOnly(true)
 			.secure(true)
 			.path("/")
