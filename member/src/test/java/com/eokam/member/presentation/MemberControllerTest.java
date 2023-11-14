@@ -45,16 +45,13 @@ public class MemberControllerTest extends BasicControllerTest {
 		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
 
 		RequestSpecification retrieveMemberDetail = RestAssured.given(documentationSpec)
-			.queryParam("memberId",memberId)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberId))
 			.log().all()
 			.filter(document(
 				"{class-name}/{method-name}",
 
 				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
 				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-				queryParameters(
-					parameterWithName("memberId").description("멤버 PK")
-				),
 				responseFields(
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
 					fieldWithPath("nickname").type(JsonFieldType.STRING).description("멤버 닉네임 (초기는 카카오 닉네임)"),
@@ -84,7 +81,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		Long memberId = 0L;
 
 		RequestSpecification retrieveMemberDetail = RestAssured.given(documentationSpec)
-			.queryParam("memberId",memberId)
+			.cookie("access-token",해당유저_JWT쿠키생성(memberId))
 			.log().all()
 			.filter(document(
 				"{class-name}/{method-name}",
@@ -397,7 +394,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		var 결과 = useBill.when()
 			.post("/member/accusation")
 			.then()
-			.statusCode(HttpStatus.BAD_REQUEST.value());
+			.statusCode(HttpStatus.UNAUTHORIZED.value());
 	}
 
 	@Test
@@ -406,6 +403,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
 		Long targetId = 닉네임이나는문어인_프로필사진이펭귄인유저생성();
 		A유저가B유저에게_팔로우(memberId,targetId);
+		A유저가B유저에게_팔로우(targetId,memberId);
 
 
 		UseBillRequest useBillRequest = UseBillRequest.builder().memberId(memberId).targetId(targetId).build();

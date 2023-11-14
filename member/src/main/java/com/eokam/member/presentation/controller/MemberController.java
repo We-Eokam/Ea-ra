@@ -44,9 +44,9 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@GetMapping("/detail")
-	public ResponseEntity<MemberDetailResponse> retrieveMemberInfo(@RequestParam Long memberId){
+	public ResponseEntity<MemberDetailResponse> retrieveMemberInfo(@JwtUser JwtMemberDto jwtMemberDto){
 		MemberDetailResponse memberDetailResponse = MemberDetailResponse.from(
-			memberService.retrieveMemberInfo(new JwtMemberDto(memberId))
+			memberService.retrieveMemberInfo(jwtMemberDto)
 		);
 		return ResponseEntity.ok(memberDetailResponse);
 	}
