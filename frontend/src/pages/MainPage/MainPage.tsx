@@ -1,4 +1,3 @@
-import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useLottie } from "lottie-react";
