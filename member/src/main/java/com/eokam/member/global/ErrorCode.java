@@ -17,7 +17,10 @@ public enum ErrorCode {
 	KAKAO_MEMBER_REQUEST_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"LOGIN_004","카카오 정보 요청이 실패했습니다."),
 	JWT_PARSE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"JWT_001","JWT 토큰 파싱 과정에서 오류가 발생했습니다."),
 	INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED,"JWT_002","유효하지 않은 JWT 토큰입니다."),
-	NO_JWT_TOKEN(HttpStatus.UNAUTHORIZED,"JWT_003","JWT 토큰이 존재하지 않습니다.");
+	NO_JWT_TOKEN(HttpStatus.UNAUTHORIZED,"JWT_003","JWT 토큰이 존재하지 않습니다."),
+	ALREADY_FOLLOW(HttpStatus.BAD_REQUEST,"FOLLOW_001","이미 follow한 사용자 입니다."),
+	THEY_NOT_FOLLOW(HttpStatus.BAD_REQUEST,"FOLLOW_003","서로 팔로우한 사용자가 아닙니다.(친구사이가 아닙니다)"),
+	NO_FOLLOW_REQUEST(HttpStatus.BAD_REQUEST,"FOLLOW_002","해당 유저가 보낸 팔로우 신청이 없습니다. requestorId와 receiverId를 확인해주세요");
 
 	ErrorCode(HttpStatus httpStatus, String errorCode, String message) {
 		this.httpStatus = httpStatus;

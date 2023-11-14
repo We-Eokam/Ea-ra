@@ -12,7 +12,7 @@ public class DatabaseCleanup {
 	private EntityManager entityManager;
 
 	private void truncate() {
-		String[] tableNames = {"member"};
+		String[] tableNames = {"member","member_follow"};
 		entityManager.createNativeQuery(String.format("SET FOREIGN_KEY_CHECKS = %d", 0)).executeUpdate();
 		for (String tableName : tableNames) {
 			entityManager.createNativeQuery(String.format("TRUNCATE TABLE %s", tableName)).executeUpdate();
