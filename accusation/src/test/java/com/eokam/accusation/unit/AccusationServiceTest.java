@@ -31,6 +31,7 @@ import com.eokam.accusation.application.service.AccusationServiceImpl;
 import com.eokam.accusation.domain.entity.Accusation;
 import com.eokam.accusation.domain.entity.AccusationImage;
 import com.eokam.accusation.global.constant.ActivityType;
+import com.eokam.accusation.infrastructure.client.MemberServiceClient;
 import com.eokam.accusation.infrastructure.repository.AccusationImageRepository;
 import com.eokam.accusation.infrastructure.repository.AccusationRepository;
 import com.eokam.accusation.infrastructure.service.S3Service;
@@ -46,6 +47,9 @@ public class AccusationServiceTest {
 
 	@Mock
 	private AccusationImageRepository accusationImageRepository;
+
+	@Mock
+	private MemberServiceClient memberServiceClient;
 
 	@Mock
 	private S3Service s3Service;
@@ -73,7 +77,6 @@ public class AccusationServiceTest {
 
 		Accusation accusation = Accusation.from(accusationDto);
 		AccusationImage accusationImage = AccusationImage.builder().accusation(accusation).fileUrl("FileURL").build();
-
 		given(s3Service.uploadFile(multipartFile)).willReturn(fileUrls);
 		given(
 			accusationRepository.save(argThat(a -> a.getActivityDetail().equals("Test Detail"))))
@@ -107,7 +110,7 @@ public class AccusationServiceTest {
 		}
 
 		// when
-		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(1L, 0, 12);
+		PageAccusationDto pageAccusationDto = accusationService.getAccusationList(1L, 1L, 0, 12);
 
 		// then
 		Assertions.assertThat(pageAccusationDto.getPageInfo().getTotalPages()).isEqualTo(1);
@@ -151,7 +154,7 @@ public class AccusationServiceTest {
 		given(accusationImageRepository.findByAccusation_AccusationId(1L)).willReturn(accusationImageList);
 
 		// when
-		AccusationDto accusationDto = accusationService.getAccusationDetail(1L);
+		AccusationDto accusationDto = accusationService.getAccusationDetail(1L, 2L);
 
 		// then
 		verify(accusationRepository).findByAccusationId(1L);

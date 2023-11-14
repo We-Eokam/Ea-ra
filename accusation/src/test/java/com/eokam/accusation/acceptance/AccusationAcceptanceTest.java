@@ -11,9 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.eokam.accusation.infrastructure.client.MemberServiceClient;
 import com.eokam.accusation.utils.DatabaseCleanupExtension;
 
 import io.restassured.RestAssured;
@@ -30,6 +32,9 @@ public class AccusationAcceptanceTest {
 
 	@LocalServerPort
 	int port;
+
+	@MockBean
+	private MemberServiceClient memberServiceClient;
 
 	@BeforeEach
 	void setUp() {

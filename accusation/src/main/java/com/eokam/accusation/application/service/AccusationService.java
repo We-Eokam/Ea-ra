@@ -11,7 +11,7 @@ public interface AccusationService {
 
 	AccusationDto createAccusation(AccusationDto accusationDto, List<MultipartFile> multipartFile);
 
-	PageAccusationDto getAccusationList(Long memberId, Integer page, Integer size);
+	PageAccusationDto getAccusationList(Long memberId, Long witnessId, Integer page, Integer size);
 
-	AccusationDto getAccusationDetail(Long accusationId);
+	AccusationDto getAccusationDetail(Long accusationId, Long memberId);
 }
