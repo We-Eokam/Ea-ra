@@ -31,7 +31,7 @@ export default function Router() {
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/welcome" element={<StartPage/>}/>
         <Route path="/test" element={<TestPage/>}/>
-        <Route path="/result/:code" element={<ResultPage/>}/>
+        <Route path="/result" element={<ResultPage/>}/>
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/calendar" element={<CalendarPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>

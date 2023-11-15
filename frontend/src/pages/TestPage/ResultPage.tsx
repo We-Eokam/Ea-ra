@@ -1,6 +1,6 @@
 // import React from 'react'
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Lottie from "lottie-react";
 import AngryEarth from "../../assets/lottie/angry-earth.json";
@@ -22,7 +22,7 @@ interface ResultDataProps {
 const available = [38, 43, 48, 53, 58, 63, 68, 73, 78, 83, 88];
 
 export default function ResultPage() {
-  const { code } = useParams<{ code: string }>();
+  const [wrong, setWrong] = useState(false);
   const [analysisValue, setAnalysisValue] = useState([0, 0]);
   const [debt, setDebt] = useState("10,000");
   const [earth, setEarth] = useState(AngryEarth);
@@ -30,45 +30,49 @@ export default function ResultPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (code) {
-      const implement = parseInt(code[0], 10);
-      const interest = parseInt(code.slice(-1), 10);
-      if (implement > 5 || interest > 5) {
-        alert("잘못된 경로입니다. 테스트를 다시 실행해주세요");
-        navigate("/test");
-        return;
-      }
-      setAnalysisValue([implement, interest]);
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
 
-      const testValue = parseInt(code.slice(1, 3), 10);
-      if (available.includes(testValue)) {
-        setDebt(String(testValue + 12) + ",000");
-
-        if (testValue < 44) {
-          setEarth(WowEarth);
-          setEarthType(data["와우"]);
-        } else if (testValue < 56) {
-          setEarth(ChuEarth);
-          setEarthType(data["츄"]);
-        } else if (testValue < 69) {
-          setEarth(MeltingEarth);
-          setEarthType(data["멜팅"]);
-        } else if (testValue < 79) {
-          setEarth(CryEarth);
-          setEarthType(data["크라이"]);
-        }
-      } else {
-        alert("잘못된 경로입니다. 테스트를 다시 실행해주세요");
-        navigate("/test");
-      }
+    if (!code) {
+      setWrong(true);
+      return
     }
+
+    const implement = parseInt(code[0], 10);
+    const interest = parseInt(code.slice(-1), 10);
+    if (implement > 5 || interest > 5) {
+      setWrong(true);
+      return;
+    }
+    setAnalysisValue([implement, interest]);
+
+    const testValue = parseInt(code.slice(1, 3), 10);
+    if (available.includes(testValue)) {
+      setDebt(String(testValue + 12) + ",000");
+
+      if (testValue < 44) {
+        setEarth(WowEarth);
+        setEarthType(data["와우"]);
+      } else if (testValue < 56) {
+        setEarth(ChuEarth);
+        setEarthType(data["츄"]);
+      } else if (testValue < 69) {
+        setEarth(MeltingEarth);
+        setEarthType(data["멜팅"]);
+      } else if (testValue < 79) {
+        setEarth(CryEarth);
+        setEarthType(data["크라이"]);
+      }
+    } else {
+      setWrong(true);
+    }
+
   }, []);
 
   useEffect(() => {
     const isComplete = JSON.parse(localStorage.getItem("answer") || "{}");
     if (isComplete !== 10) {
-      alert("모든 질문에 응답해주세요.");
-      navigate('/test');
+      setWrong(true)
     }
   }, []);
 
@@ -91,6 +95,12 @@ export default function ResultPage() {
 
   return (
     <MainFrame>
+      {wrong && (
+        <WrongPage>
+          <Title>잘못된 접근입니다.<br/><br/>테스트를 다시 실행해주세요</Title>
+          <SignUpBtn onClick={() => navigate('/test')}>테스트 하러가기</SignUpBtn>
+        </WrongPage>
+      )}
       <Panel className="top">
         <Title>xx님의</Title>
       </Panel>
@@ -173,6 +183,20 @@ const MainFrame = styled.div`
   width: 100%;
   height: 100%;
   overflow-x: hide;
+`;
+
+const WrongPage = styled.div`
+  position: absolute;
+  left: 9%;
+  top: 0;
+  width: 82%;
+  height: 100vh;
+  z-index: 5;
+  background-color: var(--white);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 `;
 
 const Panel = styled.div`
@@ -307,7 +331,7 @@ const SignUpBtn = styled.div`
   font-weight: 550;
   cursor: pointer;
   margin-top: 28px;
-  padding: 8px 0;
+  padding: 10px 0;
 `;
 
 const ShareBox = styled.div`

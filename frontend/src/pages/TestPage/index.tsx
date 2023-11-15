@@ -36,7 +36,7 @@ export default function TestPage() {
     localStorage.setItem("answer", `${id}`);
 
     if (id === 10) {
-      navigate(`/result/${type[0]}${debt}${type[1]}`);
+      navigate(`/result?code=${type[0]}${debt}${type[1]}`);
     };
 
   }, [id]);
