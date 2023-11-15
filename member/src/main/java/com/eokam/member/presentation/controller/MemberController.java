@@ -63,11 +63,12 @@ public class MemberController {
 	}
 
 	@GetMapping("/list")
-	public ResponseEntity<MemberProfileListReponse> retrieveMembers(){
+	public ResponseEntity<MemberProfileListReponse> retrieveMembers(@JwtUser JwtMemberDto jwtMemberDto){
 		MemberProfileListReponse memberProfileListReponse =
 			MemberProfileListReponse.builder().memberList(
 				memberService.retrieveAllMember()
-					.stream().map(memberDto -> MemberProfileResponse.from(memberDto)).toList()
+					.stream().filter(memberDto -> !memberDto.getMemberId().equals(jwtMemberDto.getMemberId()))
+					.map(memberDto -> MemberProfileResponse.from(memberDto)).toList()
 			).build();
 		return ResponseEntity.ok(memberProfileListReponse);
 	}
