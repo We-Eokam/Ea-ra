@@ -26,7 +26,7 @@ public class MemberProfileResponse {
 		return MemberProfileResponse
 			.builder()
 			.memberId(memberDto.getMemberId())
-			.groo(memberDto.getGroo()-memberDto.getRepayGroo())
+			.groo(memberDto.getGroo())
 			.profileImageUrl(memberDto.getProfileImageUrl())
 			.nickname(memberDto.getNickname())
 			.repayGroo(memberDto.getRepayGroo())
