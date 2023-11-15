@@ -16,25 +16,26 @@ import ImageCropper from "../../components/ImageCropper/ImageCropper";
 import { LongButton, ButtonFrame } from "../../style";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
 import reportTypes from "../../common/report.json"
+import axiosInstance from "../../api/axiosInstance";
 
 interface ReportTypeProps {
   type: string;
   content: string;
   example: string;
   imgUrl: string;
+  fine: number;
 }
 
-// 일단 임시로 해놓음 api 완성되면 수정 필
 interface FriendDataProps {
   userId: number;
   profileImg: string;
   nickname: string;
 }
 
-const friendExaple = {
-  "userId": 1,
-  "profileImg": "/icons/icon-48x48.png",
-  "nickname": "임시 닉네임",
+interface RequestProps {
+  target_id: number;
+  activity_type: string;
+  activity_detail?: string;
 }
 
 export default function ReportPage() {
@@ -49,6 +50,7 @@ export default function ReportPage() {
   const [friendInfo, setFriendInfo] = useState<FriendDataProps | null>(null);
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const axios = axiosInstance();
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -61,14 +63,28 @@ export default function ReportPage() {
 
   useEffect(() => {
     setFriendModalOpen(false);
-    console.log("넘어온 친구 아이디", friendId);
     if (friendId) {
-      // api 보내서 friendInfo 바꿈 지금은 임시
-      setFriendInfo(friendExaple);
+      getFriendInfo();
     } else {
       setFriendInfo(null);
     }
   }, [friendId])
+
+  const getFriendInfo = async () => {
+    try {
+      const response = await axios.get(`/member?memberId=${friendId}`);
+      const data = response.data.member_list[0];
+      console.log(data)
+      const userInfo = {
+        userId: data.member_id,
+        profileImg: data.profile_image_url,
+        nickname: data.nickname,
+      };
+      setFriendInfo(userInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleImgSelector = () => {
     setImgSelectorOpen((prev) => !prev);
@@ -76,6 +92,7 @@ export default function ReportPage() {
 
   const handleTempleteClick = (reportType: ReportTypeProps) => {
     setActivityType(reportType);
+    setActivityDetail("");
     setImgSelectorOpen(false);
   };
 
@@ -85,6 +102,38 @@ export default function ReportPage() {
 
   const handleFriendModalClose = () => {
     setFriendModalOpen(false);
+  };
+
+  const hadleReportClick = async () => {
+    if (!croppedImage || !friendId || (activityType.type==="OTHER" && !activityDetail)) {
+      return
+    }
+
+    const formData = new FormData();
+    const requestData:RequestProps = {
+      target_id: friendId,
+      activity_type: activityType.type,
+      activity_detail: activityDetail,
+    };
+
+    formData.append("content",  new Blob([JSON.stringify(requestData)], { type: 'application/json' }))
+
+    await fetch(croppedImage).then(res=>res.blob()).then((blob)=>
+      formData.append("file", blob)
+    )
+
+    try {
+      console.log("폼데이터ㅓ어어어", formData)
+      const response = await axios.post("/accusation", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const responseData = await response.data
+      console.log(responseData);
+    } catch (error) {
+      console.log("에---러", error);
+    }
   };
 
   return (
@@ -155,7 +204,9 @@ export default function ReportPage() {
       </MainFrame>
 
       <ButtonFrame>
-        <LongButton background="var(--red)">경고장 보내기</LongButton>
+        <LongButton background="var(--red)" onClick={hadleReportClick}>
+          경고장 보내기
+        </LongButton>
       </ButtonFrame>
 
       <Background isShow={isModalOpen} onClick={() => setIsModalOpen(false)}>
@@ -167,7 +218,7 @@ export default function ReportPage() {
         closeModal={handleFriendModalClose}
       >
         <FriendListFrame>
-          <SearchBar setUserId={setFriendId} type="follow"/>
+          <SearchBar setUserId={setFriendId} type="/follow"/>
         </FriendListFrame>
       </AnimationModal>
     </>
@@ -260,7 +311,8 @@ const ProfileImg = styled.div`
   /* background-color: var(--gray); */
 
   img {
-    width: 100%;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
   }
 `;

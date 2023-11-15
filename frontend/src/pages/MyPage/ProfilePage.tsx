@@ -10,32 +10,102 @@ import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
 import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
 import { ReactComponent as ReportSend } from "../../assets/icons/report-send-icon.svg";
+import axiosInstance from "../../api/axiosInstance";
+
+interface UserInfoProps {
+  id: number;
+  nickname: string;
+  groo: number;
+  repayGroo: number;
+  leftGroo: number;
+  profileImg: string;
+  progress: number;
+}
+
+const PostExample: { postId: number,coverImg: string }[] = [];
+
+const ReportExample = [
+  {
+    reportId: 5,
+    coverImg: "/images/template6.png",
+  },
+  {
+    reportId: 6,
+    coverImg: "/images/template6.png",
+  },
+  {
+    reportId: 7,
+    coverImg: "/images/template5.png",
+  },
+  {
+    reportId: 8,
+    coverImg: "/images/template2.png",
+  },
+];
+
+const calcPercent = (tmp: number, total: number) => {
+  if (total === 0) {
+    return 100
+  }
+  return Math.round((tmp / total) * 100)
+};
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const [status, setStatus] = useState("");
+  const [ userInfo, setUserInfo ] = useState<UserInfoProps | null>(null);
+  const [ status, setStatus ] = useState("NOTHING");
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
-
   const navigate = useNavigate();
+  const axios = axiosInstance();
 
   useEffect(() => {
-    // userId로 axios 보내서 user 정보 가져오기
-    // status랑 정보 2개 불러와야하는데 지금은 임시
-    setStatus("follow");
-    // setStatus("request");
-    // setStatus("accept");
-    // setStatus("nothing");
-  }, [id]);
+    getMemberInfo();
+    getStatus();
+  }, []);
 
   useEffect(() => {
-    if (status === "follow") {
+    console.log(status)
+    console.log(userInfo)
+  }, [status, userInfo])
+
+  const getMemberInfo = async () => {
+    try {
+      const response = await axios.get(`/member?memberId=${id}`);
+      const data = response.data.member_list[0];
+      const progress = calcPercent(data.repay_groo, data.groo)
+      const memberInfo = {
+        id: data.member_id,
+        nickname: data.nickname,
+        groo: data.groo,
+        repayGroo: data.repay_groo,
+        leftGroo: data.groo - data.repay_groo,
+        profileImg: data.profile_image_url,
+        progress: progress,
+      };
+      setUserInfo(memberInfo);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getStatus = async () => {
+    try {
+      const response = await axios.get(`/member/follow?memberId=${id}`);
+      const data = response.data.follow_status;
+      setStatus(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (status === "FRIEND") {
       // 다른 상태에서 친구로 변경될 때만 정보 가져와서 바꿈
     } else {
       // 그 외 다른 상태로 변경되면 아무일도 일어나지 않음
     }
-    console.log("밖에 있는 거", status);
   }, [status]);
 
 
@@ -50,59 +120,37 @@ export default function ProfilePage() {
   };
 
   const handleReportBtn = () => {
-    // console.log(user.nickname+"에게 경고하자");
-    navigate(`/act/report?target=${user.id}`)
+    navigate(`/act/report?target=${userInfo?.id}`)
   }
 
   const handleNavigate = (where: string, id: number) => {
     navigate(`/${where}/${id}`);
   }
 
-  const user = {
-    id: 1,
-    profileImg: "",
-    nickname: "어쩌라고라고어쩌라고",
-    gru: 25000,
-    progress: 100,
-    greenInit: 2400000,
-    // status: true,
-  };
-
-  const PostExample: { postId: number,coverImg: string }[] = [];
-
-  const ReportExample = [
-    {
-      reportId: 5,
-      coverImg: "/images/template6.png",
-    },
-    {
-      reportId: 6,
-      coverImg: "/images/template6.png",
-    },
-    {
-      reportId: 7,
-      coverImg: "/images/template5.png",
-    },
-    {
-      reportId: 8,
-      coverImg: "/images/template2.png",
-    },
-  ];
+  if (userInfo === null) {
+    return
+  }
 
   return (
     <>
-      <HeadBar pagename={user.nickname} bgcolor="white" backbutton="yes" center={true} />
+      <HeadBar pagename={userInfo?.nickname} bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="no">
         <UserFrame>
           <UserInfoContainer>
-            <ProfileImg src={user.profileImg} />
+            <ProfileImg src={userInfo?.profileImg} />
             <TextBox>
-              {user.nickname}
-              <SubText>{user.gru}그루</SubText>
+              {userInfo?.nickname}
+              <SubText>
+                {userInfo?.leftGroo === 0 ? (
+                  "그루를 다 갚았어요 !"
+                ) : (
+                  `빚 청산까지 ${userInfo?.leftGroo}그루`
+                )}
+              </SubText>
             </TextBox>
             <FollowBtn status={status} setStatus={setStatus} />
           </UserInfoContainer>
-          <ProgressBar progress={user.progress} greeninit={user.greenInit} />
+          <ProgressBar progress={userInfo?.progress} greeninit={userInfo?.groo} />
         </UserFrame>
         <SliderFrame>
           {tabs.map((tab) => (
@@ -117,7 +165,7 @@ export default function ProfilePage() {
           <ActiveTab offsetX={offsetX} />
         </SliderFrame>
 
-        {status === "follow" && activeTab !== "인증" && (
+        {status === "FRIEND" && activeTab !== "인증" && (
           <SendFrame onClick={handleReportBtn}>
             <ReportSend />
             <SendTexts>
@@ -127,7 +175,7 @@ export default function ProfilePage() {
           </SendFrame>
         )}
         
-        {status === "follow" ? (
+        {status === "FRIEND" ? (
           <PostsFrame>
             {activeTab === "인증" ? (
               PostExample.length === 0 ? (
@@ -157,16 +205,16 @@ export default function ProfilePage() {
           </PostsFrame>
         ) : (
           <Text>
-            {status === "request" && (
-              `${user.nickname}님이 회원님의 친구요청을 수락하면`
+            {status === "REQUEST" && (
+              `${userInfo?.nickname}님이 회원님의 친구요청을 수락하면`
             )}
-            {status === "accept" && (
+            {status === "ACCEPT" && (
               "친구요청을 수락하면"
             )}
-            {status === "nothing" && (
+            {status === "NOTHING" && (
               "친구 신청을 보내보세요!"
             )}
-            <br />{user.nickname}님의 활동을 볼 수 있어요
+            <br />{userInfo?.nickname}님의 활동을 볼 수 있어요
           </Text>
         )}
       </MainFrame>

@@ -66,7 +66,7 @@ export default function FeedPage() {
 
   return (
     <>
-      <SearchBar setUserId={setSearchUserId} type="all"/>
+      <SearchBar setUserId={setSearchUserId} type=""/>
       <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
         <Margin />
         {PostExample.map((post, index) => (

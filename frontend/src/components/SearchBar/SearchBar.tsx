@@ -1,82 +1,21 @@
-// import React from 'react'
+import React from 'react'
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as SearchIcon } from "../../assets/icons/search-icon.svg";
 import { ReactComponent as CloseRing } from "../../assets/icons/close_ring.svg";
+import axiosInstance from "../../api/axiosInstance";
 
 interface SearchBarProps {
   setUserId: React.Dispatch<React.SetStateAction<number | null>>;
   type: string;
 }
 
-// 일단 임시로 해놓음 api 완성되면 수정 필
 interface FriendDataProps {
-  userId: number;
+  id: number;
   profileImg: string;
   nickname: string;
-  gru: number;
-  isFollow: boolean;
+  groo: number;
 }
-
-// 임시 데이터 나중에 삭제
-const users = [
-  {
-    profileImg: "",
-    nickname: "어쩌라고라고어쩌라고",
-    gru: 25000,
-    isFollow: true,
-    userId: 1,
-  },
-  {
-    profileImg: "",
-    nickname: "어쩌라고",
-    gru: 25000,
-    isFollow: true,
-    userId: 2,
-  },
-  {
-    profileImg: "",
-    nickname: "어쩌",
-    gru: 25000,
-    isFollow: true,
-    userId: 3,
-  },
-  {
-    profileImg: "",
-    nickname: "지구지킴",
-    gru: 25000,
-    isFollow: true,
-    userId: 4,
-  },
-  {
-    profileImg: "",
-    nickname: "지",
-    gru: 25000,
-    isFollow: true,
-    userId: 5,
-  },
-  {
-    profileImg: "",
-    nickname: "지구지",
-    gru: 25000,
-    isFollow: true,
-    userId: 6,
-  },
-  {
-    profileImg: "",
-    nickname: "지현",
-    gru: 25000,
-    isFollow: true,
-    userId: 7,
-  },
-  {
-    profileImg: "",
-    nickname: "지현이",
-    gru: 25000,
-    isFollow: true,
-    userId: 8,
-  },
-];
 
 export default function SearchBar({ setUserId, type }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
@@ -84,18 +23,34 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
   const [entire, setEntire] = useState<FriendDataProps[]>([]);
   const [results, setReseults] = useState<FriendDataProps[]>([]);
   const [minuspx, setMinuspx] = useState(48);
+  const axios = axiosInstance();
 
   useEffect(() => {
-    // type에 따라 사용자 목록 불러와서 entire에 넣어주기
-    if (type == "all") {
-      // 전체 사용자 불러오는 api
-    } else if (type == "follow") {
+    if (type === "/follow") {
       setMinuspx(68);
-      // 맞팔인 사용자만 불러오는 api
     }
-    // 일단 임시 데이터 넣어놓음
-    setEntire(users);
+    getFriendsList()
   }, []);
+
+  const getFriendsList = async () => {
+    try {
+      const response = await axios.get(`/member${type}/list`);
+      const data = response.data;
+      console.log(data)
+      const transUsers = data.member_list.map((member: any) => ({
+        id: member.member_id,
+        profileImg: member.profile_image_url,
+        nickname: member.nickname,
+        groo: member.groo
+      }));
+      setEntire(transUsers);
+      if (type === "/follow") {
+        setReseults(transUsers);        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -118,6 +73,8 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
           friend.nickname.includes(tmpValue)
         )
       );
+    } else if (type === "/follow") {
+      setReseults(entire);
     } else if (results.length) {
       setReseults([]);
     }
@@ -125,8 +82,8 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
 
   const handleErase = () => {
     setInputValue("");
-    if (results.length) {
-      setReseults([]);
+    if (type === "/follow") {
+      setReseults(entire);
     }
   };
 
@@ -149,11 +106,11 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
       </SearchBarFrame>
       <SearchResultFrame isFocused={isFocused}>
         {results.map((user) => (
-          <UserInfoContainer onClick={() => setUserId(user.userId)}>
+          <UserInfoContainer onClick={() => setUserId(user.id)}>
             <ProfileImg src={user.profileImg} />
             <TextBox>
               {user.nickname}
-              <SubText>{user.gru}그루</SubText>
+              <SubText>{user.groo}그루</SubText>
             </TextBox>
           </UserInfoContainer>
         ))}
@@ -168,7 +125,7 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
 const SearchBarFrame = styled.div<{ type: string }>`
   position: absolute;
   z-index: 1;
-  padding: ${(props) => (props.type === "all" ? "0 20px" : "0")};
+  padding: ${(props) => (props.type === "" ? "0 20px" : "0")};
   left: 0;
   right: 0;
   height: 52px;

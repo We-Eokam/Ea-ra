@@ -1,5 +1,5 @@
+import React, { useState, useEffect, SetStateAction } from "react";
 import styled from "styled-components";
-import { useState, useEffect, SetStateAction } from "react";
 
 
 interface FollowBtnProps {
@@ -13,19 +13,19 @@ const FollowBtn = ({ status, setStatus }: FollowBtnProps) => {
   const [bgColor, setBgColor] = useState("gray");
 
   useEffect(() => {
-    if (status === "follow") {
+    if (status === "FRIEND") {
       setContent("친구 끊기");
       setColor("black");
       setBgColor("gray");
-    } else if (status === "request") {
+    } else if (status === "REQUEST") {
       setContent("요청됨");
       setColor("primary");
       setBgColor("third");
-    } else if (status === "accept") {
+    } else if (status === "ACCEPT") {
       setColor("white");
       setContent("수락하기");
       setBgColor("blue");
-    } else if (status === "nothing") {
+    } else if (status === "NOTHING") {
       setContent("친구 맺기");
       setColor("white");
       setBgColor("primary");
@@ -33,15 +33,15 @@ const FollowBtn = ({ status, setStatus }: FollowBtnProps) => {
   }, [status]);
 
   const handleBtnClick = () => {
-    if (status === "follow") {
+    if (status === "FRIEND") {
       // 친구 진짜 끊으시겠습니까? -> 확인 후 친구 삭제 요청 보내고 성공하면 친구 끊기
-      setStatus("nothing");
-    } else if (status === "accept") {
+      setStatus("NOTHING");
+    } else if (status === "ACCEPT") {
       // 수락하기 누르면 승인 acios 보낸 후 성공하면 바로 친구 된 것
-      setStatus("follow");
-    } else if (status === "nothing") {
+      setStatus("FRIEND");
+    } else if (status === "NOTHING") {
       // 친구신청 요청보낸 후 성공하면 요청됨으로 변경
-      setStatus("request");
+      setStatus("REQUEST");
     }
   };
 
