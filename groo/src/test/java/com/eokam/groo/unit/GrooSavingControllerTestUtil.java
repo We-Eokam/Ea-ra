@@ -63,7 +63,7 @@ public class GrooSavingControllerTestUtil {
 		return GrooSavingRequest.builder()
 			.memberId(1L)
 			.savingType(SavingType.PROOF)
-			.activityType(ActivityType.DISPOSABLE)
+			.activityType(ActivityType.PLASTIC)
 			.proofAccusationId(1L)
 			.savedAt(LocalDateTime.of(2023, 1, 1, 1, 0))
 			.build();
