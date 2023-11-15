@@ -50,7 +50,7 @@ export default function ProgressBar({ progress, greeninit }: ProgressBarProps) {
       <ProgressBarFront style={{ width: `${newProgress}%` }} />
       <GreenFirst>
         {greeninit?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
-        그린
+        그루
       </GreenFirst>
     </ProgressFrame>
   );
