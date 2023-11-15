@@ -50,6 +50,7 @@ spring:
             - Path=/cpoint/**
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
       globalcors:
         cors-configurations:
           '[/**]':

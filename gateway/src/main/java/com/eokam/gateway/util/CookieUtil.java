@@ -13,8 +13,6 @@ public class CookieUtil {
 	public Optional<String> getCookie(ServerHttpRequest request, String cookieName) {
 		final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
 
-		System.out.println(cookies);
-
 		if (cookies.isEmpty()) {
 			return Optional.empty();
 		}

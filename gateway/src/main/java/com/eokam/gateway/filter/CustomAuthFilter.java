@@ -42,6 +42,8 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 
 			Optional<String> optionalAccessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
 
+			log.info("[Request Path] {}", request.getPath());
+
 			if (optionalAccessToken.isEmpty()) {
 				log.warn("Access Token Not Exist");
 				return handleUnAuthorized(exchange);
