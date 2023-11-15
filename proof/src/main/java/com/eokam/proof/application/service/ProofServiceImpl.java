@@ -16,6 +16,8 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.cpoint.CPointServiceFeign;
+import com.eokam.proof.infrastructure.external.cpoint.SaveCpointRequest;
 import com.eokam.proof.infrastructure.external.groo.GrooSaveRequest;
 import com.eokam.proof.infrastructure.external.groo.GrooServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowList;
@@ -40,6 +42,7 @@ public class ProofServiceImpl implements ProofService {
 
 	private final FollowServiceFeign followServiceFeign;
 	private final GrooServiceFeign grooServiceFeign;
+	private final CPointServiceFeign cPointServiceFeign;
 
 	@Override
 	public Page<ProofDto> getMyProofList(String jwt, PageRequest pageRequest) {
@@ -82,6 +85,11 @@ public class ProofServiceImpl implements ProofService {
 		grooServiceFeign.saveGroo(jwt,
 			GrooSaveRequest.of(ParseJwtUtil.parseMemberId(jwt), savedProof.getActivityType(), savedProof.getProofId(),
 				savedProof.getCreatedAt()));
+		if (savedProof.getCCompanyId() != null) {
+			cPointServiceFeign.saveCpoint(jwt,
+				SaveCpointRequest.of(
+					ParseJwtUtil.parseMemberId(jwt), savedProof.getActivityType(), savedProof.getCCompanyId()));
+		}
 
 		return ProofDto.of(savedProof, s3SavedList);
 	}
