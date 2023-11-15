@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.eokam.cpoint.domain.Company;
 import com.eokam.cpoint.domain.CompanyConnect;
@@ -22,7 +21,6 @@ import com.eokam.cpoint.infra.StoreRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-@EnableJpaAuditing
 @DataJpaTest
 @SuppressWarnings("NonAsciiCharacters")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
