@@ -7,6 +7,9 @@ spring:
 
   application:
     name: member-service
+  web:
+    resources:
+      static-locations=classpath:/static/docs/:
 
   jpa:
     hibernate:
