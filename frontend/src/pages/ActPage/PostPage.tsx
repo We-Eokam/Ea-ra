@@ -8,8 +8,10 @@ import DetailInput from "../../components/Input/DetailInput";
 import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
 import { ShortButton, LongButton, ButtonFrame } from "../../style";
 import data from "../../common/act.json";
+import axiosInstance from "../../api/axiosInstance";
 
 interface CompanyPorops {
+  id: number;
   name: string;
   logo: string;
   detail: string;
@@ -29,7 +31,8 @@ export default function PostPage() {
   const [activityDetail, setActivityDetail] = useState("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [isRegist, setIsRegist] = useState(false);
-  const [selectIdx, setSelectIdx] = useState<number | null>(null);
+  const [selectCompanyIdx, setSelectCompanyIdx] = useState<number | null>(null);
+  const axios = axiosInstance();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -45,8 +48,14 @@ export default function PostPage() {
   }, [type]);
 
   const handleSelectOption = (index: number) => {
-    setType(index + 1);
-    setIsRegist(false);
+    if (index + 1 !== type) {
+      setType(index + 1);
+      setIsRegist(false);
+      setSelectCompanyIdx(null);
+    }
+    if (index !== 9) {
+      setActivityDetail("");
+    }
     setShowOptions(false);
   };
 
@@ -57,7 +66,37 @@ export default function PostPage() {
   const handleRegist = (select: boolean) => {
     setIsRegist(select);
     if (select === false) {
-      setSelectIdx(null);
+      setSelectCompanyIdx(null);
+    }
+  };
+
+  const hadlePostClick = async () => {
+    if (!croppedImage || (isRegist && !selectCompanyIdx)) {
+      return
+    }
+    const formData = new FormData();
+    const requestData = {
+      activity_type: actType.englishName,
+      c_company_id: selectCompanyIdx,
+      content: activityDetail,
+    };
+    // console.log("리퀘스트데이터~~~", requestData)
+    formData.append('content',  new Blob([JSON.stringify(requestData)], { type: 'application/json' }))
+
+    await fetch(croppedImage).then(res=>res.blob()).then((blob)=>
+      formData.append("file", blob)
+    )
+
+    try {
+      const response = await axios.post("/proof", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      const responseData = await response.data
+      console.log("리스폰스데이터", responseData);
+    } catch (error) {
+      console.log("에 ----- 러", error);
     }
   };
 
@@ -115,11 +154,11 @@ export default function PostPage() {
           <InfoFrame>
             <InfoName>기업선택</InfoName>
             <ButtonsFrame>
-              {actType.companies.map((company, idx) => (
+              {actType.companies.map((company) => (
                 <Button
                   width="30%"
-                  onClick={() => setSelectIdx(idx)}
-                  isSelected={selectIdx === idx}
+                  onClick={() => setSelectCompanyIdx(company.id)}
+                  isSelected={selectCompanyIdx === company.id}
                 >
                   {company.name}
                 </Button>
@@ -129,7 +168,7 @@ export default function PostPage() {
         )}
         <Margin />
         <ButtonFrame>
-          <LongButton>인증하기</LongButton>
+          <LongButton onClick={hadlePostClick}>인증하기</LongButton>
         </ButtonFrame>
       </MainFrame>
     </>
@@ -229,5 +268,5 @@ const Button = styled(ShortButton)<{ isSelected: boolean }>`
 `;
 
 const Margin = styled.div`
-  margin: 108px
+  margin: 108px;
 `;
