@@ -14,15 +14,56 @@ import { ReactComponent as Logout } from "../../assets/icons/logout-icon.svg";
 import { ReactComponent as Trash } from "../../assets/icons/Trash-icon.svg";
 import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
 import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
+import useInfScroll from "../../hooks/useInfScroll";
+import axiosInstance from "../../api/axiosInstance";
+import reportData from "../../common/report.json";
+
+interface UserInfo {
+  memberId?: number;
+  profileImg?: string;
+  nickname?: string;
+  groo?:number;
+  progress: number;
+  grooInit: number;
+  bill?: number;
+}
+
+interface Post {
+  proof_id: number;
+  picture: {url: string }[];
+}
+
+interface Report {
+  accusation_id: number;
+  imageUrl: string;
+}
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const axios = axiosInstance();
 
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    progress: 0,
+    grooInit: 0,
+  });
+  
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [curPosts, setCurPosts] = useState(0);
+  const [morePosts, setMorePosts] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [curReports, setCurReports] = useState(0);
+  const [moreReports, setMoreReports] = useState(true);
+  const [isLoadingReports, setIsLoadingReports] = useState(false);
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   useEffect(() => {
     const tabIndex = tabs.indexOf(activeTab);
@@ -30,6 +71,90 @@ export default function MyPage() {
     setOffsetX(newPosition);
   }, [activeTab]);
 
+  const { ref: postInfScrollRef } = useInfScroll({
+    getMore: () => {
+      getPosts();
+    },
+    hasMore: morePosts,
+  });
+
+  const { ref: reportInfScrollRef } = useInfScroll({
+    getMore: () => {
+      getReports();
+    },
+    hasMore: moreReports,
+  });
+
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(`/member/detail`);
+      const data = response.data;
+
+      setUserInfo({
+        memberId: data.member_id,
+        profileImg: data.profile_image_url,
+        nickname: data.nickname,
+        groo: data.groo,
+        progress: 100,
+        grooInit: 24000,
+        bill: data.bill,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getPosts = async () => {
+    if (isLoadingPosts) return;
+    setIsLoadingPosts(true);
+
+    try {
+      const nowPosts = curPosts;
+      const response = await axios.get(`/proof/me?page=${nowPosts}&size=12`);
+      const data = response.data;
+
+      if(response.status !== 204) {
+        setPosts((prevPosts) => [...prevPosts, ...data.proof as Post[]]);
+        setCurPosts(nowPosts+1);
+      } else {
+        setMorePosts(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  };
+
+  const getReports = async () => {
+    if (isLoadingReports) return;
+    setIsLoadingReports(true);
+    
+    try {
+      const nowReports = curReports;
+      const response = await axios.get(`/accusation?targetId=${userInfo.memberId}&page=${nowReports}&size=12`);
+      const data = response.data;
+
+      const updateReports = data.accusation_list.map((report: any) => {
+        const actData = reportData.find(item => item.type === report.activity_type);
+        const imageUrl = actData ? actData.imgUrl : report.image_list.imageURL_1;
+        return { ...report, imageUrl };
+      })
+      
+      setReports(prevReports => [...prevReports, ...updateReports as Report[]]);   
+      
+      if(data.page_info.is_last) {
+        setMoreReports(false);
+      } else {
+        setCurReports(nowReports+1);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingReports(false);
+    }
+  };
+  
   const handleSlider = (tabName: string) => {
     setActiveTab(tabName);
   };
@@ -50,37 +175,6 @@ export default function MyPage() {
     navigate(`/${where}/${id}`);
   }
 
-  const user = {
-    profileImg: "",
-    nickname: "어쩌라고라고어쩌라고",
-    gru: 25000,
-    progress: 100,
-    greenInit: 2400000,
-    reportCnt: 2,
-  };
-
-  const PostExample = [
-    {
-      postId: 1,
-      coverImg: "/images/template1.png",
-    },
-  ];
-
-  const ReportExample = [
-    {
-      reportId: 1,
-      coverImg: "/images/template4.png",
-    },
-    {
-      reportId: 2,
-      coverImg: "/images/template2.png",
-    },
-    {
-      reportId: 3,
-      coverImg: "/images/template3.png",
-    },
-  ];
-
   return (
     <>
       <HeadFrame>
@@ -94,14 +188,14 @@ export default function MyPage() {
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="no">
         <UserFrame>
           <UserInfoContainer>
-            <ProfileImg src={user.profileImg} />
+            <ProfileImg src={userInfo.profileImg} />
             <TextBox>
-              {user.nickname}
-              <SubText>{user.gru}그루</SubText>
+              {userInfo.nickname}
+              <SubText>{userInfo.groo}그루</SubText>
             </TextBox>
             <ShowBtn onClick={navigateFriends}> 친구 보기 </ShowBtn>
           </UserInfoContainer>
-          <ProgressBar progress={user.progress} greeninit={user.greenInit} />
+          <ProgressBar progress={userInfo.progress} greeninit={userInfo.grooInit} />
         </UserFrame>
         <SliderFrame>
           {tabs.map((tab) => (
@@ -117,30 +211,31 @@ export default function MyPage() {
         </SliderFrame>
         <PostsFrame>
           {activeTab === "인증" ? (
-            PostExample.length === 0 ? (
+            posts.length === 0 ? (
               <NoPost>
                 <NoAct />활동 인증 없음
               </NoPost>
             ) : (
-              PostExample.map((post) => (
-                <Post onClick={() => {handleNavigate("post", post.postId)}}>
-                  <CoverImg src={post.coverImg} />
+              posts.map((post) => (
+                <Post onClick={() => {handleNavigate("post", post.proof_id)}}>
+                  <CoverImg src={post.picture[0].url} />
                 </Post>
               ))
             )
           ) : (
-            ReportExample.length === 0 ? (
+            reports.length === 0 ? (
               <NoPost>
                 <NoReport />받은 경고장 없음
               </NoPost>
             ) : (
-              ReportExample.map((post) => (
-                <Post onClick={() => {handleNavigate("report", post.reportId)}}>
-                  <CoverImg src={post.coverImg} />
+              reports.map((report) => (
+                <Post onClick={() => {handleNavigate("report", report.accusation_id)}}>
+                  <CoverImg src={report.imageUrl} />
                 </Post>
               ))
             )
           )}
+          <div ref={activeTab === "인증" ? postInfScrollRef : reportInfScrollRef} />
         </PostsFrame>
       </MainFrame>
 
@@ -153,7 +248,7 @@ export default function MyPage() {
           <Opt>
             <Article />
             <OptText>경고장 수</OptText>
-            <OptSubText>{user.reportCnt} 개</OptSubText>
+            <OptSubText>{userInfo.bill} 개</OptSubText>
           </Opt>
           <Opt>
             <Logout />

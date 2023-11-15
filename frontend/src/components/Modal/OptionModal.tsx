@@ -7,6 +7,7 @@ interface OptionModalProps {
   btnText:string;
   isOpen: boolean;
   closeModal: () => void;
+  onConfirm?: () => void;
 }
 
 export default function OptionModal({
@@ -14,7 +15,8 @@ export default function OptionModal({
   content,
   btnText,
   isOpen,
-  closeModal
+  closeModal,
+  onConfirm
 }: OptionModalProps) {
   
   return (
@@ -24,7 +26,7 @@ export default function OptionModal({
         <NotiContent>{content}</NotiContent>
       </NotiFrame>
       <OptionFrame>
-        <Opt>
+        <Opt onClick={onConfirm}>
           <OptText isRed={true}>{btnText}</OptText>
         </Opt>
         <Opt onClick={closeModal}>
