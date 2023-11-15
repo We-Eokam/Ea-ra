@@ -22,7 +22,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 		+ " AND cc.memberId = :memberId"
 		+ " INNER JOIN CompanyPolicy cp"
 		+ " ON cp.company.id = c.id"
-		+ " AND cp.activityType = :activityType")
+		+ " AND cp.activityType = :activityType"
+		+ " ORDER BY c.name")
 	public List<CompanyDto> findCompaniesByActivityTypeAndMemberId(ActivityType activityType, Long memberId);
 
 	@Query("select new com.eokam.cpoint.application.dto.CompanyDto(c.id,c.name,"
@@ -32,7 +33,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 		+ " ON c.id  = cc.company.id"
 		+ " AND cc.memberId = :memberId"
 		+ " WHERE c.id = :companyId")
-	public Optional<CompanyDto> findCompanyByCompanyIdAndMemberId(Long companyId,Long memberId);
+	public Optional<CompanyDto> findCompanyByCompanyIdAndMemberId(Long companyId, Long memberId);
 
 	public Optional<Company> findCompanyById(Long companyId);
 }
