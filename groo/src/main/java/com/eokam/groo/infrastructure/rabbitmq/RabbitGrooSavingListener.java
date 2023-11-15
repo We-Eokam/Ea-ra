@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.eokam.groo.application.dto.GrooSavingDto;
 import com.eokam.groo.application.service.GrooSavingService;
+import com.eokam.groo.infrastructure.dto.RepayGrooRequest;
 import com.eokam.groo.presentation.dto.GrooSavingRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 public class RabbitGrooSavingListener {
 
 	private final GrooSavingService grooSavingService;
+	private final RabbitSender rabbitSender;
 
 	@RabbitListener(queues = "grooSavingQueue")
 	public void receiveMessage(GrooSavingRequest grooSavingRequest) {
 		GrooSavingDto grooSavingDto = grooSavingService.createGrooSaving(GrooSavingDto.from(grooSavingRequest));
 		log.info("Data has been successfully saved to the GrooSaving. Saved Data: '{}'", grooSavingDto);
+		rabbitSender.send(RepayGrooRequest.from(grooSavingDto));
 	}
 }
