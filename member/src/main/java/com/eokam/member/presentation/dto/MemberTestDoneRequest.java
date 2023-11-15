@@ -19,10 +19,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MemberTestDoneRequest {
 
-	@NotNull(message = "member_id가 필요합니다.")
-	@Positive(message = "member_id는 양수여야 합니다.")
-	private Long memberId;
-
 	@NotNull(message = "적립할 그루가 필요합니다")
 	@Positive(message = "적립할 그루는 양수여야합니다")
 	private Integer groo;

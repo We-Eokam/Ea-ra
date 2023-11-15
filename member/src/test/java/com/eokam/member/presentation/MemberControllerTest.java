@@ -690,7 +690,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
 
 		MemberTestDoneRequest memberTestDoneRequest =
-			MemberTestDoneRequest.builder().memberId(memberId).groo(300).build();
+			MemberTestDoneRequest.builder().groo(300).build();
 
 		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -702,7 +702,6 @@ public class MemberControllerTest extends BasicControllerTest {
 				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
 				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 				requestFields(
-					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK가 필요합니다"),
 					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("테스트 결과로 적립할 그루")
 				),
 				responseFields(
@@ -736,7 +735,7 @@ public class MemberControllerTest extends BasicControllerTest {
 
 		해당유저_테스트완료(memberId);
 		MemberTestDoneRequest memberTestDoneRequest =
-			MemberTestDoneRequest.builder().memberId(memberId).groo(300).build();
+			MemberTestDoneRequest.builder().groo(300).build();
 
 		RequestSpecification updateNickname = RestAssured.given(documentationSpec)
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -748,7 +747,6 @@ public class MemberControllerTest extends BasicControllerTest {
 				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
 				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 				requestFields(
-					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK가 필요합니다"),
 					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("테스트 결과로 적립할 그루")
 				)
 			));
