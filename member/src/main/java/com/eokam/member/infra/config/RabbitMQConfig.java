@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ public class RabbitMQConfig {
 	@Bean
 	public MessageConverter messageConverter() {
 		ObjectMapper mapper = new ObjectMapper()
-			.registerModule(new JavaTimeModule());
+			.registerModule(new JavaTimeModule())
+			.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
 		return new Jackson2JsonMessageConverter(mapper);
 	}
 
