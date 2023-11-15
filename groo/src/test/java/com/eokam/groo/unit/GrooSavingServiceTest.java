@@ -23,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
+import com.eokam.groo.application.dto.GrooDailyDto;
 import com.eokam.groo.application.service.GrooSavingServiceImpl;
 import com.eokam.groo.domain.entity.GrooSaving;
 import com.eokam.groo.global.constant.ActivityType;
@@ -112,16 +113,16 @@ public class GrooSavingServiceTest {
 		given(grooSavingRepository.getDailyProofCount(1L, startDate, endDate)).willReturn(expectedWeeklyProofCountDtoList);
 
 		// when
-		List<WeeklyProofCountDto> weeklyProofCountDtoList = grooSavingService.getDailyProofCountByWeek(1L);
+		List<GrooDailyDto> weeklyProofCountDtoList = grooSavingService.getDailyProofCountByWeek(1L);
 
 		// then
 		verify(grooSavingRepository).getDailyProofCount(1L, startDate, endDate);
-		assertThat(weeklyProofCountDtoList).hasSize(expectedWeeklyProofCountDtoList.size());
+		assertThat(weeklyProofCountDtoList).hasSize(7);
 	}
 
 	public List<WeeklyProofCountDto> getWeeklyProofCountDtoList(LocalDate startDate) {
 		List<WeeklyProofCountDto> weeklyProofCountDtoList = new ArrayList<>();
-		for (int i = 0; i<7; i++){
+		for (int i = 0; i<3; i++){
 			weeklyProofCountDtoList.add(
 				new WeeklyProofCountDto(Date.valueOf(startDate.plusDays(i)), new Random().nextLong(10L)));
 		}
