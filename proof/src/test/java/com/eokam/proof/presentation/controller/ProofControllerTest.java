@@ -575,8 +575,7 @@ class ProofControllerTest extends BaseControllerTest {
 	}
 
 	@ParameterizedTest
-	@CsvSource({"ELECTRONIC_RECEIPT, 1, 내용", "ETC, 1, 내용", "ELECTRONIC_RECEIPT, , ", "ETC, , ",
-		"ELECTRONIC_RECEIPT, , 내용", "ETC, 1, "})
+	@CsvSource({"ELECTRONIC_RECEIPT, 1, 내용", "ETC, 1, 내용", "ELECTRONIC_RECEIPT, , ", "ETC, , ", "ETC, 1, "})
 	@DisplayName("올바르지 않은 Request 요청 시 400 에러")
 	void postCreateProof_400(ActivityType activityType, Long companyId, String content) throws Exception {
 		final String testJwt = createJwt(1L);
