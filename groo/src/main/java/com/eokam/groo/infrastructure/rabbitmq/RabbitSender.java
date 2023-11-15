@@ -2,13 +2,14 @@ package com.eokam.groo.infrastructure.rabbitmq;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.eokam.groo.infrastructure.dto.RepayGrooRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class RabbitSender {
