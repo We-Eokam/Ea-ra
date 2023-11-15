@@ -30,7 +30,7 @@ public class GrooAcceptanceStep {
 	public static final SavingType 인증 = SavingType.PROOF;
 	public static final SavingType 제보 = SavingType.ACCUSATION;
 	public static final ActivityType 텀블러_사용 = ActivityType.TUMBLER;
-	public static final ActivityType 일회용컵_사용 = ActivityType.DISPOSABLE;
+	public static final ActivityType 일회용컵_사용 = ActivityType.PLASTIC;
 	public static final Long 활동_ID = 1L;
 	public static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6MX0.b9AyXTApiN9ii7WMT1GO8h_wjWgGG5hsW11hXT3RXXk";
 	public static final Integer YEAR = 2023;
