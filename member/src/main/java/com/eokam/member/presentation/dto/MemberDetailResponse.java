@@ -19,6 +19,8 @@ public class MemberDetailResponse {
 
 	private Integer groo;
 
+	private Integer repayGroo;
+
 	private Integer bill;
 
 	private Integer billCount;
@@ -33,6 +35,7 @@ public class MemberDetailResponse {
 			.memberId(memberDto.getMemberId())
 			.nickname(memberDto.getNickname())
 			.groo(memberDto.getGroo())
+			.repayGroo(memberDto.getRepayGroo())
 			.bill(memberDto.getBill())
 			.billCount(memberDto.getBillCount())
 			.profileImageUrl(memberDto.getProfileImageUrl())

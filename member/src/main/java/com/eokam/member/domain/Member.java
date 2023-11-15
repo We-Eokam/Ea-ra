@@ -36,6 +36,8 @@ public class Member extends BaseEntity {
 
 	private Integer groo = 0;
 
+	private Integer repayGroo = 0;
+
 	private Integer billCount = 0;
 
 	private Integer bill = 0;
@@ -44,7 +46,7 @@ public class Member extends BaseEntity {
 
 	public void repayGroo(SavingType savingType,Integer amount){
 		if(savingType.equals(SavingType.PROOF)){
-			this.groo -= amount;
+			this.repayGroo += amount;
 		}
 		if(savingType.equals(SavingType.ACCUSATION)){
 			this.groo += amount;
@@ -99,6 +101,7 @@ public class Member extends BaseEntity {
 		this.profileImageFileName = profileImageFileName;
 		this.socialId = socialId;
 		this.groo = 0;
+		this.repayGroo = 0;
 		this.billCount = 0;
 		this.bill = 0;
 		this.isTestDone = false;

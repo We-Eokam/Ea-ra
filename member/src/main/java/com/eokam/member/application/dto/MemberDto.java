@@ -15,6 +15,8 @@ public class MemberDto {
 
 	private Integer groo;
 
+	private Integer repayGroo;
+
 	private Integer bill;
 
 	private Integer billCount;
@@ -36,6 +38,7 @@ public class MemberDto {
 			.profileImageUrl(member.getProfileImageUrl())
 			.profileImageFileName(member.getProfileImageFileName())
 			.isTestDone(member.getIsTestDone())
+			.repayGroo(member.getRepayGroo())
 			.build();
 	}
 }

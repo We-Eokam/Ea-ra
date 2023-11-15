@@ -59,7 +59,8 @@ public class MemberControllerTest extends BasicControllerTest {
 					fieldWithPath("bill").type(JsonFieldType.NUMBER).description("유저 고소장 개수"),
 					fieldWithPath("bill_count").type(JsonFieldType.NUMBER).description("유저 고소장 카운트 (3개 모이면 고소장 하나)"),
 					fieldWithPath("profile_image_url").type(JsonFieldType.STRING).description("유저 프로필 사진 url(초기는 카카오 프로필)"),
-					fieldWithPath("is_test_done").type(JsonFieldType.BOOLEAN).description("테스트 완료 여부")
+					fieldWithPath("is_test_done").type(JsonFieldType.BOOLEAN).description("테스트 완료 여부"),
+					fieldWithPath("repay_groo").type(JsonFieldType.NUMBER).description("여태까지 갚은 그루")
 				)
 			));
 
@@ -179,7 +180,54 @@ public class MemberControllerTest extends BasicControllerTest {
 	}
 
 	@Test
-	void 그루_적립(){
+	void 그루_적립_고발_인증(){
+		//given
+		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
+		RepayGrooRequest repayGrooRequest = RepayGrooRequest.builder().groo(300).memberId(memberId).savingType(
+			SavingType.PROOF).build();
+
+
+		RequestSpecification saveGroo = RestAssured.given(documentationSpec)
+			.body(repayGrooRequest)
+			.contentType(ContentType.JSON)
+			.log().all()
+			.filter(document(
+				"{class-name}/{method-name}",
+
+				Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+				Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+				requestFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
+					fieldWithPath("saving_type").type(JsonFieldType.STRING).description("적립 타입 고발(ACCUSATION) 인증(PROOF)"),
+					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("적립할 그루")
+				),
+				responseFields(
+					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
+					fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("유저 갚아야할 그루"),
+					fieldWithPath("repay_groo").type(JsonFieldType.NUMBER).description("유저 여태까지 갚은 그루"),
+					fieldWithPath("bill").type(JsonFieldType.NUMBER).description("내 고발장 수"),
+					fieldWithPath("bill_count").type(JsonFieldType.NUMBER).description("내 고발장 카운트 수"),
+					fieldWithPath("profile_image_url").type(JsonFieldType.STRING).description("멤버 프로필 사진 url"),
+					fieldWithPath("is_test_done").type(JsonFieldType.BOOLEAN).description("테스트 완료 여부")
+				)
+			));
+
+		//when & then
+		var 결과 = saveGroo.when()
+			.post("/member/groo")
+			.then()
+			.statusCode(HttpStatus.CREATED.value())
+			.extract()
+			.jsonPath();
+
+		assertThat(결과.getLong("member_id")).isEqualTo(memberId);
+		assertThat(결과.getInt("repay_groo")).isEqualTo(300);
+		assertThat(결과.getString("nickname")).isEqualTo("꿈을꾸는문어");
+	}
+
+	@Test
+	void 그루_적립_고발(){
 		//given
 		Long memberId = 닉네임이꿈을꾸는문어인_프로필사진이펭귄인유저생성();
 		RepayGrooRequest repayGrooRequest = RepayGrooRequest.builder().groo(300).memberId(memberId).savingType(
@@ -203,7 +251,8 @@ public class MemberControllerTest extends BasicControllerTest {
 				responseFields(
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
 					fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
-					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("갚아야할 그루"),
+					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("유저 갚아야할 그루"),
+					fieldWithPath("repay_groo").type(JsonFieldType.NUMBER).description("유저 여태까지 갚은 그루"),
 					fieldWithPath("bill").type(JsonFieldType.NUMBER).description("내 고발장 수"),
 					fieldWithPath("bill_count").type(JsonFieldType.NUMBER).description("내 고발장 카운트 수"),
 					fieldWithPath("profile_image_url").type(JsonFieldType.STRING).description("멤버 프로필 사진 url"),
@@ -659,6 +708,7 @@ public class MemberControllerTest extends BasicControllerTest {
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
 					fieldWithPath("nickname").type(JsonFieldType.STRING).description("멤버 닉네임 (초기는 카카오 닉네임)"),
 					fieldWithPath("groo").type(JsonFieldType.NUMBER).description("유저의 남은 그루"),
+					fieldWithPath("repay_groo").type(JsonFieldType.NUMBER).description("유저의 갚은 그루"),
 					fieldWithPath("bill").type(JsonFieldType.NUMBER).description("유저 고소장 개수"),
 					fieldWithPath("bill_count").type(JsonFieldType.NUMBER).description("유저 고소장 카운트 (3개 모이면 고소장 하나)"),
 					fieldWithPath("profile_image_url").type(JsonFieldType.STRING).description("유저 프로필 사진 url(초기는 카카오 프로필)"),
