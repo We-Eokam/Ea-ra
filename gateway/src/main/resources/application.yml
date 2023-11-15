@@ -54,7 +54,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "dev.ea-ra.com"
+            allowedOrigins: "https://dev.ea-ra.com"
             allow-credentials: true
             allowedHeaders: '*'
             allowedMethods:
