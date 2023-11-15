@@ -1,5 +1,6 @@
  package com.eokam.member.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,11 +41,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<MemberDto> retrieveMemberProfile(List<Long> memberIdList) {
-		List<Member> memberList = memberRepository.findAllById(memberIdList);
-		if(memberList.size() != memberIdList.size()){
-			throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+		memberRepository.findAllById(memberIdList);
+		List<Member> retMemberList = new ArrayList<>();
+		for(Long memberId : memberIdList){
+			retMemberList.add(memberRepository.findById(memberId).orElseThrow(()-> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND)));
 		}
-		return memberList.stream().map(member->MemberDto.from(member)).toList();
+		return retMemberList.stream().map(member->MemberDto.from(member)).toList();
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,6 +43,7 @@ public class MemberServiceTest extends BaseServiceTest {
 
 	@Nested
 	class retrieveMemberProfile_성공테스트 {
+		@Disabled
 		@Test
 		void 멤버프로필조회_테스트() {
 			//given

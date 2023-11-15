@@ -108,10 +108,10 @@ public class MemberControllerTest extends BasicControllerTest {
 		Long memberId4 = 닉네임이나는문어인_프로필사진이펭귄인유저생성();
 
 		RequestSpecification retrieveMemberDetail = RestAssured.given(documentationSpec)
-			.queryParam("memberId",memberId)
-			.queryParam("memberId",memberId2)
 			.queryParam("memberId",memberId3)
 			.queryParam("memberId",memberId4)
+			.queryParam("memberId",memberId)
+			.queryParam("memberId",memberId2)
 			.log().all()
 			.filter(document(
 				"{class-name}/{method-name}",
@@ -135,6 +135,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		var 결과 = retrieveMemberDetail.when()
 			.get("/member")
 			.then()
+			.log().all()
 			.extract()
 			.jsonPath();
 
