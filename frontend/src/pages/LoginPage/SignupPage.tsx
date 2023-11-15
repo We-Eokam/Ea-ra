@@ -1,11 +1,13 @@
 // import React from "react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import { ShortButton, LongButton } from "../../style";
 import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
-import areasList from "../../common/seoul-area.json"
+import areasList from "../../common/seoul-area.json";
+import axiosInstance from "../../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -15,6 +17,16 @@ interface DropdownProps {
   isOpen: boolean;
 }
 
+interface UserInfoProps {
+  member_id: number;
+  nickname: string;
+  groo: number;
+  bill: number;
+  bill_count: number;
+  profile_image_url: string;
+  is_test_done: boolean;
+}
+
 export default function SignupPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<string>("male");
@@ -22,16 +34,14 @@ export default function SignupPage() {
   const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState("");
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-  
-  const green = 2400000;
-  
-  const onToggle = () => setIsOpen(!isOpen);
+  const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
 
-  const alertSignup = () => {
-    if (isNicknameChecked) {
-      alert("ㅇㅇㅇㅇ")
-    }
-  }
+  const axios = axiosInstance();
+  const navigate = useNavigate();
+
+  const green = 2400000;
+
+  const onToggle = () => setIsOpen(!isOpen);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -55,11 +65,79 @@ export default function SignupPage() {
     setSelectedGender(gender);
   };
 
-  const handleCheckNickname = () => {
-    // 서버에 닉네임 중복 요청을 보내는 로직을 여기에 추가
-
-    setIsNicknameChecked(true);
+  const handleCheckNickname = async () => {
+    try {
+      const response = await axios.get(`/member/nickname/${nickname}`);
+      const data = await response;
+      console.log(data);
+      window.alert("사용 가능한 닉네임입니다");
+      setIsNicknameChecked(true);
+    } catch (error) {
+      console.log(error);
+      setNickname("");
+      window.alert("중복된 닉네임입니다");
+    }
   };
+
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(`/member/detail?memberId=3`);
+      const data = await response.data;
+      setUserInfo(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const signupClicked = async () => {
+    // 닉네임 중복확인 했는지
+    if (isNicknameChecked) {
+      // 새로운 사진을 선택했는지
+      console.log(selectedImage);
+      if (selectedImage) {
+        // 멀티파트 만드는 부분
+        const multiImage = new FormData();
+
+        await fetch(selectedImage)
+          .then((res) => res.blob())
+          .then((blob) => multiImage.append("profile_image", blob));
+
+        try {
+          const response = await axios.post(
+            "/member/profileImage",
+            multiImage,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          const data = await response.data;
+          console.log(data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      try {
+        const response = await axios.put(`/member/nickname`, {
+          member_id: userInfo?.member_id,
+          nickname: nickname,
+        });
+        const data = await response.data;
+        console.log(data);
+        window.alert("가입되었습니다");
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   return (
     <>
@@ -67,6 +145,9 @@ export default function SignupPage() {
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
         <ProfileNickname>
           <ProfileFrame>
+            <ProfileEditIcon htmlFor="file">
+              {/* 연필아이콘추가하기 */}
+            </ProfileEditIcon>
             <ProfileInput
               type="file"
               id="file"
@@ -77,7 +158,8 @@ export default function SignupPage() {
             {selectedImage ? (
               <ProfileImage src={selectedImage} />
             ) : (
-              <NoProfile src="../src/assets/icons/upload-image-icon.png" />
+              // <NoProfile src="../src/assets/icons/upload-image-icon.png" />
+              <ProfileImage src={userInfo?.profile_image_url} />
             )}
           </ProfileFrame>
           <NicknameFrame>
@@ -88,8 +170,12 @@ export default function SignupPage() {
                 maxLength={8}
                 value={nickname}
                 onChange={handleNicknameChange}
+                placeholder={userInfo?.nickname}
               />
-              <CheckButton onClick={handleCheckNickname} isNicknameValid={nickname.length >= 2}>
+              <CheckButton
+                onClick={handleCheckNickname}
+                isNicknameValid={nickname.length >= 2}
+              >
                 중복확인
               </CheckButton>
             </NicknameCheck>
@@ -141,10 +227,10 @@ export default function SignupPage() {
           {green?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
           그린
         </InitialGreen>
-        <InfoName>추천인</InfoName>
-        <InitialGreen>QKF4FDL</InitialGreen>
         <SignupFrame>
-          <SignupButton disabled={!isNicknameChecked} onClick={alertSignup}>가입하기</SignupButton>
+          <SignupButton disabled={!isNicknameChecked} onClick={signupClicked}>
+            가입하기
+          </SignupButton>
           <Terms>
             회원가입 시 어라의 개인정보 처리방침 및 이용약관에
             <br />
@@ -177,6 +263,18 @@ const ProfileFrame = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const ProfileEditIcon = styled.label`
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  background-color: var(--white);
+  border: 1px solid var(--gray);
+  border-radius: 100px;
 `;
 
 const ProfileInput = styled.input`
@@ -214,13 +312,13 @@ const ProfileImage = styled.img`
   /* border: 1px solid var(--nav-gray); */
 `;
 
-const NoProfile = styled.img`
-  position: absolute;
-  margin-left: 3px;
-  width: 40%;
-  height: 40%;
-  z-index: 1;
-`;
+// const NoProfile = styled.img`
+//   position: absolute;
+//   margin-left: 3px;
+//   width: 40%;
+//   height: 40%;
+//   z-index: 1;
+// `;
 
 const NicknameFrame = styled.div`
   position: relative;
@@ -270,6 +368,10 @@ const NicknameInput = styled.input`
   ::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  &::placeholder {
+    color: var(--nav-gray);
   }
 `;
 
@@ -382,7 +484,8 @@ const SignupFrame = styled.div`
 const SignupButton = styled(LongButton)<{ disabled: boolean }>`
   width: calc(86.67%);
   margin-bottom: 28px;
-  background-color: ${({ disabled }) => (disabled ? "var(--nav-gray)" : "var(--primary)")};
+  background-color: ${({ disabled }) =>
+    disabled ? "var(--nav-gray)" : "var(--primary)"};
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 `;
 

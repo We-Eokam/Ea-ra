@@ -5,6 +5,7 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import { ModalFrame } from "../../style/ModalFrame";
 import "../../style/kakaomapOverlay.css";
 import actList from "../../common/act.json";
+import axiosInstance from "../../api/axiosInstance";
 
 interface CategoryProps {
   isSelected: boolean;
@@ -16,7 +17,7 @@ declare global {
   }
 }
 
-interface Store {
+interface StoreProps {
   company_id: number;
   company_name: string;
   branch_name: string;
@@ -25,12 +26,14 @@ interface Store {
   distance: number;
 }
 
-interface Activity {
+interface StoreListProps {
   activity_type: string;
-  stores: Store[];
+  stores: StoreProps;
 }
 
 export default function MapPage() {
+  const axios = axiosInstance();
+  const { kakao } = window;
   const categoryList = [
     "전체보기",
     "전자영수증",
@@ -57,8 +60,21 @@ export default function MapPage() {
     "DISCARDED_PHONE",
   ];
 
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
-  var filteredList: Store[];
+  const [selectedCategoryIndex, setSelectedCategoryIndex] =
+    useState<number>(10);
+  const [mapLat, setMapLat] = useState(0);
+  const [mapLng, setMapLng] = useState(0);
+  const [mapLevel, setMapLevel] = useState(505);
+  const [kakaoMap, setKakaoMap] = useState<any>(null);
+  const [markers, setMarkers] = useState([]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSelectedCategoryIndex(0);
+    }, 250);
+  }, []);
+
+  var filteredList: StoreProps;
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -69,67 +85,21 @@ export default function MapPage() {
       setSelectedCategoryIndex(0);
     }
   };
-
-  const store_list: Activity[] = [
-    {
-      activity_type: "EMISSION_FREE_CAR",
-      stores: [
-        {
-          company_id: 3,
-          company_name: "쏘카",
-          branch_name: "땡땡지점",
-          latitude: 127.0282206319216,
-          longitude: 37.51267716377659,
-          distance: 4800,
-        },
-        {
-          company_id: 3,
-          company_name: "CU",
-          branch_name: "역삼캠퍼스",
-          latitude: 127.0307206319216,
-          longitude: 37.51267716377659,
-          distance: 1200,
-        },
-      ],
-    },
-    {
-      activity_type: "TUMBLER",
-      stores: [
-        {
-          company_id: 1,
-          company_name: "스타벅스",
-          branch_name: "강남점",
-          latitude: 127.0264206319216,
-          longitude: 37.51267716377659,
-          distance: 100.0,
-        },
-      ],
-    },
-    {
-      activity_type: "ELECTRONIC_RECEIPT",
-      stores: [
-        {
-          company_id: 2,
-          company_name: "메가MGC커피",
-          branch_name: "언주로점",
-          latitude: 127.000001,
-          longitude: 35.0,
-          distance: 110.0,
-        },
-      ],
-    },
-  ];
+  const [store_list, setStoreList] = useState<StoreListProps | null>(null);
 
   if (selectedCategoryIndex === 0) {
-    filteredList = store_list.flatMap((item) => item.stores);
+    // @ts-ignore
+    filteredList = store_list?.flatMap((item: any) => item.stores);
   } else {
     const selectedType = categoryInEnglish[selectedCategoryIndex];
-    const foundItem = store_list.find(
-      (item) => item.activity_type === selectedType
+    // @ts-ignore
+    const foundItem = store_list?.find(
+      (item: any) => item.activity_type === selectedType
     );
     filteredList = foundItem ? foundItem.stores : [];
   }
-  filteredList.sort((a, b) => a.distance - b.distance);
+  // @ts-ignore
+  filteredList.sort((a: any, b: any) => a.distance - b.distance);
 
   const calculateTime = (distance: number) => {
     if (distance < 80) {
@@ -152,86 +122,42 @@ export default function MapPage() {
   }
 
   useEffect(() => {
-    // console.log(filteredList);
-    let container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
-    let options = {
-      //지도를 생성할 때 필요한 기본 옵션
-      center: new window.kakao.maps.LatLng(37.5013068, 127.0396597), //지도의 중심좌표.
-      level: 4, //지도의 레벨(확대, 축소 정도)
+    const container = document.getElementById("map");
+    const options = {
+      center: new kakao.maps.LatLng(33.450701, 126.570667),
+      level: 4,
     };
 
-    let map = new window.kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    const map = new kakao.maps.Map(container, options);
+    setKakaoMap(map);
 
     map.setMinLevel(1);
     map.setMaxLevel(8);
 
-    const displayMarkers = () => {
-      // 지도 영역을 얻어옵니다.
-      let bounds = map.getBounds();
-      // @ts-ignore
-      let swLatLng = bounds.getSouthWest(); // 남서쪽 좌표를 얻어옵니다.
-      // @ts-ignore
-      let neLatLng = bounds.getNorthEast(); // 북동쪽 좌표를 얻어옵니다.
-
-      filteredList.forEach((place) => {
-        let position = new window.kakao.maps.LatLng(
-          place.longitude,
-          place.latitude
-        );
-        // 현재 지도 영역 내에 있는지 확인합니다.
-        if (bounds.contain(position)) {
-          // 마커를 생성하고 지도에 표시합니다.
-          // @ts-ignore
-          let marker = new window.kakao.maps.Marker({
-            map: map,
-            position: position,
-          });
-
-          var customContent = `<div class="custom-overlay">${place?.company_name} ${place?.branch_name}</div>`;
-
-          // @ts-ignore
-          var customOverlay = new window.kakao.maps.CustomOverlay({
-            map: map,
-            position: position,
-            content: customContent,
-            yAnchor: 2.6,
-          });
-
-          // let infowindow = new window.kakao.maps.InfoWindow({
-          //   map: map,
-          //   position: position,
-          //   content: place.name,
-          // })
-
-          // infowindow.open(map, marker)
-        }
-      });
-    };
-
-    // 지도 이동 시 이벤트 리스너를 등록합니다.
-    window.kakao.maps.event.addListener(map, "idle", displayMarkers);
-
     if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
       navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude - 0.00025, // 위도
-          lon = position.coords.longitude - 0.0003; // 경도
+        var lat = position.coords.latitude - 0.00025;
+        var lon = position.coords.longitude;
 
-        var locPosition = new window.kakao.maps.LatLng(lat, lon);
+        setMapLat(lat);
+        setMapLng(lon);
+
+        getFirstStore(lat, lon);
+
+        var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
 
-        // 마커와 인포윈도우를 표시합니다
         var imageSrc = "/images/netzero/gps-my.png";
-        var imageSize = new window.kakao.maps.Size(32, 32);
-        var imageOption = { offset: new window.kakao.maps.Point(16, 24) };
+        var imageSize = new kakao.maps.Size(32, 32);
+        var imageOption = { offset: new kakao.maps.Point(16, 24) };
 
-        var markerImage = new window.kakao.maps.MarkerImage(
+        var markerImage = new kakao.maps.MarkerImage(
           imageSrc,
           imageSize,
           imageOption
         );
 
-        var marker = new window.kakao.maps.Marker({
+        var marker = new kakao.maps.Marker({
           position: locPosition,
           image: markerImage,
         });
@@ -239,12 +165,13 @@ export default function MapPage() {
         marker.setMap(map);
       });
     }
-
-    window.kakao.maps.event.addListener(map, "dragend", function () {
-      // 지도의 중심 좌표를 얻어옵니다
-
+    kakao.maps.event.addListener(map, "dragend", function () {
       var center = map.getCenter();
+      var newLat = center.getLat();
+      var newLng = center.getLng();
       var mapLevel = map.getLevel();
+      setMapLat(newLat);
+      setMapLng(newLng);
       var radius = 505;
       if (mapLevel == 1) {
         radius = 58;
@@ -257,20 +184,72 @@ export default function MapPage() {
       } else if (mapLevel > 4) {
         radius = 995;
       }
-      console.log(
-        `드래그가 끝난 후 중앙 좌표: 레벨(${mapLevel}), 반경(${radius}) 위도(${center.getLat()}), 경도(${center.getLng()})`
-      );
+      setMapLevel(radius);
     });
-    window.kakao.maps.event.addListener(map, "idle", displayMarkers);
+  }, []);
 
-    // 처음에 마커를 표시합니다.
-    displayMarkers();
-  }, [selectedCategoryIndex]);
+  const clearMarkers = () => {
+    // @ts-ignore
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+  };
+
+  useEffect(() => {
+    clearMarkers();
+
+    getStore(mapLevel, mapLat, mapLng);
+    // @ts-ignore
+    const map = kakaoMap;
+    // @ts-ignore
+    const newMarkers: any = filteredList.map((store) => {
+      const latlng = new kakao.maps.LatLng(store.latitude, store.longitude);
+      const marker = new kakao.maps.Marker({ position: latlng });
+      marker.setMap(kakaoMap);
+      return marker;
+    });
+
+    setMarkers(newMarkers); // Update the markers state
+  }, [mapLat, mapLng, selectedCategoryIndex]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSelectedCategoryIndex(0);
+    }, 300);
+  }, []);
+
+  const getStore = async (radius: number, draglat: number, draglon: number) => {
+    try {
+      const response = await axios.get(
+        `/cpoint/store?radius=${radius}&latitude=${draglat}&longitude=${draglon}`
+      );
+      const data = await response.data.store_list;
+      setStoreList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFirstStore = async (initlat: number, initlon: number) => {
+    try {
+      const response = await axios.get(
+        `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
+      );
+      const data = await response.data.store_list;
+      setStoreList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
       <HeadBar pagename="지도" bgcolor="white" backbutton="yes" />
-      <Categories>
+      <Categories
+        onClick={() => {
+          console.log(mapLat);
+          console.log(mapLng);
+        }}
+      >
         <Margin />
         {categoryList.map((category, index) => (
           <Category
@@ -289,9 +268,14 @@ export default function MapPage() {
         <MapModal>
           <CurrencyInfoFrame />
 
-          <StoreScroll>
-            {filteredList?.length > 0 ? (
-              filteredList.map((Store, index: number) => (
+          <StoreScroll
+            onClick={() => {
+              console.log(filteredList);
+              console.log(store_list);
+            }}
+          >
+            {/* @ts-ignore */}
+            {filteredList?.length > 0 ? (filteredList.map((Store: any, index: number) => (
                 <StoreFrame key={index}>
                   <LogoFrame>
                     <Logo src={getLogoPath(Store.company_name)} />
@@ -302,7 +286,7 @@ export default function MapPage() {
                     </StoreName>
                     <StoreInfo>
                       {Store?.distance < 1000
-                        ? `${Store?.distance}m`
+                        ? `${parseInt(Store?.distance)}m`
                         : `${(Store?.distance / 1000).toFixed(1)}km`}
                       &nbsp;&nbsp;
                       <Middot>&middot;</Middot>&nbsp;&nbsp;
@@ -474,4 +458,4 @@ const NoStore = styled.div`
   font-size: 16px;
   color: var(--dark-gray);
   font-weight: 400;
-`
+`;

@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from "react";
 import styled from "styled-components";
 
 interface MainFrameProps {
@@ -27,11 +27,11 @@ export default function MainFrame({
     marginTop = "calc(48px + env(safe-area-inset-top))";
     frame = "calc(100% - 48px - env(safe-area-inset-top))";
   } else if (headbar === "no" && navbar === "yes") {
-    marginTop = '0'
-    frame = "calc(100% - 76px)"
+    marginTop = "0";
+    frame = "calc(100% - 76px)";
   } else if (headbar === "no" && navbar === "no") {
-    marginTop = '0'
-    frame = "100%"
+    marginTop = "0";
+    frame = "100%";
   }
 
   if (marginsize === "small") {

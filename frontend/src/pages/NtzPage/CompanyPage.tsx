@@ -1,5 +1,5 @@
 // import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -8,15 +8,28 @@ import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
 import { ReactComponent as Connected } from "../../assets/icons/connected-icon.svg";
 import CompanyDetail from "../../components/Modal/CompanyDetail";
 import CompanyList from "../../common/act.json";
+import axiosInstance from "../../api/axiosInstance";
 
 interface CategoryProps {
   isSelected: boolean;
+}
+
+interface CompanyConnectProps {
+  id: number;
+  name: string;
+  is_connect: boolean;
+  policies: string;
 }
 
 export default function CompanyPage() {
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedCompany, setSelectedCompany] = useState<number>(0);
+  const [company_list, setCompanyList] = useState<CompanyConnectProps | null>(
+    null
+  );
+
+  const axios = axiosInstance();
 
   const showModal = (index: number) => {
     setSelectedCompany(index);
@@ -39,80 +52,16 @@ export default function CompanyPage() {
     "폐휴대폰",
   ];
 
-  // 영어 리스트도 가져오기
-  const company_list = [
-    {
-      id: 1,
-      name: "갤러리아백화점",
-      is_connect: true,
-      policies: null,
-    },
-    {
-      id: 2,
-      name: "롯데마트",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 3,
-      name: "롯데백화점",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 4,
-      name: "신세계백화점",
-      is_connect: true,
-      policies: null,
-    },
-    {
-      id: 5,
-      name: "이마트",
-      is_connect: true,
-      policies: null,
-    },
-    {
-      id: 6,
-      name: "현대백화점",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 7,
-      name: "현대아울렛",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 8,
-      name: "홈플러스",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 9,
-      name: "GS리테일",
-      is_connect: true,
-      policies: null,
-    },
-    {
-      id: 10,
-      name: "CU",
-      is_connect: false,
-      policies: null,
-    },
-    {
-      id: 11,
-      name: "세븐일레븐",
-      is_connect: true,
-      policies: null,
-    },
-    {
-      id: 12,
-      name: "세이브존",
-      is_connect: false,
-      policies: null,
-    },
+  const categoryInEnglish = [
+    "ELECTRONIC_RECEIPT",
+    "TUMBLER",
+    "DISPOSABLE_CUP",
+    "REFILL_STATION",
+    "MULTI_USE_CONTAINER",
+    "HIGH_QUALITY_RECYCLED_PRODUCTS",
+    "ECO_FRIENDLY_PRODUCTS",
+    "EMISSION_FREE_CAR",
+    "DISCARDED_PHONE",
   ];
 
   const handleCategoryClick = (index: number) => {
@@ -122,10 +71,32 @@ export default function CompanyPage() {
     }
   };
 
-  const filteredCompanies =
+  const filteredCompanies = (
     CompanyList.find(
       (category) => category.name === categoryList[selectedCategoryIndex]
-    )?.companies || [];
+    )?.companies || []
+  ).sort((a, b) => a.name.localeCompare(b.name, "en"));
+
+  const getCompanyConnected = async () => {
+    try {
+      const response = await axios.get(
+        `/cpoint/company?category=${categoryInEnglish[selectedCategoryIndex]}`
+      );
+      const data = await response.data.company_list;
+      console.log(data);
+      setCompanyList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCompanyConnected();
+  }, []);
+
+  useEffect(() => {
+    getCompanyConnected();
+  }, [selectedCategoryIndex]);
 
   return (
     <>
@@ -156,13 +127,19 @@ export default function CompanyPage() {
         </ConnectedFrame>
 
         <CompaniesFrame>
-          {filteredCompanies.map((company, index) => (
+          {filteredCompanies.map((company, index: number) => (
             <CompanyFrame
               onClick={() => {
                 showModal(index);
               }}
             >
-              {company_list[index]?.is_connect === true ? <CompanyConnected /> : null}
+              {company_list ? (
+                // @ts-ignore
+                company_list[index]?.is_connect === true ? (
+                  <CompanyConnected />
+                ) : null
+              ) : null}
+              {/* {company_list[index]?.is_connect === true ? <CompanyConnected /> : null} */}
               <LogoImgFrame>
                 <LogoImg src={company.logo} />
               </LogoImgFrame>
@@ -177,7 +154,10 @@ export default function CompanyPage() {
         <CompanyDetail
           closeModal={closeModal}
           companyInfo={filteredCompanies[selectedCompany]}
-          isConnected={company_list[selectedCompany]?.is_connect}
+          isConnected={
+            // @ts-ignore
+            company_list ? company_list[selectedCompany]?.is_connect : null
+          }
         />
       ) : null}
       <NavBar />
