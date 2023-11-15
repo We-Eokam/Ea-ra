@@ -1,5 +1,6 @@
 package com.eokam.proof.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,9 +70,13 @@ public class ProofServiceImpl implements ProofService {
 
 		Proof savedProof = proofRepository.save(Proof.from(proofCreateDto));
 
-		List<S3FileDetail> s3SavedList = s3Service.saveList(multipartFiles);
+		List<S3FileDetail> s3SavedList = new ArrayList<>();
 
-		s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
+		if (!multipartFiles.isEmpty()) {
+			s3SavedList = s3Service.saveList(multipartFiles);
+
+			s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
+		}
 
 		followServiceFeign.increaseAccusationCount(jwt, IsFollowRequest.from(proofCreateDto.memberId()));
 		grooServiceFeign.saveGroo(jwt,
