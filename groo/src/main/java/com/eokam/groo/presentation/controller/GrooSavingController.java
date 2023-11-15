@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eokam.groo.application.dto.GrooMonthDto;
 import com.eokam.groo.application.dto.GrooSavingDto;
+import com.eokam.groo.application.dto.GrooDailyDto;
 import com.eokam.groo.application.service.GrooSavingService;
 import com.eokam.groo.global.validation.ValidationSequence;
 import com.eokam.groo.infrastructure.dto.GrooTodayCountDto;
-import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
 import com.eokam.groo.infrastructure.jwt.TokenManager;
 import com.eokam.groo.presentation.dto.GrooSavingMonthResponse;
 import com.eokam.groo.presentation.dto.GrooSavingRequest;
@@ -53,7 +53,7 @@ public class GrooSavingController {
 	@GetMapping("/current-week")
 	ResponseEntity<WeeklyProofCountResponse> getDailyProofCountByWeek(@CookieValue(value = "access-token") String jwt){
 		Long memberId = tokenManager.getMemberId(jwt);
-		List<WeeklyProofCountDto> weeklyProofCountDtos = grooSavingService.getDailyProofCountByWeek(memberId);
+		List<GrooDailyDto> weeklyProofCountDtos = grooSavingService.getDailyProofCountByWeek(memberId);
 		return ResponseEntity.ok().body(WeeklyProofCountResponse.from(weeklyProofCountDtos));
 	}
 

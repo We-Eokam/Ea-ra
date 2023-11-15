@@ -1,8 +1,8 @@
 package com.eokam.groo.presentation.dto;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
-import com.eokam.groo.infrastructure.dto.WeeklyProofCountDto;
+import com.eokam.groo.application.dto.GrooDailyDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +12,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class DailyProofCountResponse {
-	private Date date;
+	private LocalDate date;
 	private Long proofCount;
 
-	public static DailyProofCountResponse from(WeeklyProofCountDto weeklyProofCountDto){
+	public static DailyProofCountResponse from(GrooDailyDto grooDailyDto){
 		return DailyProofCountResponse.builder()
-			.date(weeklyProofCountDto.getDate())
-			.proofCount(weeklyProofCountDto.getProofCount())
+			.date(grooDailyDto.date())
+			.proofCount(grooDailyDto.proofCount())
 			.build();
 	}
 }
