@@ -125,7 +125,7 @@ public class MemberController {
 
 	@PostMapping(value="/profileImage",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MemberDetailResponse> updateProfileImage(@JwtUser JwtMemberDto jwtMemberDto,
-		@RequestPart(value="profile_image",required = true) MultipartFile multipartFile){
+		@RequestParam(value="profile_image",required = true) MultipartFile multipartFile){
 		MemberDetailResponse memberDetailResponse =
 			MemberDetailResponse.from(memberService.updateProfileImage(jwtMemberDto,multipartFile));
 		return ResponseEntity.ok(memberDetailResponse);
