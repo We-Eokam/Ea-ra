@@ -7,6 +7,8 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import { ModalFrame } from "../../style/ModalFrame";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import { ShortButton } from "../../style";
+import axiosInstance from "../../api/axiosInstance";
+import { useState, useEffect } from "react";
 
 import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
 // import AngryEarth from "../../assets/lottie/angry-earth.json";
@@ -14,6 +16,16 @@ import { ReactComponent as Notification } from "../../assets/icons/notification-
 // import CryEarth from "../../assets/lottie/cry-earth.json";
 // import MeltingEarth from "../../assets/lottie/melting-earth.json";
 import WowEarth from "../../assets/lottie/wow-earth.json";
+
+interface UserInfoProps {
+  member_id: number;
+  nickname: string;
+  groo: number;
+  bill: number;
+  bill_count: number;
+  profile_image_url: string;
+  is_test_done: boolean;
+}
 
 function getCurrentWeek() {
   const day = new Date();
@@ -44,7 +56,10 @@ const getCountColor = (count: number): string => {
 };
 
 export default function MainPage() {
+  const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
+
   const navigate = useNavigate();
+  const axios = axiosInstance();
 
   const toNotification = () => {
     navigate("/notice");
@@ -65,7 +80,7 @@ export default function MainPage() {
   };
 
   const { View, play, stop } = useLottie(options);
-  
+
   const handleAnimationClick = () => {
     stop();
     play();
@@ -120,31 +135,55 @@ export default function MainPage() {
     },
   ];
 
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(`/member/detail?memberId=3`);
+      const data = await response.data;
+      setUserInfo(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getWeekAct = async () => {
+    try {
+      const response = await axios.get(`/groo/current-week`);
+      const data = await response.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    getWeekAct();
+  }, []);
+
   return (
     <>
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
         <NotiBar>
           <NotificationIcon onClick={toNotification} />
-          {/* <div onClick={() => navigate("/login")}>로그인 페이지</div>
-          <div onClick={() => navigate("/signup")}>회원가입 페이지</div>
-          <div onClick={() => navigate("/welcome")}>테스트 페이지</div> */}
+          <span onClick={() => navigate("/login")}>로그인 페이지</span>
+          <span onClick={() => navigate("/signup")}>회원가입 페이지</span>
+          <span onClick={() => navigate("/welcome")}>테스트 페이지</span>
         </NotiBar>
         <EarthFrame>
           <TodayEarth>
             오늘의 지구
             <div>활동을 통해 지구 상태를 바꿔보세요!</div>
           </TodayEarth>
-          <EarthLottie onClick={handleAnimationClick}>
-            {View}
-          </EarthLottie>
+          <EarthLottie onClick={handleAnimationClick}>{View}</EarthLottie>
         </EarthFrame>
         <HomeFrame>
           <ShowDate>{dateString} 기준</ShowDate>
           <NicknameLine>
-            <Bold>환경구해</Bold>님의 남은 빚
+            <Bold>{userInfo?.nickname}</Bold>님의 남은 빚
           </NicknameLine>
           <GreenLeft>
-            <Bold>1,242,600</Bold>그린
+            <Bold>{userInfo?.groo}</Bold>그루
           </GreenLeft>
 
           <ProgressBar progress={progress} greeninit={greenInit} />
@@ -209,6 +248,7 @@ const EarthFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: -14px;
 `;
 
 const TodayEarth = styled.div`

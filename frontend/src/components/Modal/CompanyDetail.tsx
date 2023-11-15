@@ -5,8 +5,10 @@ import styled, { keyframes } from "styled-components";
 // import { ModalBackground } from "./ModalBackground";
 import { ReactComponent as CloseIcon } from "../../assets/icons/close-icon.svg";
 import { LongButton } from "../../style";
+import axiosInstance from "../../api/axiosInstance";
 
 interface CompanyInfoProps {
+  id: number;
   name: string;
   logo: string;
   detail: string;
@@ -32,6 +34,7 @@ export default function CompanyDetail({
   isConnected,
 }: CompanyDetailProps) {
   const [isclosing, setIsClosing] = useState(false);
+  const axios = axiosInstance();
 
   const closeAndAnimate = () => {
     setIsClosing(true);
@@ -42,13 +45,36 @@ export default function CompanyDetail({
 
   const saveAndClose = () => {
     if (isConnected) {
-      // 연동취소
+      disconnectCompany();
     } else {
-      // 연동하기
+      connectCompany();
     }
     closeAndAnimate();
     location.reload();
+  };
 
+  const connectCompany = async () => {
+    try {
+      const response = await axios.post(
+        `/cpoint/company/${companyInfo.id}/connect`
+      );
+      const data = await response.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const disconnectCompany = async () => {
+    try {
+      const response = await axios.delete(
+        `/cpoint/company/${companyInfo.id}/connect`
+      );
+      const data = await response.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -64,7 +90,9 @@ export default function CompanyDetail({
           <CompanyName>{companyInfo?.name}</CompanyName>
           <CompanyPoints>{companyInfo?.detail}</CompanyPoints>
           {isConnected ? (
-            <ConnectedButton onClick={saveAndClose}>연동했어요</ConnectedButton>
+            <ConnectedButton onClick={saveAndClose}>
+              연동해제할게요
+            </ConnectedButton>
           ) : (
             <ConnectButton onClick={saveAndClose}>연동할래요</ConnectButton>
           )}

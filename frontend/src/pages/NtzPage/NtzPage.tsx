@@ -5,11 +5,29 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import { ReactComponent as PigCoin } from "../../assets/icons/pig-coin.svg";
 import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 import { ResponsivePie } from "@nivo/pie";
 
+interface UserInfoProps {
+  member_id: number;
+  nickname: string;
+  groo: number;
+  bill: number;
+  bill_count: number;
+  profile_image_url: string;
+  is_test_done: boolean;
+}
+
 export default function NtzPage() {
   const [charSort, setChartSort] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
+  const [userCpoint, setUserCpoint] = useState(0);
+  const [summary_list, setSummaryList] = useState([
+    { activity_type: "TUMBLER", point: 1 },
+    { activity_type: "ELECTRONIC_RECEIPT", point: 2 },
+  ]);
+  const axios = axiosInstance();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,8 +36,44 @@ export default function NtzPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const navigate = useNavigate();
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(`/member/detail?memberId=3`);
+      const data = await response.data;
+      setUserInfo(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const getCpoint = async () => {
+    try {
+      const response = await axios.get(`/cpoint`);
+      const data = await response.data;
+      setUserCpoint(data?.cpoint);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getSummary = async () => {
+    try {
+      const response = await axios.get(`/cpoint/summary`);
+      const data = await response.data.summary_list;
+      setSummaryList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    getCpoint();
+    getSummary();
+  }, []);
+
+  const navigate = useNavigate();
+  //test
   const categoryList = [
     "전자영수증",
     "텀블러",
@@ -59,32 +113,32 @@ export default function NtzPage() {
     "hsl(265, 30.6%, 75.7%)",
   ];
 
-  const summary_list = [
-    {
-      activity_type: "ELECTRONIC_RECEIPT",
-      point: 1200,
-    },
-    {
-      activity_type: "TUMBLER",
-      point: 2000,
-    },
-    {
-      activity_type: "DISPOSABLE_CUP",
-      point: 1000,
-    },
-    {
-      activity_type: "REFILL_STATION",
-      point: 2100,
-    },
-    {
-      activity_type: "MULTI_USE_CONTAINER",
-      point: 2100,
-    },
-    {
-      activity_type: "HIGH_QUALITY_RECYCLED_PRODUCTS",
-      point: 2100,
-    },
-  ];
+  // const summary_list = [
+  //   {
+  //     activity_type: "ELECTRONIC_RECEIPT",
+  //     point: 1200,
+  //   },
+  //   {
+  //     activity_type: "TUMBLER",
+  //     point: 2000,
+  //   },
+  //   {
+  //     activity_type: "DISPOSABLE_CUP",
+  //     point: 1000,
+  //   },
+  //   {
+  //     activity_type: "REFILL_STATION",
+  //     point: 2100,
+  //   },
+  //   {
+  //     activity_type: "MULTI_USE_CONTAINER",
+  //     point: 2100,
+  //   },
+  //   {
+  //     activity_type: "HIGH_QUALITY_RECYCLED_PRODUCTS",
+  //     point: 2100,
+  //   },
+  // ];
 
   for (var i = 0; i < summary_list.length; i++) {
     var cat =
@@ -113,14 +167,14 @@ export default function NtzPage() {
     window.Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
-        title: "~~~~~~ 어라",
-        description: `~~~님이 어라로 초대했어요`,
+        title: "일상 속 작은 실천, 어라🌱",
+        description: `${userInfo?.nickname}님이 어라로 초대했어요`,
         imageUrl:
           "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
-          mobileWebUrl: `https://eara-test-repo.vercel.app/`,
-          webUrl: `https://eara-test-repo.vercel.app/`,
+          mobileWebUrl: `https://dev.ea-ra.com/login`,
+          webUrl: `https://dev.ea-ra.com/login`,
         },
       },
     });
@@ -131,10 +185,10 @@ export default function NtzPage() {
       (max, item) => (item.point > max.point ? item : max),
       summary_list[0]
     );
-    const index = categoryInEnglish.indexOf(highestScoring.activity_type);
+    const index = categoryInEnglish.indexOf(highestScoring?.activity_type);
     const arr = [0, 2, 3, 5, 6, 8];
     const activity =
-      categoryList[categoryInEnglish.indexOf(highestScoring.activity_type)];
+      categoryList[categoryInEnglish.indexOf(highestScoring?.activity_type)];
 
     if (arr.includes(index)) {
       return `${activity}으`;
@@ -154,13 +208,13 @@ export default function NtzPage() {
       >
         <CPointContainer>
           <TextLine>
-            <Bold>환경구해</Bold>님이
+            <Bold>{userInfo?.nickname}</Bold>님이
           </TextLine>
           <TextLine>
             이번달 모은 <Green>탄소중립포인트</Green>는
           </TextLine>
           <CPoint>
-            <Bold>12,610</Bold>원
+            <Bold>{userCpoint ? userCpoint : 0}</Bold>원
           </CPoint>
           <PigCoinFrame>
             <PigCoin />

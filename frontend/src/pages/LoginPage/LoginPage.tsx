@@ -48,7 +48,7 @@ export default function LoginPage() {
             <br />
             고소한다면?
           </EARA>
-          <KakaoButton>
+          <KakaoButton href={"https://dev.ea-ra.com/api/login"}>
             카카오로 시작하기
             <ButtonLogo src="images/kakao-logo.png" />
           </KakaoButton>
@@ -149,7 +149,7 @@ const ButtonsFrame = styled.div`
   max-height: 60%;
 `;
 
-const KakaoButton = styled.div`
+const KakaoButton = styled.a`
   position: relative;
   left: 0;
   right: 0;
@@ -163,6 +163,7 @@ const KakaoButton = styled.div`
   font-weight: 550;
   font-size: 14px;
   color: var(--kakao-black);
+  text-decoration: none;
 `;
 
 const InstallButton = styled(KakaoButton)`

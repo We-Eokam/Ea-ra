@@ -1,5 +1,5 @@
 // import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
@@ -8,123 +8,54 @@ import "react-calendar/dist/Calendar.css";
 import "../../style/MonthCalendar.css";
 import styled from "styled-components";
 import moment from "moment";
+import axiosInstance from "../../api/axiosInstance";
+
+interface GrooSavingProps {
+  date: string;
+  proof_sum: number;
+  proof_count: 1;
+  accusation_sum: number;
+  accusation_count: number;
+}
+
+interface MonthCalendarProps {
+  proof_sum: number;
+  proof_count: number;
+  accusation_sum: number;
+  accusation_count: number;
+  groo_saving_list: GrooSavingProps;
+}
 
 export default function CalendarPage() {
   const [value, onChange] = useState<any>(new Date());
   const monthOfActiveDate = moment(value).format("YYYY-MM");
   const [activeMonth, setActiveMonth] = useState(monthOfActiveDate);
+  const [monthGroo, setMonthGroo] = useState<MonthCalendarProps | null>(null);
+  const axios = axiosInstance();
+
+  const apiYear = activeMonth.slice(0, 4);
+  const apiMonth = Number(activeMonth.slice(5, 7));
+
+  const getMonthAct = async () => {
+    try {
+      const response = await axios.get(
+        `/groo?year=${apiYear}&month=${apiMonth}`
+      );
+      const data = await response.data;
+      setMonthGroo(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getActiveMonth = (activeStartDate: moment.MomentInput) => {
     const newActiveMonth = moment(activeStartDate).format("YYYY-MM");
     setActiveMonth(newActiveMonth);
   };
 
-  const testList = {
-    proof_sum: 2500,
-    proof_count: 10,
-    accusation_sum: 3000,
-    accusation_count: 10,
-    groo_saving_list: [
-      {
-        date: "2023-11-17",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 0,
-        accusation_count: 0,
-      },
-      {
-        date: "2023-11-18",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 0,
-        accusation_count: 0,
-      },
-      {
-        date: "2023-11-19",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 0,
-        accusation_count: 0,
-      },
-      {
-        date: "2023-11-20",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 0,
-        accusation_count: 0,
-      },
-      {
-        date: "2023-11-21",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-22",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-23",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-24",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-25",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-26",
-        proof_sum: 250,
-        proof_count: 1,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-27",
-        proof_sum: 0,
-        proof_count: 0,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-28",
-        proof_sum: 0,
-        proof_count: 0,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-29",
-        proof_sum: 0,
-        proof_count: 0,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-      {
-        date: "2023-11-30",
-        proof_sum: 0,
-        proof_count: 0,
-        accusation_sum: 300,
-        accusation_count: 1,
-      },
-    ],
-  };
+  useEffect(() => {
+    getMonthAct();
+  }, [activeMonth]);
 
   const generateComma = (price: number) => {
     return price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
@@ -152,8 +83,9 @@ export default function CalendarPage() {
           }
           // @ts-ignore
           tileContent={({ date, view }) => {
-            const data = testList.groo_saving_list.find(
-              (x) => x.date === moment(date).format("YYYY-MM-DD")
+            // @ts-ignore
+            const data = monthGroo?.groo_saving_list.find(
+              (x: any) => x.date === moment(date).format("YYYY-MM-DD")
             );
             if (data) {
               return (
@@ -177,29 +109,42 @@ export default function CalendarPage() {
           {Number(moment(activeMonth).format("YYYY-MM").slice(5, 7))}월 종합내역
         </MonthSumText>
 
-        {testList?.proof_count === 0 && testList?.accusation_count === 0 ? (
-            <MonthActText style={{ marginTop: '-8px', fontSize: '15px'}}>활동 탭에서 환경활동을 시작해보세요</MonthActText>
+        {monthGroo?.proof_count === null &&
+        monthGroo?.accusation_count === null ? (
+          <MonthActText style={{ marginTop: "-8px", fontSize: "15px" }}>
+            활동 탭에서 환경활동을 시작해보세요
+          </MonthActText>
         ) : (
           <MonthActFrame>
             <MonthActText>전체 활동</MonthActText>
             <ActCountFrame>
-              <ActCountText>{testList.proof_count}회</ActCountText>
+              <ActCountText>
+                {monthGroo?.proof_count ? monthGroo.proof_count : 0}회
+              </ActCountText>
               <ActGrewCount>
-                {generateComma(testList.proof_sum)}그루
+                {generateComma(monthGroo?.proof_sum ? monthGroo.proof_sum : 0)}
+                그루
               </ActGrewCount>
             </ActCountFrame>
           </MonthActFrame>
         )}
 
-        {testList?.proof_count === 0 && testList?.accusation_count === 0 ? (
+        {monthGroo?.proof_count === null &&
+        monthGroo?.accusation_count === null ? (
           <></>
         ) : (
           <MonthActFrame>
             <MonthActText>전체 제보</MonthActText>
             <ActCountFrame>
-              <ActCountText>{testList.accusation_count}회</ActCountText>
+              <ActCountText>
+                {monthGroo?.accusation_count ? monthGroo.accusation_count : 0}회
+              </ActCountText>
               <ReportGrewCount>
-                -{generateComma(testList.accusation_sum)}그루
+                -
+                {generateComma(
+                  monthGroo?.accusation_sum ? monthGroo.accusation_sum : 0
+                )}
+                그루
               </ReportGrewCount>
             </ActCountFrame>
           </MonthActFrame>
@@ -236,7 +181,7 @@ const PlusGrew = styled.div`
 `;
 
 const MinusGrew = styled.div`
-  font-size: 11px;
+  font-size: 12px;
   color: var(--red);
   position: relative;
   width: 100%;
