@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ActivityType {
 
 	// Accusation
-	DISPOSABLE(250L, SavingType.ACCUSATION),
+	PLASTIC(250L, SavingType.ACCUSATION),
 	PAPER(150L, SavingType.ACCUSATION),
 	ELECTRICITY(350L, SavingType.ACCUSATION),
 	WATER(400L, SavingType.ACCUSATION),
