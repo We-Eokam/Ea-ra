@@ -39,23 +39,32 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
 	public GatewayFilter apply(Config config) {
 		return (((exchange, chain) -> {
 			ServerHttpRequest request = exchange.getRequest();
+			ServerHttpResponse response = exchange.getResponse();
 
 			Optional<String> optionalAccessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
 
 			log.info("[Request Path] {}", request.getPath());
+			log.info("PRE filter : request uri -> {}", request.getURI());
+			log.info("PRE filter : request headers {}", request.getHeaders());
+			log.info("PRE filter : request cookies {}", request.getCookies());
 
 			if (optionalAccessToken.isEmpty()) {
 				log.warn("Access Token Not Exist");
 				return handleUnAuthorized(exchange);
 			}
+			log.info("Acess Token Exists");
 
 			String accessToken = optionalAccessToken.get();
 
 			if (!jwtService.checkToken(accessToken)) {
 				return handleUnAuthorized(exchange);
 			}
+			log.info("Valid Jwt Token");
 
-			return chain.filter(exchange.mutate().request(request).build());
+			return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+				log.info("Loggin Post filter : response code -> {}", response.getStatusCode());
+				log.info("Loggin Post filter : response headers -> {}", response.getHeaders());
+			}));
 		}));
 	}
 
