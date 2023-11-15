@@ -15,6 +15,8 @@ import com.eokam.proof.domain.entity.Proof;
 import com.eokam.proof.domain.entity.ProofImage;
 import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
+import com.eokam.proof.infrastructure.external.groo.GrooSaveRequest;
+import com.eokam.proof.infrastructure.external.groo.GrooServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowList;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
@@ -36,6 +38,7 @@ public class ProofServiceImpl implements ProofService {
 	private final S3Service s3Service;
 
 	private final FollowServiceFeign followServiceFeign;
+	private final GrooServiceFeign grooServiceFeign;
 
 	@Override
 	public Page<ProofDto> getMyProofList(String jwt, PageRequest pageRequest) {
@@ -71,6 +74,9 @@ public class ProofServiceImpl implements ProofService {
 		s3SavedList.forEach(file -> proofImageRepository.save(ProofImage.of(file, savedProof)));
 
 		followServiceFeign.increaseAccusationCount(jwt, IsFollowRequest.from(proofCreateDto.memberId()));
+		grooServiceFeign.saveGroo(jwt,
+			GrooSaveRequest.of(ParseJwtUtil.parseMemberId(jwt), savedProof.getActivityType(), savedProof.getProofId(),
+				savedProof.getCreatedAt()));
 
 		return ProofDto.of(savedProof, s3SavedList);
 	}
@@ -104,6 +110,7 @@ public class ProofServiceImpl implements ProofService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteProof(String jwt, Long proofId) {
 		Proof proof = proofRepository.findByProofId(proofId).orElseThrow(()
 			-> new ProofException(ErrorCode.PROOF_NOT_EXIST));

@@ -17,9 +17,6 @@ public class ProofCreateRequestValidator {
 		if (proofCreateRequest.cCompanyId() != null && StringUtils.isNotBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.CREATE_PROOF_MANY_ARG);
 		}
-		if (!proofCreateRequest.activityType().equals(ActivityType.ETC) && proofCreateRequest.cCompanyId() == null) {
-			throw new ProofException(ErrorCode.REQUIRE_CCOMPANY_ID);
-		}
 		if (proofCreateRequest.activityType().equals(ActivityType.ETC)
 			&& StringUtils.isBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.REQUIRE_CONTENT_ID);
