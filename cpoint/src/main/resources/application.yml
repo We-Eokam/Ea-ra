@@ -6,7 +6,9 @@ spring:
     password: ssafy
   application:
     name: cpoint-service
-
+  web:
+    resources:
+      static-locations=classpath:/static/docs/:
 
   jpa:
     open-in-view: false
@@ -15,7 +17,7 @@ spring:
       format_sql: true
       ddl-auto: update
 
-eureka: 
+eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
