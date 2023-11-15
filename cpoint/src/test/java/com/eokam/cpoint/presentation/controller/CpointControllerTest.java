@@ -109,19 +109,15 @@ public class CpointControllerTest extends BaseControllerTest {
 		//given
 		Long memberId = 10L;
 		MemberDto memberDto = MemberDto.builder().memberId(10L).build();
-		Integer cpoint = 1000;
 
 		CpointCreateRequest cpointCreateRequest = CpointCreateRequest
 			.builder()
 			.memberId(memberId)
 			.activityType(ActivityType.TUMBLER)
 			.companyId(10L)
-			.amount(cpoint)
 			.build();
 
 		CpointDto cpointDto = CpointDto.of(cpointCreateRequest, memberDto);
-
-		CpointCreateResponse cpointCreateResponse = CpointCreateResponse.from(cpointDto);
 
 		given(cpointService.saveCpoint(any()))
 			.willReturn(cpointDto);
@@ -138,7 +134,6 @@ public class CpointControllerTest extends BaseControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.member_id", equalTo(memberId.intValue())))
-				.andExpect(jsonPath("$.point", equalTo(cpoint)))
 				.andExpect(jsonPath("$.company_id", equalTo(cpointDto.getCompanyId().intValue())))
 				.andExpect(jsonPath("$.activity_type", equalTo(cpointDto.getActivityType().name())));
 
@@ -153,7 +148,6 @@ public class CpointControllerTest extends BaseControllerTest {
 				),
 				requestFields(
 					fieldWithPath("member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
-					fieldWithPath("amount").type(JsonFieldType.NUMBER).description("적립할 포인트"),
 					fieldWithPath("company_id").type(JsonFieldType.NUMBER).description("회사 PK"),
 					fieldWithPath("activity_type").type(JsonFieldType.STRING).description("활동 종류")
 				)
@@ -172,7 +166,6 @@ public class CpointControllerTest extends BaseControllerTest {
 			.builder()
 			.memberId(memberId)
 			.activityType(ActivityType.TUMBLER)
-			.companyId(10L)
 			.build();
 
 		CpointDto cpointDto = CpointDto.of(cpointCreateRequest, memberDto);
@@ -226,7 +219,6 @@ public class CpointControllerTest extends BaseControllerTest {
 			.memberId(memberId)
 			.activityType(ActivityType.TUMBLER)
 			.companyId(9L)
-			.amount(cpoint)
 			.build();
 
 		CpointDto cpointDto = CpointDto.of(cpointCreateRequest, memberDto);

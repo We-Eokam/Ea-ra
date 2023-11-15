@@ -34,7 +34,7 @@ public class CpointDto {
 		return CpointDto
 			.builder()
 			.member(memberDto)
-			.point(cpointCreateRequest.getAmount())
+			.point(Cpoint.getCpointAmountByActivityType(cpointCreateRequest.getActivityType()))
 			.activityType(cpointCreateRequest.getActivityType())
 			.companyId(cpointCreateRequest.getCompanyId())
 			.build();

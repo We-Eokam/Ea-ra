@@ -64,6 +64,19 @@ public class Cpoint extends BaseEntity {
 
 	}
 
+	public static int getCpointAmountByActivityType(ActivityType activityType) {
+		return switch (activityType) {
+			case TUMBLER -> 300;
+			case ELECTRONIC_RECEIPT -> 100;
+			case DISPOSABLE_CUP -> 200;
+			case DISCARDED_PHONE, ECO_FRIENDLY_PRODUCTS, MULTI_USE_CONTAINER -> 1000;
+			case EMISSION_FREE_CAR -> 500;
+			case HIGH_QUALITY_RECYCLED_PRODUCTS -> 300;
+			case REFILL_STATION -> 2000;
+			case ETC -> 0;
+		};
+	}
+
 	public void minusMonthsCreatedAtForTest(Long months) {
 		this.createdAt = this.createdAt.minusMonths(months);
 	}

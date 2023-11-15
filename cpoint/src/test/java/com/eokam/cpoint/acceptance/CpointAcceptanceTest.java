@@ -61,7 +61,6 @@ public class CpointAcceptanceTest {
 		//given
 		var 생성_요청 = CpointCreateRequest
 			.builder()
-			.amount(100)
 			.memberId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
 			.build();
@@ -84,7 +83,6 @@ public class CpointAcceptanceTest {
 		//given
 		var 생성_요청 = CpointCreateRequest
 			.builder()
-			.amount(100)
 			.memberId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
 			.build();
@@ -147,28 +145,24 @@ public class CpointAcceptanceTest {
 
 		var 생성_요청_전자영수증 = CpointCreateRequest
 			.builder()
-			.amount(100)
 			.memberId(1L)
 			.activityType(ActivityType.ELECTRONIC_RECEIPT)
 			.build();
 
 		var 생성_요청_텀블러 = CpointCreateRequest
 			.builder()
-			.amount(300)
 			.memberId(1L)
 			.activityType(ActivityType.TUMBLER)
 			.build();
 
 		var 생성_요청_다회용기 = CpointCreateRequest
 			.builder()
-			.amount(1000)
 			.memberId(1L)
 			.activityType(ActivityType.MULTI_USE_CONTAINER)
 			.build();
 
 		var 생성_요청_리필스테이션_이용 = CpointCreateRequest
 			.builder()
-			.amount(2000)
 			.memberId(1L)
 			.activityType(ActivityType.REFILL_STATION)
 			.build();
