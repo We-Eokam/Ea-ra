@@ -11,9 +11,6 @@ import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 @Component
 public class ProofCreateRequestValidator {
 	public void validate(ProofCreateRequest proofCreateRequest) {
-		if (proofCreateRequest.cCompanyId() == null && StringUtils.isBlank(proofCreateRequest.content())) {
-			throw new ProofException(ErrorCode.CREATE_PROOF_REQUIRE_ARG);
-		}
 		if (proofCreateRequest.cCompanyId() != null && StringUtils.isNotBlank(proofCreateRequest.content())) {
 			throw new ProofException(ErrorCode.CREATE_PROOF_MANY_ARG);
 		}
