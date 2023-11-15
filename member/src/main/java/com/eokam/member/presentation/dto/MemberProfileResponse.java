@@ -16,6 +16,8 @@ public class MemberProfileResponse {
 
 	private Integer groo;
 
+	private Integer repayGroo;
+
 	private String profileImageUrl;
 
 	private String nickname;
@@ -27,6 +29,7 @@ public class MemberProfileResponse {
 			.groo(memberDto.getGroo()-memberDto.getRepayGroo())
 			.profileImageUrl(memberDto.getProfileImageUrl())
 			.nickname(memberDto.getNickname())
+			.repayGroo(memberDto.getRepayGroo())
 			.build();
 	}
 

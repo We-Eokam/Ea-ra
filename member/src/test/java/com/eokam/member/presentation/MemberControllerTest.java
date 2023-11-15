@@ -126,6 +126,7 @@ public class MemberControllerTest extends BasicControllerTest {
 					fieldWithPath("member_list.[].member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
 					fieldWithPath("member_list.[].nickname").type(JsonFieldType.STRING).description("멤버 닉네임"),
 					fieldWithPath("member_list.[].groo").type(JsonFieldType.NUMBER).description("멤버의 남은 그루"),
+					fieldWithPath("member_list.[].repay_groo").type(JsonFieldType.NUMBER).description("멤버의 갚은 그루"),
 					fieldWithPath("member_list.[].profile_image_url").type(JsonFieldType.STRING).description("멤버 프로필 사진 url(초기는 카카오 프로필)")
 				)
 			));
@@ -1075,6 +1076,7 @@ public class MemberControllerTest extends BasicControllerTest {
 					fieldWithPath("member_list.[].member_id").type(JsonFieldType.NUMBER).description("멤버 PK"),
 					fieldWithPath("member_list.[].nickname").type(JsonFieldType.STRING).description("멤버 닉네임"),
 					fieldWithPath("member_list.[].groo").type(JsonFieldType.NUMBER).description("멤버의 남은 그루"),
+					fieldWithPath("member_list.[].repay_groo").type(JsonFieldType.NUMBER).description("멤버의 갚은 그루"),
 					fieldWithPath("member_list.[].profile_image_url").type(JsonFieldType.STRING).description("멤버 프로필 사진 url(초기는 카카오 프로필)")
 				)
 			));
