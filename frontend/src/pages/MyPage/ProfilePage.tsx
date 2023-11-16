@@ -10,7 +10,9 @@ import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
 import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
 import { ReactComponent as ReportSend } from "../../assets/icons/report-send-icon.svg";
+import useInfScroll from "../../hooks/useInfScroll";
 import axiosInstance from "../../api/axiosInstance";
+import reportData from "../../common/report.json";
 
 interface UserInfoProps {
   id: number;
@@ -22,26 +24,15 @@ interface UserInfoProps {
   progress: number;
 }
 
-const PostExample: { postId: number,coverImg: string }[] = [];
+interface Post {
+  proof_id: number;
+  picture: {url: string }[];
+}
 
-const ReportExample = [
-  {
-    reportId: 5,
-    coverImg: "/images/template6.png",
-  },
-  {
-    reportId: 6,
-    coverImg: "/images/template6.png",
-  },
-  {
-    reportId: 7,
-    coverImg: "/images/template5.png",
-  },
-  {
-    reportId: 8,
-    coverImg: "/images/template2.png",
-  },
-];
+interface Report {
+  accusation_id: number;
+  imageUrl: string;
+}
 
 const calcPercent = (tmp: number, total: number) => {
   if (total === 0) {
@@ -60,15 +51,21 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const axios = axiosInstance();
 
+
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [curPosts, setCurPosts] = useState(0);
+  const [morePosts, setMorePosts] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [curReports, setCurReports] = useState(0);
+  const [moreReports, setMoreReports] = useState(true);
+  const [isLoadingReports, setIsLoadingReports] = useState(false);
+
+
   useEffect(() => {
     getMemberInfo();
     getStatus();
   }, []);
-
-  useEffect(() => {
-    console.log(status)
-    console.log(userInfo)
-  }, [status, userInfo])
 
   const getMemberInfo = async () => {
     try {
@@ -102,12 +99,78 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (status === "FRIEND") {
-      // 다른 상태에서 친구로 변경될 때만 정보 가져와서 바꿈
-    } else {
-      // 그 외 다른 상태로 변경되면 아무일도 일어나지 않음
     }
   }, [status]);
+  
+  useEffect(() => {
+    console.log("인증",posts)
+    console.log("제보",reports)
+  }, [posts, reports])
+  
+  const { ref: postInfScrollRef } = useInfScroll({
+    getMore: () => {
+      getPosts();
+    },
+    hasMore: morePosts,
+  });
 
+  const { ref: reportInfScrollRef } = useInfScroll({
+    getMore: () => {
+      getReports();
+    },
+    hasMore: moreReports,
+  });
+
+  const getPosts = async () => {
+    if (isLoadingPosts) return;
+    setIsLoadingPosts(true);
+
+    try {
+      const nowPosts = curPosts;
+      const response = await axios.get(`/proof?memberId=${userInfo?.id}&page=${nowPosts}&size=12`);
+      const data = response.data;
+
+      if(response.status !== 204) {
+        setPosts((prevPosts) => [...prevPosts, ...data.proof as Post[]]);
+        setCurPosts(nowPosts+1);
+      } else {
+        setMorePosts(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  };
+
+  const getReports = async () => {
+    if (isLoadingReports) return;
+    setIsLoadingReports(true);
+    
+    try {
+      const nowReports = curReports;
+      const response = await axios.get(`/accusation?targetId=${userInfo?.id}&page=${nowReports}&size=12`);
+      const data = response.data;
+
+      const updateReports = data.accusation_list.map((report: any) => {
+        const actData = reportData.find(item => item.type === report.activity_type);
+        const imageUrl = actData ? actData.imgUrl : report.image_list.imageURL_1;
+        return { ...report, imageUrl };
+      })
+      
+      setReports(prevReports => [...prevReports, ...updateReports as Report[]]);   
+      
+      if(data.page_info.is_last) {
+        setMoreReports(false);
+      } else {
+        setCurReports(nowReports+1);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingReports(false);
+    }
+  };
 
   useEffect(() => {
     const tabIndex = tabs.indexOf(activeTab);
@@ -152,19 +215,20 @@ export default function ProfilePage() {
           </UserInfoContainer>
           <ProgressBar progress={userInfo?.progress} greeninit={userInfo?.groo} />
         </UserFrame>
-        <SliderFrame>
-          {tabs.map((tab) => (
-            <SliderTab
-              key={tab}
-              active={activeTab === tab}
-              onClick={() => handleSlider(tab)}
-            >
-              {tab}
-            </SliderTab>
-          ))}
-          <ActiveTab offsetX={offsetX} />
-        </SliderFrame>
-
+        {status === "FRIEND" && (
+          <SliderFrame>
+            {tabs.map((tab) => (
+              <SliderTab
+                key={tab}
+                active={activeTab === tab}
+                onClick={() => handleSlider(tab)}
+              >
+                {tab}
+              </SliderTab>
+            ))}
+            <ActiveTab offsetX={offsetX} />
+          </SliderFrame>
+        )}
         {status === "FRIEND" && activeTab !== "인증" && (
           <SendFrame onClick={handleReportBtn}>
             <ReportSend />
@@ -178,30 +242,31 @@ export default function ProfilePage() {
         {status === "FRIEND" ? (
           <PostsFrame>
             {activeTab === "인증" ? (
-              PostExample.length === 0 ? (
+              posts.length === 0 ? (
                 <NoPost>
                   <NoAct />활동 인증 없음
                 </NoPost>
               ) : (
-                PostExample.map((post) => (
-                  <Post onClick={() => {handleNavigate("post", post.postId)}}>
-                    <CoverImg src={post.coverImg} />
+                posts.map((post) => (
+                  <Post onClick={() => {handleNavigate("post", post.proof_id)}}>
+                    <ImageUrl src={post.picture[0].url} />
                   </Post>
                 ))
               )
             ) : (
-              ReportExample.length === 0 ? (
+              reports.length === 0 ? (
                 <NoPost hasSendFrame={true}>
                   <NoReport />보낸 경고장 없음
                 </NoPost>
               ) : (
-                ReportExample.map((post) => (
-                  <Post onClick={() => {handleNavigate("report", post.reportId)}}>
-                    <CoverImg src={post.coverImg} />
+                reports.map((report) => (
+                  <Post onClick={() => {handleNavigate("report", report.accusation_id)}}>
+                    <ImageUrl src={report.imageUrl} />
                   </Post>
                 ))
               )
             )}
+            <div ref={activeTab === "인증" ? postInfScrollRef : reportInfScrollRef} />
           </PostsFrame>
         ) : (
           <Text>
@@ -335,7 +400,7 @@ const Post = styled.div`
   aspect-ratio: 1/1;
 `;
 
-const CoverImg = styled.img`
+const ImageUrl = styled.img`
   position: absolute;
   top: 0;
   left: 0;
