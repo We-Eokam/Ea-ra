@@ -1,6 +1,7 @@
 // import React from 'react'
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 import styled from "styled-components";
 import NavBar from "../../components/NavBar/NavBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -9,40 +10,69 @@ import { ReactComponent as PointCircle } from "../../assets/icons/point-circle.s
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg";
 // import { ReactComponent as LeafEmpty } from "../../assets/icons/leaf-empty.svg";
 // import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg";
+import useInfScroll from "../../hooks/useInfScroll";
+import axiosInstance from "../../api/axiosInstance";
+import rewardData from "../../common/reward.json"
 
-const PostExample = [
-  {
-    id: 1,
-    userId : 1,
-    writerProfileImg: "",
-    writerNickname: "지구구해",
-    time: "오늘",
-    act: "다회용기 이용",
-    point: "1,000",
-    gru: "200",
-    img: "/images/template1.png",
-    likedUser: "일회용품뿌셔",
-    liked: 24,
-  },
-  {
-    id: 2,
-    userId : 2,
-    writerProfileImg: "",
-    writerNickname: "지뀨해",
-    time: "오늘",
-    act: "텀블러•다회용컵 이용",
-    point: "300",
-    gru: "100",
-    img: "",
-    likedUser: "지구구해",
-    liked: 22,
-  },
-];
+interface Post {
+  proof_id: number;
+  member_id: number;
+  content: string;
+  c_company_id: number | null;
+  created_at: string;
+  picture: { name: string, url: string }[];
+  writerProfileImg?: string;
+  writerNickname?: string;
+  activity_type?: string | number;
+  activity?: string;
+  cpoint?: number;
+  groo?: number;
+}
+
+interface UserInfo {
+  member_id: number;
+  profile_image_url: string;
+  nickname: string;
+}
 
 export default function FeedPage() {
   const navigate = useNavigate();
+  const axios = axiosInstance();
+
   // const [isLiked, setIsLiked] = useState(false);
   const [searchUserId, setSearchUserId] = useState<number|null>(null);
+  
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [curPosts, setCurPosts] = useState(0);
+  const [morePosts, setMorePosts] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+
+  const formatDate = (createdAt: string): string => {
+    const createdMoment = moment(createdAt);
+    const now = moment();
+    const diffDays = now.diff(createdMoment, 'days');
+    const diffHours = now.diff(createdMoment, 'hours');
+    const diffMinutes = now.diff(createdMoment, 'minutes');
+    const diffSeconds = now.diff(createdMoment, 'seconds');
+  
+    if (diffDays >= 7) {
+      return createdMoment.format(createdMoment.year() === now.year() ? 'MM월 DD일' : 'YYYY년 MM월 DD일');
+    } else if (diffDays > 0) {
+      return `${diffDays}일 전`;
+    } else if (diffHours > 0) {
+      return `${diffHours}시간 전`;
+    } else if (diffMinutes > 0) {
+      return `${diffMinutes}분 전`;
+    } else if (diffSeconds > 0) {
+      return `${diffSeconds}초 전`;
+    } else {
+      return '방금 전';
+    }
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
   
   useEffect(() => {
     if (searchUserId) {
@@ -64,32 +94,103 @@ export default function FeedPage() {
   //   setIsLiked(!isLiked);
   // };
 
+  const { ref: feedInfScrollRef } = useInfScroll({
+    getMore: () => {
+      getPosts();
+    },
+    hasMore: morePosts,
+  })
+
+  const getMemberInfo = async (members: number[]) => {
+    try {
+      const response = await axios.get(`/member?memberId=${members.join('&memberId=')}`);
+      return response.data.member_list;
+    } catch (error) {
+      console.error('멤버 정보 가져오기 실패:', error);
+      return [];
+    }
+  };
+
+  const getPosts = async () => {
+    if (isLoadingPosts) return;
+    setIsLoadingPosts(true);
+
+    try {
+      const nowPosts = curPosts;
+      const response = await axios.get(`/proof/feed?page=${nowPosts}&size=12`);
+      const data = response.data;
+      console.log(data);
+
+      if(response.status !== 204) {
+        const memberIdsObj = data.proof.reduce((acc: { [key: number]: boolean }, post: Post) => {
+          acc[post.member_id] = true;
+          return acc;
+        }, {});
+
+        const memberIds = Object.keys(memberIdsObj).map(id => parseInt(id));
+        const membersInfo = await getMemberInfo(memberIds);
+
+        const updatedPosts = data.proof.map((post: Post) => {
+          const memberInfo = membersInfo.find((member: UserInfo) => member.member_id === post.member_id);
+          
+          const rwd = rewardData.find(item => item.type === post.activity_type);
+          const activity = rwd ? rwd.typeInKorean : "";
+          const cpoint = (rwd && post.c_company_id) ? rwd.ntzPoint : 0;
+          const groo = rwd ? rwd.groo : 0;
+
+          return {
+            ...post,
+            writerProfileImg: memberInfo.profile_image_url,
+            writerNickname: memberInfo.nickname,
+            activity,
+            cpoint,
+            groo,
+          };
+        });
+        
+        setPosts((prevPosts) => [...prevPosts, ...updatedPosts]);
+        setCurPosts(nowPosts+1);
+      } else {
+        setMorePosts(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  };
+
   return (
     <>
       <SearchBar setUserId={setSearchUserId} type=""/>
       <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
         <Margin />
-        {PostExample.map((post, index) => (
-          <PostFrame key={index} onClick={() => goToDetail(post.id)}>
+        {posts.map((post, index) => (
+          <PostFrame key={index} onClick={() => goToDetail(post.proof_id)}>
             <WriterContainer>
               <ProfileImg
                 src={post.writerProfileImg}
-                onClick={(event) => goToProfile(event, post.userId)}
+                onClick={(event) => goToProfile(event, post.member_id)}
               />
               <TextBox>
-                <Bold onClick={(event) => goToProfile(event, post.userId)}>{post.writerNickname}</Bold>
-                님이 {post.time}&nbsp;
-                <Bold>{post.act}</Bold>에 참여했어요!
+                <Bold onClick={(event) => goToProfile(event, post.member_id)}>{post.writerNickname}</Bold>
+                님이&nbsp;
+                <Bold>{post.activity}</Bold>에 참여했어요!
                 <RewardContainer>
-                  <PointCircle />
-                  <RewardText>{post.point} 포인트 적립</RewardText>
+                {(post.cpoint !== 0) && 
+                    <>
+                      <PointCircle />
+                      <RewardText>{post.cpoint} 포인트 적립</RewardText>
+                    </>
+                  }
                   <GruCircle />
-                  <RewardText>{post.gru} 그루 갚음</RewardText>
+                  <RewardText>{post.groo} 그루 갚음</RewardText>
+                  <RewardText style={{ marginLeft: 0 }}> |&nbsp;&nbsp;{formatDate(post.created_at)} </RewardText>
                 </RewardContainer>
               </TextBox>
             </WriterContainer>
             <ContentContainer>
-              <ActImg src={post.img} />
+              <ActImg src={post.picture[0].url} />
               {/* <ReactionContainer>
                 {isLiked ? (
                   <LeafFill onClick={toggleLeaf} />
@@ -101,6 +202,7 @@ export default function FeedPage() {
                 </ReactionText>
               </ReactionContainer> */}
             </ContentContainer>
+            <div ref={feedInfScrollRef} />
           </PostFrame>
         ))}
         <BottomMargin />
@@ -160,6 +262,7 @@ const RewardText = styled.div`
   margin-right: 2.5%;
   font-size: 12px;
   color: var(--dark-gray);
+  white-space: nowrap;
 `;
 
 const ContentContainer = styled.div`

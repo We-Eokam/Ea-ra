@@ -1,6 +1,6 @@
 // import React from 'react'
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -11,34 +11,130 @@ import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg"
 // import { ReactComponent as LeafFill } from "../../assets/icons/leaf-fill.svg"
 import { ReactComponent as BallMenu } from "../../assets/icons/ball-menu-icon.svg"
 import OptionModal from "../../components/Modal/OptionModal";
+import axiosInstance from "../../api/axiosInstance";
+import actData from "../../common/act.json";
+import rewardData from "../../common/reward.json"
 
-const post = {
-  writerProfileImg: "",
-  writerNickname: "지구구해",
-  time: "2023년 10월 24일",
-  act: "다회용기 이용",
-  company: "회사이름",
-  point: "1,000",
-  gru: "200",
-  img: "/images/template2.png",
-  likedUser: "일회용품뿌셔",
-  liked: 24
+interface Post {
+  reportId?: number;
+  writerId?: number;
+  act?: string;
+  actDetail?: string;
+  company?: string;
+  createdAt?: string;
+  image?: string;
+  isMine?: boolean;
+}
+
+interface Reward {
+  cpoint: string | number;
+  groo: string | number;
 }
 
 export default function PostDetail() {
+  const navigate = useNavigate();
+  const axios = axiosInstance();
+
   const { id } = useParams<{ id: string }>();
   // const [isLiked, setIsLiked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [post, setPost] = useState<Post>({});
+  const [writerProfile, setWriterProfile] = useState("");
+  const [writerNickname, setWriterNickname] = useState("");
+  const [reward, setReward] = useState<Reward>({ cpoint: 0, groo: 0 });
+
   useEffect(() => {
-    // id로 요청보내고 post정보 바꾸기
+    getPost();
   }, [id]);
+
+  useEffect(() => {
+    if (post.writerId) {
+      getUsersInfo();
+    }
+  }, [post])
+
+  const getPost = async () => {
+    try {
+      const response = await axios.get(`/proof/${id}`);
+      const data = response.data;
+
+      const date = new Date(data.created_at);
+      const formattedDate = new Intl.DateTimeFormat("ko-KR", {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+
+      const act = actData.find(item => item.englishName === data.activity_type);
+      const actName = act ? act.name : '';
+
+      let companyName = "";
+      if(data.c_company_id !== null) {
+        const company = act?.companies.find(c => c.id === data.c_company_id);
+        companyName = company ? company.name : '';
+      }
+
+      const rwd = rewardData.find(item => item.type === data.activity_type);
+      if(rwd) {
+        setReward({
+          cpoint: data.c_company_id ? rwd.ntzPoint : 0,
+          groo: rwd.groo
+        });
+      }
+
+      setPost({
+        reportId: data.proof_id,
+        writerId: data.member_id,
+        act: actName,
+        actDetail: data.content,
+        company: companyName,
+        createdAt: formattedDate,
+        image: data.picture[0].url,
+        isMine: data.is_mine
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getUsersInfo = async () => {
+    try {
+      const response = await axios.get(`/member?memberId=${post.writerId}`);
+      const memberData = response.data.member_list;
+
+      setWriterProfile(memberData[0].profile_image_url);
+      setWriterNickname(memberData[0].nickname);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const deletePost = async () => {
+    try {
+      await axios.delete(`/proof/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // const toggleLeaf = () => {
   //   setIsLiked(!isLiked);
   // }
 
-  const showModal = () => {
+  const goToProfile = (userId: number) => {
+    if (userId === undefined) return;
+    
+    if(post.isMine) {
+      navigate(`/mypage`);
+    } else {
+      navigate(`/profile/${userId}`);
+    }
+  }
+
+  const showModal = (e : any) => {
+    e.stopPropagation();
     setModalOpen(true);
   };
 
@@ -46,30 +142,42 @@ export default function PostDetail() {
     setModalOpen(false);
   };
 
+  const handleDelete = () => {
+    deletePost();
+    setModalOpen(false);
+    navigate(-1);
+  }
+
   return (
     <>
       <HeadBar pagename="활동 인증" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <PostFrame>
-          <WriterContainer>
-            <ProfileImg src={post.writerProfileImg} />
+          <WriterContainer onClick={() => post.writerId && goToProfile(post.writerId)}>
+            <ProfileImg src={writerProfile} />
             <TextBox>
-              <Bold>{post.writerNickname}</Bold>
-              <SubText>{post.time}</SubText>
+              <Bold>{writerNickname}</Bold>
+              <SubText>{post.createdAt}</SubText>
             </TextBox>
-            <BallMenu onClick={showModal} />
+            {post.isMine && 
+              <BallMenu onClick={showModal} />
+            }
           </WriterContainer>
-          <ActImg src={post.img} />
+          <ActImg src={post.image} />
           {/* <ReactionContainer>
             {isLiked ? <LeafFill onClick={toggleLeaf} /> : <LeafEmpty onClick={toggleLeaf} />}
             <ReactionText><Bold>{post.likedUser}</Bold>님 외 {post.liked}명이 좋아해요</ReactionText>
           </ReactionContainer> */}
         </PostFrame>
         <RewardContainer>
-          <PointCircle />
-          <RewardText>{post.point} 포인트 적립</RewardText>
+          {(reward.cpoint !== 0) && 
+            <>
+              <PointCircle />
+              <RewardText>{reward.cpoint} 포인트 적립</RewardText>
+            </>
+          }
           <GruCircle />
-          <RewardText>{post.gru} 그루 갚음</RewardText>
+          <RewardText>{reward.groo} 그루 갚음</RewardText>
         </RewardContainer>
         <MiddleMargin/>
         <ActContainer>
@@ -81,9 +189,13 @@ export default function PostDetail() {
             <ActText>기업</ActText>
             <ActText>{post.company}</ActText>
           </ActContainer>}
+        {post.actDetail &&
+          <ActContainer>
+            <ActText>내용</ActText>
+            <ActText>{post.actDetail}</ActText>
+          </ActContainer>}
       </MainFrame>
-
-      <OptionModal title="게시물 삭제" content="정말로 인증 내역을 삭제하시겠습니까?" btnText="삭제" isOpen={modalOpen} closeModal={closeModal} />
+      <OptionModal title="게시물 삭제" content="정말로 인증 내역을 삭제하시겠습니까?" btnText="삭제" isOpen={modalOpen} closeModal={closeModal} onConfirm={handleDelete}/>
       <NavBar />
     </>
   )
