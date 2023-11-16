@@ -14,9 +14,9 @@ interface GenderButtonProps {
   isSelected: boolean;
 }
 
-interface DropdownProps {
-  isOpen: boolean;
-}
+// interface DropdownProps {
+//   isOpen: boolean;
+// }
 
 interface UserInfoProps {
   member_id: number;
@@ -167,14 +167,14 @@ export default function SignupPage() {
 
   useEffect(() => {
     getUserInfo();
-    // const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
-    // if (initGroo) {
-    //   setGroo(initGroo);
-    //   localStorage.removeItem("testGroo");
-    // } else {
-    //   window.alert("테스트를 먼저 진행해주세요");
-    //   navigate("/welcome");
-    // }
+    const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
+    if (initGroo) {
+      setGroo(initGroo);
+      localStorage.removeItem("testGroo");
+    } else {
+      // window.alert("테스트를 먼저 진행해주세요");
+      // navigate("/welcome");
+    }
   }, []);
 
   const handleNoti = () => {
