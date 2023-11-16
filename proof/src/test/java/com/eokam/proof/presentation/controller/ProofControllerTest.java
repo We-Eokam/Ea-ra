@@ -38,6 +38,7 @@ import com.eokam.proof.application.dto.ProofImageDto;
 import com.eokam.proof.application.service.ProofServiceImpl;
 import com.eokam.proof.common.BaseControllerTest;
 import com.eokam.proof.domain.constant.ActivityType;
+import com.eokam.proof.infrastructure.rabbitmq.RabbitSender;
 import com.eokam.proof.infrastructure.util.error.ErrorCode;
 import com.eokam.proof.infrastructure.util.error.GlobalExceptionHandler;
 import com.eokam.proof.infrastructure.util.error.exception.ProofException;
@@ -56,6 +57,9 @@ class ProofControllerTest extends BaseControllerTest {
 	ProofServiceImpl proofService;
 	@Spy
 	ProofCreateRequestValidator proofCreateRequestValidator;
+
+	@Mock
+	RabbitSender rabbitSender;
 
 	private static final List<ProofDto> EXPECTED_MY_PROOF_LIST
 		= ProofControllerTestStatic.EXPECTED_MY_PROOF_LIST();
