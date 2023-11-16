@@ -12,6 +12,7 @@ import Judge from "../../assets/lottie/judge.json";
 import data from "../../common/result.json";
 import { ScoreBar } from "../../components/ProgressBar/ScoreBar";
 import { ReactComponent as CopySvg } from "../../assets/icons/copy_icon.svg";
+import axiosInstance from "../../api/axiosInstance";
 
 interface ResultDataProps {
   type: number;
@@ -26,10 +27,12 @@ export default function ResultPage() {
   const [initCode, setInitCode] = useState("")
   const [wrong, setWrong] = useState(false);
   const [analysisValue, setAnalysisValue] = useState([0, 0]);
-  const [debt, setDebt] = useState("10,000");
+  const [debt, setDebt] = useState(0);
   const [earth, setEarth] = useState(AngryEarth);
   const [earthType, setEarthType] = useState<ResultDataProps>(data["5"]);
+  const [shareInfo, setShareInfo] = useState([0, "알수없음"])
   const navigate = useNavigate();
+  const axios = axiosInstance();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -51,7 +54,7 @@ export default function ResultPage() {
 
     const testValue = parseInt(code.slice(1, 3), 10);
     if (available.includes(testValue)) {
-      setDebt(String(testValue + 12) + ",000");
+      setDebt(testValue + 12);
 
       if (testValue < 44) {
         setEarth(WowEarth);
@@ -75,25 +78,52 @@ export default function ResultPage() {
     const isComplete = JSON.parse(localStorage.getItem("answer") || "{}");
     if (isComplete !== 10) {
       setWrong(true);
+      return
     }
+    getUserNickname()
   }, []);
+
+  const handleClickSignup = () => {
+    localStorage.setItem("testGroo", `${debt}`);
+    navigate("/signup")
+  }
 
   const shareKakao = () => {
     window.Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
-        title: "지구 재판",
-        description: `xx님의 재판 결과를 확인해보세요`,
+        title: "어-라? 어느날 지구에게 고소당했다",
+        description: `${shareInfo[1]}님의 재판 결과를 확인해보세요`,
         imageUrl:
-          "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
+          `https://raw.githubusercontent.com/YJS96/eara_test_repo/main/public/images/earth-${earthType.type}.png`,
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
-          // initCode 뒤에 userId 붙여줘야하는데 임시로 6번임
-          mobileWebUrl: `https://eara-test-repo.vercel.app/earth-trial?code=${initCode}6&type=${earthType.type}`,
-          webUrl: `http://localhost:5173/result`,
+          mobileWebUrl: `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
+          webUrl: `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
         },
       },
     });
+  };
+
+  const getUserNickname = async () => {
+    try {
+      const response = await axios.get(`/member/detail`);
+      const data = response.data;
+      setShareInfo([data.member_id, data.nickname])
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCopyClick = () => {
+    const urlToCopy = `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`;
+    navigator.clipboard.writeText(urlToCopy)
+      .then(() => {
+        console.log("URL이 클립보드에 복사되었습니다.");
+      })
+      .catch(error => {
+        console.error("클립보드에 복사하는 데 실패했습니다.", error);
+      });
   };
 
   return (
@@ -138,7 +168,7 @@ export default function ResultPage() {
             <EarthFrame>
               <Lottie animationData={Judge} />
             </EarthFrame>
-            <span style={{ fontSize: "30px" }}>{debt} 그루</span>
+            <span style={{ fontSize: "30px" }}>{debt},000 그루</span>
           </TypeName>
           <Gray
             dangerouslySetInnerHTML={{ __html: earthType.content }}
@@ -153,7 +183,7 @@ export default function ResultPage() {
             <br />
             탄소 중립<HighLight> 혜택 정보, 내 주변 가게</HighLight> 등<br />
             다양한 정보도 놓치지 마세요 ~<br />
-            <SignUpBtn onClick={() => navigate("/signup")}>
+            <SignUpBtn onClick={handleClickSignup}>
               어라 회원가입하기
             </SignUpBtn>
           </EaraExplain>
@@ -162,7 +192,7 @@ export default function ResultPage() {
             <ShareBtn>
               <img src="/images/kakao-logo.png" onClick={shareKakao} />
             </ShareBtn>
-            <ShareBtn style={{ backgroundColor: "var(--gray)" }}>
+            <ShareBtn style={{ backgroundColor: "var(--gray)" }} onClick={handleCopyClick}>
               <CopySvg />
             </ShareBtn>
           </ShareBox>
