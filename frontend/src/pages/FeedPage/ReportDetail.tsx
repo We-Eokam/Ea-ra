@@ -160,7 +160,7 @@ export default function ReportDetail() {
             <Bold>{writerNickname}</Bold>님이 {targetNickname}님의{" "}
             {report.actType === "OTHER" ? (
               <span>
-                환경 오염 ({report.actDetail}) 현장을 목격했습니다. <br />
+                환경 오염({report.actDetail}) 현장을 목격했습니다. <br />
               </span>
             ) : (
               <span>
