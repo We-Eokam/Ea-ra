@@ -195,11 +195,11 @@ public class MemberServiceImpl implements MemberService {
 		MemberFollow newMemberFollow = MemberFollow.builder().requestor(requestor).receiver(receiver).build();
 		memberFollowRepository.save(newMemberFollow);
 		FollowStatus followStatus = checkFollowStatus(requestorId,receiverId);
-		if(followStatus.equals(FollowStatus.ACCEPT)){
+		if(followStatus.equals(FollowStatus.REQUEST)){
 			sendMQService.sendFollowRequestNotification(NotificationReqeust.builder()
 				.sender(requestorId).receiver(receiverId).build());
 		}
-		if(followStatus.equals(FollowStatus.FRIEND)){
+		if(followStatus.equals(FollowStatus.ACCEPT)){
 			sendMQService.sendFollowAcceptNotification(NotificationReqeust.builder()
 				.sender(requestorId).receiver(receiverId).build());
 		}
