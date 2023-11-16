@@ -33,13 +33,12 @@ export default function SignupPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
+  const [groo, setGroo] = useState(0);
 
   const axios = axiosInstance();
   const navigate = useNavigate();
-
-  const green = 2400000;
 
   const onToggle = () => setIsOpen(!isOpen);
 
@@ -54,6 +53,9 @@ export default function SignupPage() {
 
   const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
+    if (event.target.value) {
+      setIsNicknameChecked(false);
+    }
   };
 
   const onOptionClicked = (index: number) => () => {
@@ -83,6 +85,10 @@ export default function SignupPage() {
     try {
       const response = await axios.get(`/member/detail?memberId=3`);
       const data = await response.data;
+      if (data.is_test_done) {
+        window.alert("이미 어라 회원입니다.");
+        window.location.href = "/";
+      }
       setUserInfo(data);
       console.log(data);
     } catch (error) {
@@ -92,34 +98,38 @@ export default function SignupPage() {
 
   const signupClicked = async () => {
     // 닉네임 중복확인 했는지
-    if (isNicknameChecked) {
-      // 새로운 사진을 선택했는지
-      console.log(selectedImage);
-      if (selectedImage) {
-        // 멀티파트 만드는 부분
-        const multiImage = new FormData();
+    if (!isNicknameChecked) { return }
+    // 새로운 사진을 선택했는지
+    // console.log(selectedImage);
+    if (selectedImage) {
+      // 멀티파트 만드는 부분
+      const multiImage = new FormData();
 
-        await fetch(selectedImage)
-          .then((res) => res.blob())
-          .then((blob) => multiImage.append("profile_image", blob));
+      await fetch(selectedImage)
+        .then((res) => res.blob())
+        .then((blob) => multiImage.append("profile_image", blob));
 
-        try {
-          const response = await axios.post(
-            "/member/profileImage",
-            multiImage,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-          const data = await response.data;
-          console.log(data);
-        } catch (error) {
-          console.log(error);
-        }
+      try {
+        const response = await axios.post(
+          "/member/profileImage",
+          multiImage,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const data = await response.data;
+        console.log(data);
+      } catch (error) {
+        window.alert("이미지 업로드에 실패했습니다");
+        console.log(error);
+        return
       }
+    }
 
+    // 중복검사 true이고, 닉네임 있을 때 (없을 땐 변경 x)
+    if (nickname) {
       try {
         const response = await axios.put(`/member/nickname`, {
           member_id: userInfo?.member_id,
@@ -127,16 +137,41 @@ export default function SignupPage() {
         });
         const data = await response.data;
         console.log(data);
+      } catch (error) {
+        window.alert("닉네임 변경에 실패했습니다");
+        console.log(error);
+        return
+      }
+    }
+    
+    // 사진이랑 닉네입 성공하면 시작 빚 보내기
+    if (groo) {
+      try {
+        const response = await axios.put(`/member/test`, {
+          member_id: userInfo?.member_id,
+          groo: groo * 1000,
+        });
+        const data = await response.data;
+        console.log(data);
         window.alert("가입되었습니다");
         navigate("/");
       } catch (error) {
         console.log(error);
+        return
       }
     }
   };
 
   useEffect(() => {
     getUserInfo();
+    const initGroo = JSON.parse(localStorage.getItem("testGroo") || "{}");
+    if (initGroo) {
+      setGroo(initGroo);
+      localStorage.removeItem("testGroo");
+    } else {
+      window.alert("테스트를 먼저 진행해주세요");
+      navigate("/welcome");
+    }
   }, []);
 
   return (
@@ -223,10 +258,9 @@ export default function SignupPage() {
           </DropdownFrame>
         </PlaceFrame>
         <InfoName>시작 빚</InfoName>
-        <InitialGreen>
-          {green?.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
-          그린
-        </InitialGreen>
+        <InitialGroo>
+          {groo},000그루
+        </InitialGroo>
         <SignupFrame>
           <SignupButton disabled={!isNicknameChecked} onClick={signupClicked}>
             가입하기
@@ -465,7 +499,7 @@ const BigGray = styled.div`
   color: var(--nav-gray);
 `;
 
-const InitialGreen = styled(BigGray)`
+const InitialGroo = styled(BigGray)`
   margin-top: 8px;
   margin-bottom: 40px;
 `;
