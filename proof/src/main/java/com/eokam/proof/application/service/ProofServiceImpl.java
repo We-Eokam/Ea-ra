@@ -116,8 +116,6 @@ public class ProofServiceImpl implements ProofService {
 			.map(FollowMember::memberId)
 			.collect(Collectors.toList());
 
-		followIds.add(ParseJwtUtil.parseMemberId(jwt));
-
 		Page<Proof> proofPage = proofRepository.findAllByMemberList(followIds, pageRequest);
 
 		return ProofDto.toDtoPage(proofPage, ParseJwtUtil.parseMemberId(jwt));
