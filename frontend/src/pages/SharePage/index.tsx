@@ -33,9 +33,15 @@ export default function SharePage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const code = params.get("code");
-    const type = params.get("type");
+    
+    if (!code) {
+      setWrong(true);
+      return;
+    }
 
-    if (!code || !type || !(type in data)) {
+    const type = code[4];
+    console.log(type)
+    if (!type || !(type in data)) {
       setWrong(true);
       return;
     }
@@ -67,7 +73,7 @@ export default function SharePage() {
       return;
     }
 
-    const userId = parseInt(code.slice(4), 10);
+    const userId = parseInt(code.slice(5), 10);
       if (userId) {
         getUserNickname(userId)
       }
@@ -77,12 +83,11 @@ export default function SharePage() {
     try {
       const response = await axios.get(`/member?memberId=${id}`);
       const data = response.data.member_list[0];
-      setNickname(data.nicknake);
+      setNickname(data.nickname);
     } catch (error) {
       console.log(error);
     }
-  }
-
+  };
 
   return (
     <MainFrame>

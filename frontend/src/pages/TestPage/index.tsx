@@ -31,7 +31,6 @@ export default function TestPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(debt)
     setQuestion(data[id]);
     localStorage.setItem("answer", `${id}`);
 
