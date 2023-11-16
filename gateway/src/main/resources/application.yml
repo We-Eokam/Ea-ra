@@ -51,17 +51,17 @@ spring:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       globalcors:
-          cors-configurations:
-            '[/**]':
-              allowedOrigins: ${ALLOWED_ORIGINS}
-              allow-credentials: true
-              allowedHeaders: '*'
-              allowedMethods:
-                - PUT
-                - GET
-                - POST
-                - DELETE
-                - OPTIONS
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://www.ea-ra.com"
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
 
 jwt:
   key: ${JWT_KEY}
