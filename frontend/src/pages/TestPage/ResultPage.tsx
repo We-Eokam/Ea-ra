@@ -9,34 +9,37 @@ import CryEarth from "../../assets/lottie/cry-earth.json";
 import MeltingEarth from "../../assets/lottie/melting-earth.json";
 import WowEarth from "../../assets/lottie/wow-earth.json";
 import Judge from "../../assets/lottie/judge.json";
-import data from "../../common/result.json"
+import data from "../../common/result.json";
 import { ScoreBar } from "../../components/ProgressBar/ScoreBar";
 import { ReactComponent as CopySvg } from "../../assets/icons/copy_icon.svg";
 
 interface ResultDataProps {
+  type: number;
   name: string;
   content: string;
-  detail : string;
+  detail: string;
 }
 
 const available = [38, 43, 48, 53, 58, 63, 68, 73, 78, 83, 88];
 
 export default function ResultPage() {
+  const [initCode, setInitCode] = useState("")
   const [wrong, setWrong] = useState(false);
   const [analysisValue, setAnalysisValue] = useState([0, 0]);
   const [debt, setDebt] = useState("10,000");
   const [earth, setEarth] = useState(AngryEarth);
-  const [earthType, setEarthType] = useState<ResultDataProps>(data["앵그리"]);
+  const [earthType, setEarthType] = useState<ResultDataProps>(data["5"]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const code = params.get("code");
-
+    
     if (!code) {
       setWrong(true);
-      return
+      return;
     }
+    setInitCode(code);
 
     const implement = parseInt(code[0], 10);
     const interest = parseInt(code.slice(-1), 10);
@@ -52,27 +55,26 @@ export default function ResultPage() {
 
       if (testValue < 44) {
         setEarth(WowEarth);
-        setEarthType(data["와우"]);
+        setEarthType(data["1"]);
       } else if (testValue < 56) {
         setEarth(ChuEarth);
-        setEarthType(data["츄"]);
+        setEarthType(data["2"]);
       } else if (testValue < 69) {
         setEarth(MeltingEarth);
-        setEarthType(data["멜팅"]);
+        setEarthType(data["3"]);
       } else if (testValue < 79) {
         setEarth(CryEarth);
-        setEarthType(data["크라이"]);
+        setEarthType(data["4"]);
       }
     } else {
       setWrong(true);
     }
-
   }, []);
 
   useEffect(() => {
     const isComplete = JSON.parse(localStorage.getItem("answer") || "{}");
     if (isComplete !== 10) {
-      setWrong(true)
+      setWrong(true);
     }
   }, []);
 
@@ -86,7 +88,8 @@ export default function ResultPage() {
           "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
-          mobileWebUrl: `https://eara-test-repo.vercel.app/result`,
+          // initCode 뒤에 userId 붙여줘야하는데 임시로 6번임
+          mobileWebUrl: `https://eara-test-repo.vercel.app/earth-trial?code=${initCode}6&type=${earthType.type}`,
           webUrl: `http://localhost:5173/result`,
         },
       },
@@ -97,27 +100,35 @@ export default function ResultPage() {
     <MainFrame>
       {wrong && (
         <WrongPage>
-          <Title>잘못된 접근입니다.<br/><br/>테스트를 다시 실행해주세요</Title>
-          <SignUpBtn onClick={() => navigate('/test')}>테스트 하러가기</SignUpBtn>
+          <Title>
+            잘못된 접근입니다.<br /><br />
+            테스트를 다시 실행해주세요
+          </Title>
+          <SignUpBtn onClick={() => navigate("/test")}>
+            테스트 하러가기
+          </SignUpBtn>
         </WrongPage>
       )}
       <Panel className="top">
-        <Title>xx님의</Title>
+        <Title>당신의</Title>
       </Panel>
       <HideUnderClock />
       <HideBottomBar />
       <ResultFrame>
         <MarginBox />
         <ResultInner>
-          <TypeName>당신은 .. <br/><span>{earthType.name}</span></TypeName>
+          <TypeName>
+            당신은 .. <br />
+            <span>{earthType.name}</span>
+          </TypeName>
           <EarthFrame>
             <Lottie animationData={earth} />
           </EarthFrame>
-          <Gray dangerouslySetInnerHTML={{ __html: earthType.detail }}/>
+          <Gray dangerouslySetInnerHTML={{ __html: earthType.detail }} />
           <AnalysisBox>
             <SubTitle>진술 내역 요약</SubTitle>
-            <ScoreBar title="실행력" score={analysisValue[0]}/>
-            <ScoreBar title="관심도" score={analysisValue[1]}/>
+            <ScoreBar title="실행력" score={analysisValue[0]} />
+            <ScoreBar title="관심도" score={analysisValue[1]} />
           </AnalysisBox>
         </ResultInner>
         <MarginBox />
@@ -125,29 +136,33 @@ export default function ResultPage() {
           <TypeName>
             당신의 <span style={{ color: "var(--red)" }}>벌금</span>은?
             <EarthFrame>
-              <Lottie animationData={Judge}/>
+              <Lottie animationData={Judge} />
             </EarthFrame>
             <span style={{ fontSize: "30px" }}>{debt} 그루</span>
           </TypeName>
           <Gray
-            dangerouslySetInnerHTML={{__html: earthType.content}}
-            style={{ marginBottom: "12px"}}  
+            dangerouslySetInnerHTML={{ __html: earthType.content }}
+            style={{ marginBottom: "12px" }}
           />
           <SmallText>* 진술한 내용을 바탕으로 벌금을 산정했어요.</SmallText>
           <EaraExplain>
             <SubTitle>일상생활 속 환경보호, 어려우신가요?</SubTitle>
-            <HighLight>친구와 함께</HighLight> 실천하고 공유하며<br/>
-            동기부여가 되도록 <span>'어라'</span>가 도와줄게요<br/>
-            탄소 중립<HighLight> 혜택 정보, 내 주변 가게</HighLight> 등<br/>
-            다양한 정보도 놓치지 마세요 ~<br/>
-            <SignUpBtn onClick={() => navigate('/signup')}>어라 회원가입하기</SignUpBtn>
+            <HighLight>친구와 함께</HighLight> 실천하고 공유하며
+            <br />
+            동기부여가 되도록 <span>'어라'</span>가 도와줄게요
+            <br />
+            탄소 중립<HighLight> 혜택 정보, 내 주변 가게</HighLight> 등<br />
+            다양한 정보도 놓치지 마세요 ~<br />
+            <SignUpBtn onClick={() => navigate("/signup")}>
+              어라 회원가입하기
+            </SignUpBtn>
           </EaraExplain>
           <SubTitle>내 결과 공유하기</SubTitle>
           <ShareBox>
             <ShareBtn>
-              <img src="/images/kakao-logo.png" onClick={shareKakao}/>
+              <img src="/images/kakao-logo.png" onClick={shareKakao} />
             </ShareBtn>
-            <ShareBtn style={{backgroundColor: "var(--gray)"}}>
+            <ShareBtn style={{ backgroundColor: "var(--gray)" }}>
               <CopySvg />
             </ShareBtn>
           </ShareBox>
@@ -242,7 +257,7 @@ const HideUnderClock = styled.div`
   height: env(safe-area-inset-top);
   background-color: var(--white);
   z-index: 3;
-`
+`;
 
 const HideBottomBar = styled.div`
   position: fixed;
@@ -251,13 +266,13 @@ const HideBottomBar = styled.div`
   height: env(safe-area-inset-bottom);
   background-color: var(--white);
   z-index: 3;
-`
+`;
 
 const MarginBox = styled.div`
   position: relative;
   width: 100%;
   height: 12%;
-`
+`;
 
 const ResultInner = styled.div`
   padding: 0 10%;
@@ -273,7 +288,7 @@ const TypeName = styled.div`
     color: var(--primary);
     font-size: 36px;
   }
-  `;
+`;
 
 const EarthFrame = styled.div`
   width: 70%;
@@ -317,7 +332,7 @@ const EaraExplain = styled.div`
     font-weight: 500;
     color: var(--primary);
   }
-  `;
+`;
 const HighLight = styled.span`
   background: linear-gradient(0deg, rgb(129, 222, 173, 0.3), transparent 75%);
   color: var(--black) !important;
@@ -349,7 +364,7 @@ const ShareBtn = styled.div`
   justify-content: center;
   align-items: center;
 
-  img{
+  img {
     width: 24px;
   }
 `;
