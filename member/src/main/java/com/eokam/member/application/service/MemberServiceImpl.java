@@ -16,15 +16,16 @@ import com.eokam.member.global.ErrorCode;
 import com.eokam.member.global.exception.BusinessException;
 import com.eokam.member.global.exception.MemberNotFoundException;
 import com.eokam.member.global.exception.NicknameAlreadyExistException;
-import com.eokam.member.global.exception.NoBillException;
 import com.eokam.member.global.exception.TestException;
 import com.eokam.member.infra.dto.FollowStatus;
 import com.eokam.member.infra.dto.JwtMemberDto;
+import com.eokam.member.infra.dto.NotificationReqeust;
 import com.eokam.member.infra.external.S3FileDetail;
 import com.eokam.member.infra.external.service.S3Service;
+import com.eokam.member.infra.mq.ReceiveMQService;
+import com.eokam.member.infra.mq.SendMQService;
 import com.eokam.member.infra.repository.MemberFollowRepository;
 import com.eokam.member.infra.repository.MemberRepository;
-import com.eokam.member.presentation.dto.MemberProfileListReponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +38,8 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberFollowRepository memberFollowRepository;
 
 	private final S3Service s3Service;
+
+	private final SendMQService sendMQService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -191,7 +194,16 @@ public class MemberServiceImpl implements MemberService {
 
 		MemberFollow newMemberFollow = MemberFollow.builder().requestor(requestor).receiver(receiver).build();
 		memberFollowRepository.save(newMemberFollow);
-		return checkFollowStatus(requestorId,receiverId);
+		FollowStatus followStatus = checkFollowStatus(requestorId,receiverId);
+		if(followStatus.equals(FollowStatus.ACCEPT)){
+			sendMQService.sendFollowRequestNotification(NotificationReqeust.builder()
+				.sender(requestorId).receiver(receiverId).build());
+		}
+		if(followStatus.equals(FollowStatus.FRIEND)){
+			sendMQService.sendFollowAcceptNotification(NotificationReqeust.builder()
+				.sender(requestorId).receiver(receiverId).build());
+		}
+		return followStatus;
 	}
 
 	@Override
@@ -215,6 +227,8 @@ public class MemberServiceImpl implements MemberService {
 		Optional<MemberFollow> friendFollow = memberFollowRepository.findMemberFollowByRequestorIdAndReceiverId(receiverId,requestorId);
 
 		if(friendFollow.isPresent()) memberFollowRepository.delete(friendFollow.get());
+
+
 
 		return checkFollowStatus(requestorId,receiverId);
 	}
