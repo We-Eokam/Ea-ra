@@ -16,12 +16,12 @@ public class FollowNotification extends Notification {
 		super(notificationType, sender, receiver, content, createdAt);
 	}
 
-	public static FollowNotification from(NotificationDto dto) {
+	public static FollowNotification of(NotificationDto dto, String senderNickname) {
 		return FollowNotification.builder()
 			.notificationType(dto.getNotificationType())
 			.sender(dto.getSender())
 			.receiver(dto.getReceiver())
-			.content(dto.getSender() + "님이 회원님과 친구가 되고 싶어해요.")
+			.content(senderNickname + "님이 회원님과 친구가 되고 싶어해요.")
 			.createdAt(LocalDateTime.now())
 			.build();
 	}

@@ -14,12 +14,12 @@ public class FollowAcceptNotification extends Notification {
 		super(notificationType, sender, receiver, content, createdAt);
 	}
 
-	public static FollowAcceptNotification from(NotificationDto dto) {
+	public static FollowAcceptNotification of(NotificationDto dto, String senderNickname) {
 		return FollowAcceptNotification.builder()
 			.notificationType(dto.getNotificationType())
 			.sender(dto.getSender())
 			.receiver(dto.getReceiver())
-			.content(dto.getSender() + "님이 회원님의 친구 요청을 수락했어요.")
+			.content(senderNickname + "님이 회원님의 친구 요청을 수락했어요.")
 			.createdAt(LocalDateTime.now())
 			.build();
 	}

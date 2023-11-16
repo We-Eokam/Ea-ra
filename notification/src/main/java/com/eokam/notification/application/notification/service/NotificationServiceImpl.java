@@ -11,6 +11,7 @@ import com.eokam.notification.domain.notification.document.FollowAcceptNotificat
 import com.eokam.notification.domain.notification.document.FollowNotification;
 import com.eokam.notification.domain.notification.document.Notification;
 import com.eokam.notification.domain.notification.repository.NotificationRepository;
+import com.eokam.notification.infrastructure.member.MemberServiceFeign;
 import com.eokam.notification.infrastructure.util.ParseJwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -20,22 +21,37 @@ import lombok.RequiredArgsConstructor;
 public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationRepository notificationRepository;
+	private final MemberServiceFeign memberServiceFeign;
 
 	@Override
 	public NotificationDto saveAccusationNotification(NotificationDto notificationDto) {
-		Notification notification = notificationRepository.save(AccusationNotification.from(notificationDto));
+		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
+			.memberInfoList()
+			.get(0)
+			.nickname();
+		Notification notification = notificationRepository.save(
+			AccusationNotification.of(notificationDto, senderNickname));
 		return NotificationDto.from(notification);
 	}
 
 	@Override
 	public NotificationDto saveFollowNotification(NotificationDto notificationDto) {
-		Notification notification = notificationRepository.save(FollowNotification.from(notificationDto));
+		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
+			.memberInfoList()
+			.get(0)
+			.nickname();
+		Notification notification = notificationRepository.save(FollowNotification.of(notificationDto, senderNickname));
 		return NotificationDto.from(notification);
 	}
 
 	@Override
 	public NotificationDto saveFollowAcceptNotification(NotificationDto notificationDto) {
-		Notification notification = notificationRepository.save(FollowAcceptNotification.from(notificationDto));
+		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
+			.memberInfoList()
+			.get(0)
+			.nickname();
+		Notification notification = notificationRepository.save(
+			FollowAcceptNotification.of(notificationDto, senderNickname));
 		return NotificationDto.from(notification);
 	}
 

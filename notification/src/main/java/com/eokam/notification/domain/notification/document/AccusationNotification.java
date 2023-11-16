@@ -26,12 +26,12 @@ public class AccusationNotification extends Notification {
 		this.accusationType = accusationType;
 	}
 
-	public static AccusationNotification from(NotificationDto dto) {
+	public static AccusationNotification of(NotificationDto dto, String senderNickname) {
 		return AccusationNotification.builder()
 			.notificationType(dto.getNotificationType())
 			.sender(dto.getSender())
 			.receiver(dto.getReceiver())
-			.content(dto.getSender() + "님이 회원님의 환경 오염 활동을 목격했어요.")
+			.content(senderNickname + "님이 회원님의 환경 오염 활동을 목격했어요.")
 			.createdAt(LocalDateTime.now())
 			.accusationType(dto.getAccusationType())
 			.build();
