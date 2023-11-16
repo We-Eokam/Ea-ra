@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("member-service")
 public interface FollowServiceFeign {
-	@GetMapping("/follow")
+	@GetMapping("/member/follow")
 	FollowStatus isFollow(@CookieValue(name = "access-token") String jwt, @RequestParam Long memberId);
 
-	@GetMapping("/followList")
+	@GetMapping("/member/follow/list")
 	FollowList getFriends(@CookieValue(name = "access-token") String jwt);
 
-	@PostMapping(value = "member/accusation/count", consumes = "application/json")
+	@PostMapping(value = "/member/accusation/count", consumes = "application/json")
 	void increaseAccusationCount(@CookieValue(name = "access-token") String jwt, IsFollowRequest isFollowRequest);
 }

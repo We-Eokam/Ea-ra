@@ -110,9 +110,9 @@ public class ProofServiceImpl implements ProofService {
 	public Page<ProofDto> getFeed(String jwt, PageRequest pageRequest) {
 		FollowList followList = getFriends(jwt);
 
-		List<Long> followIds = followList.followMemberList()
+		List<Long> followIds = followList.memberList()
 			.stream()
-			.map(followMember -> followMember.memberProfile().memberId())
+			.map(followMember -> followMember.memberId())
 			.collect(Collectors.toList());
 
 		followIds.add(ParseJwtUtil.parseMemberId(jwt));

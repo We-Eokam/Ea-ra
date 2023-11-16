@@ -6,5 +6,5 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record FollowList(List<FollowMember> followMemberList) {
+public record FollowList(List<FollowMember> memberList) {
 }

@@ -34,8 +34,6 @@ import com.eokam.proof.infrastructure.external.member.FollowList;
 import com.eokam.proof.infrastructure.external.member.FollowMember;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowStatus;
-import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
-import com.eokam.proof.infrastructure.external.member.MemberProfile;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.util.JwtUtil;
 
@@ -270,18 +268,10 @@ class ProofAcceptanceTest extends AcceptanceTest {
 
 		FollowList expectFList = new FollowList(new ArrayList<FollowMember>() {
 			{
-				new FollowMember(
-					new MemberProfile(2L, "http://profile2.com"), 1000L
-				);
-				new FollowMember(
-					new MemberProfile(3L, "http://profile3.com"), 1000L
-				);
-				new FollowMember(
-					new MemberProfile(4L, "http://profile4.com"), 1000L
-				);
-				new FollowMember(
-					new MemberProfile(5L, "http://profile5.com"), 1000L
-				);
+				new FollowMember(2L, 1000L, 0L, "http://profile2.com", "2번");
+				new FollowMember(3L, 1000L, 0L, "http://profile3.com", "3번");
+				new FollowMember(4L, 1000L, 0L, "http://profile4.com", "4번");
+				new FollowMember(5L, 1000L, 0L, "http://profile5.com", "5번");
 			}
 		});
 
