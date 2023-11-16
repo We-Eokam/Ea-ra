@@ -143,11 +143,11 @@ public class ProofServiceImpl implements ProofService {
 			return true;
 		}
 
-		return followServiceFeign.isFollow(jwt, otherId).followStatus().equals("ACCEPT");
+		return followServiceFeign.isFollow(jwt, otherId).followStatus().equals("FRIEND");
 	}
 
 	private boolean isFriend(String jwt, Long memberId) {
-		return followServiceFeign.isFollow(jwt, memberId).followStatus().equals("ACCEPT");
+		return followServiceFeign.isFollow(jwt, memberId).followStatus().equals("FRIEND");
 	}
 
 	private FollowList getFriends(String jwt) {
