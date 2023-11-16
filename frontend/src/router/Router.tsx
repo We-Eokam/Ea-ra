@@ -23,6 +23,8 @@ import ReportDetail from "../pages/FeedPage/ReportDetail";
 import FriendsList from "../pages/MyPage/FriendsList";
 import ProfilePage from "../pages/MyPage/ProfilePage";
 
+import SharePage from "../pages/SharePage";
+
 export default function Router() {
   return (
     <BrowserRouter>
@@ -48,6 +50,7 @@ export default function Router() {
         <Route path="/mypage" element={<MyPage />}></Route>
         <Route path="/mypage/friends" element={<FriendsList />}></Route>
         <Route path="/profile/:id" element={<ProfilePage />}></Route>
+        <Route path="/earth-trial" element={<SharePage />}></Route>
       </Routes>
     </BrowserRouter>
   );
