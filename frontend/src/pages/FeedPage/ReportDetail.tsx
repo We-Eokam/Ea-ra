@@ -7,25 +7,111 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as GruCircle } from "../../assets/icons/gru-circle.svg";
 import { ReactComponent as DropRight } from "../../assets/icons/drop-right-icon.svg";
+import axiosInstance from "../../api/axiosInstance";
+import reportData from "../../common/report.json";
 
-const report = {
-  writerProfileImg: "../src/assets/images/templete1.png",
-  writerNickname: "지구구해",
-  targetNickname: "환경구해",
-  time: "2023년 10월 24일",
-  act: "다회용기 이용",
-  img_list: ["/images/template1.png", "/images/template2.png"],
-  likedUser: "일회용품뿌셔",
-  fine: 300,
-};
+interface Report {
+  reportId?: number;
+  writerId?: number;
+  targetId?: number;
+  actDetail?: string;
+  actType?: string;
+  createdAt?: string;
+  images?: string[];
+}
 
-export default function FeedDetail() {
+export default function ReportDetail() {
+  const axios = axiosInstance();
+
   const { id } = useParams<{ id: string }>();
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
+  const [report, setReport] = useState<Report>({ images: [] });
+  const [writerProfile, setWriterProfile] = useState("");
+  const [writerNickname, setWriterNickname] = useState("");
+  const [targetNickname, setTargetNickname] = useState("");
+  const [actContent, setActContent] = useState("");
+  const [fine, setFine] = useState(0);
+
   useEffect(() => {
-    // id로 요청보내고 report 데이터 바꾸기
+    getReport();
   }, [id]);
+
+  useEffect(() => {
+    if (report.writerId && report.targetId) {
+      getUsersInfo();
+    }
+  }, [report])
+
+  const getReport = async () => {
+    try {
+      const response = await axios.get(`/accusation/${id}`);
+      const data = response.data;
+
+      const date = new Date(data.created_at);
+      const formattedDate = new Intl.DateTimeFormat("ko-KR", {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+
+      let coverImg = "";
+      const actData = reportData.find(item => item.type === data.activity_type);
+      if (actData) {
+        setActContent(actData.content);
+        setFine(actData.fine);
+        coverImg = actData.imgUrl;
+      }
+
+      const reportImages = data.image_list.imageURL_1 ? [data.image_list.imageURL_1] : [];
+      const images = coverImg ? [coverImg, ...reportImages] : reportImages;
+
+      setReport({
+        reportId: data.accusation_id,
+        writerId: data.witness_id,
+        targetId: data.member_id,
+        actType: data.activity_type,
+        actDetail: data.activity_detail,
+        createdAt: formattedDate,
+        images: images
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getUsersInfo = async () => {
+    try {
+      const response = await axios.get(`/member?memberId=${report.writerId}&memberId=${report.targetId}`);
+      const memberData = response.data.member_list;
+
+      setWriterProfile(memberData[0].profile_image_url);
+      setWriterNickname(memberData[0].nickname);
+      setTargetNickname(memberData[1].nickname);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleImageChange = (e: any) => {
+    if (!report.images) {
+      return;
+    }
+
+    const containerWidth = e.currentTarget.offsetWidth;
+    const clickX = e.clientX - e.currentTarget.getBoundingClientRect().left;
+
+    if (clickX < containerWidth / 2 && currentImgIndex > 0) {
+      setCurrentImgIndex(prevIndex => {
+        return prevIndex - 1;
+      });
+    } else if (clickX >= containerWidth / 2 && currentImgIndex < report.images.length - 1) {
+      setCurrentImgIndex(prevIndex => {
+        return prevIndex + 1;
+      });
+    }
+  };
 
   const handleImageChangeByDot = (index: number) => {
     setCurrentImgIndex(index);
@@ -42,38 +128,45 @@ export default function FeedDetail() {
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <PostFrame>
           <WriterContainer>
-            <ProfileImg src={report.writerProfileImg} />
+            <ProfileImg src={writerProfile} />
             <TextBox>
               <MainText>
-                <Bold>{report.writerNickname}</Bold>
+                <Bold>{writerNickname}</Bold>
                 <DropRight style={{ margin: "0 8px" }} />
-                <Bold>{report.targetNickname}</Bold>
+                <Bold>{targetNickname}</Bold>
               </MainText>
-              <SubText>{report.time}</SubText>
+              <SubText>{report.createdAt}</SubText>
             </TextBox>
           </WriterContainer>
-          <SlideContainer>
+          <SlideContainer onClick={handleImageChange}>
             <Slides currentImgIndex={currentImgIndex}>
-              {report.img_list.map((img, index) => (
+              {report.images && report.images.map((img, index) => (
                 <img src={img} key={index} style={{ width: '100%', flexShrink: 0 }} />
               ))}
             </Slides>
           </SlideContainer>
           <Dots>
-            {report.img_list.map((_, index) => (
+            {report.images && report.images.map((_, index) => (
               <Dot key={index} active={index === currentImgIndex} onClick={() => handleImageChangeByDot(index)} />
             ))}
           </Dots>
           <ReactionContainer>
             <BigGruCircle />
             <ReactionText>
-              <Bold>벌금 {report.fine}그루</Bold>
+              <Bold>벌금 {fine}그루</Bold>
             </ReactionText>
           </ReactionContainer>
           <ActText>
-            <Bold>{report.writerNickname}</Bold>님이 {report.targetNickname}님의{" "}
-            {report.act} 현장을 목격했습니다. <br />
-            <br />
+            <Bold>{writerNickname}</Bold>님이 {targetNickname}님의{" "}
+            {report.actType === "OTHER" ? (
+              <span>
+                환경 오염 ({report.actDetail}) 현장을 목격했습니다. <br />
+              </span>
+            ) : (
+              <span>
+                {actContent} 현장을 목격했습니다. <br />
+              </span>
+            )}
           </ActText>
         </PostFrame>
       </MainFrame>

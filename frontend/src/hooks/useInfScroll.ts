@@ -9,12 +9,14 @@ const useInfScroll = ({ getMore, hasMore }: InfScrollProps) => {
   const onIntersect = (entry: IntersectionObserverEntry, observer: IntersectionObserver) => {
     if (entry.isIntersecting && hasMore) {
       getMore();
-      observer.disconnect();
+      if (!hasMore) {
+        observer.disconnect();
+      }
     }
   };
 
   const options = {
-    threshold: 0.6,
+    threshold: 0,
   }
 
   const { ref } = useIntersect(onIntersect, options);

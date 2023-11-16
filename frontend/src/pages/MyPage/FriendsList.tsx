@@ -1,4 +1,5 @@
 // import React from 'react'
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeadBar from "../../components/HeadBar/HeadBar";
@@ -7,87 +8,131 @@ import NavBar from "../../components/NavBar/NavBar";
 import { ReactComponent as ReportSend } from "../../assets/icons/report-send-icon.svg";
 import { ReactComponent as PersonCancel } from "../../assets/icons/person_cancel.svg";
 import OptionModal from "../../components/Modal/OptionModal";
-import { useState } from "react";
+import axiosInstance from "../../api/axiosInstance";
 
 interface User {
   id: number;
-  profileImg: string;
-  nickname: string;
-  gru: number;
+  profileImg?: string;
+  nickname?: string;
+  groo?: number;
 }
-
-const users:User[] = [
-  {
-    id: 1,
-    profileImg: "",
-    nickname: "어쩌라고라고어쩌라고",
-    gru: 25000,
-  },
-  {
-    id: 2,
-    profileImg: "",
-    nickname: "어쩌라고",
-    gru: 25000,
-  },
-  {
-    id: 3,
-    profileImg: "",
-    nickname: "어쩌",
-    gru: 25000,
-  },
-  {
-    id: 4,
-    profileImg: "",
-    nickname: "지구 지킴",
-    gru: 25000,
-  },
-];
 
 export default function FriendsList() {
   const navigate = useNavigate();
+  const axios = axiosInstance();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState("");
 
-  const handleReportBtn = (userId: number) => {
-    // console.log(user.nickname+"에게 경고하자");
+  const [friends, setFriends] = useState<User[]>([]);
+  const [target, setTarget] = useState<User>({
+    id: 0
+  });
+
+  useEffect(() => {
+    getFriends();
+  }, []);
+
+  const getFriends = async () => {
+    try {
+      const response = await axios.get(`/member/follow/list`);
+      const data = response.data;
+
+      const transUsers = data.member_list.map((member: any) => ({
+        id: member.member_id,
+        profileImg: member.profile_image_url,
+        nickname: member.nickname,
+        groo: member.groo
+      }));
+
+      setFriends(transUsers);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const deleteFriend = async () => {
+    if (!target.id) return;
+
+    try {
+      await axios.delete(`/member/follow?targetId=${target.id}`);
+      getFriends();
+      closeModal();
+    } catch (error) {
+      console.error('친구 삭제 실패:', error);
+    }
+  }
+
+  const handleReportBtn = (e: any, userId: number) => {
+    e.stopPropagation();
+    goToReport(userId);
+  }
+
+  const goToReport = (userId: number) => {
     navigate(`/act/report?target=${userId}`);
   }
 
-  const showModal = (user: User) => {
-    setModalContent("정말로 " + user.nickname + "님과 친구를 끊으시겠습니까?")
+  const handleDeleteBtn = (e: any, newTarget: User) => {
+    e.stopPropagation();
+    showModal(newTarget);
+  }
+
+  const showModal = (newTarget: User) => {
+    setTarget(newTarget);
+    setModalContent("정말로 " + newTarget.nickname + "님과 친구를 끊으시겠습니까?")
     setModalOpen(true);
   };
 
   const closeModal = () => {
     setModalOpen(false);
+    setTarget({ id: 0 });
   };
 
   return (
     <>
       <HeadBar pagename="친구 목록" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="medium">
-        {users.map((user) => (
-          <UserInfoContainer>
-            <ProfileImg src={user.profileImg} onClick={() => navigate(`/profile/${user.id}`)}/>
-            <TextBox>
-              <span onClick={() => navigate(`/profile/${user.id}`)}>
-                {user.nickname}
-              </span>
-              <SubText>{user.gru}그루</SubText>
-            </TextBox>
-            <IconContainer>
-              <ReportSend onClick={() => handleReportBtn(user.id)} />
-              <PersonCancel onClick={() => showModal(user)}/>
-            </IconContainer>
-          </UserInfoContainer>
-        ))}
+        {friends.length === 0 ? (
+          <NoFriends> 친구가 없습니다. </NoFriends>
+        ) : (
+          friends.map((friend) => (
+            <UserInfoContainer onClick={() => navigate(`/profile/${friend.id}`)}>
+              <ProfileImg src={friend.profileImg} />
+              <TextBox>
+                {friend.nickname}
+                <SubText>{friend.groo}그루</SubText>
+              </TextBox>
+              <IconContainer>
+                <ReportSend onClick={(e) => handleReportBtn(e, friend.id)} />
+                <PersonCancel onClick={(e) => handleDeleteBtn(e, friend)} />
+              </IconContainer>
+            </UserInfoContainer>
+          ))
+        )}
       </MainFrame>
 
-      <OptionModal title="친구 끊기" content={modalContent}  btnText="삭제" isOpen={modalOpen} closeModal={closeModal} />
+      <OptionModal title="친구 끊기" content={modalContent} btnText="삭제" isOpen={modalOpen} closeModal={closeModal} onConfirm={() => deleteFriend} />
       <NavBar />
     </>
   )
 }
+
+const NoFriends = styled.div`
+  height: calc(100% - 96px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--nav-gray);
+`;
 
 const UserInfoContainer = styled.div`
   display: flex;
@@ -121,5 +166,5 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 20px;
 `;
