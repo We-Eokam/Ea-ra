@@ -21,6 +21,7 @@ import com.eokam.proof.infrastructure.external.cpoint.SaveCpointRequest;
 import com.eokam.proof.infrastructure.external.groo.GrooSaveRequest;
 import com.eokam.proof.infrastructure.external.groo.GrooServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowList;
+import com.eokam.proof.infrastructure.external.member.FollowMember;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
 import com.eokam.proof.infrastructure.external.member.IsFollowRequest;
 import com.eokam.proof.infrastructure.external.s3.S3FileDetail;
@@ -50,7 +51,7 @@ public class ProofServiceImpl implements ProofService {
 
 		Page<Proof> proofPage = proofRepository.findAllByMemberId(memberId, pageRequest);
 
-		return ProofDto.toDtoPage(proofPage);
+		return ProofDto.toDtoPage(proofPage, memberId);
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public class ProofServiceImpl implements ProofService {
 
 		Page<Proof> proofPage = proofRepository.findAllByMemberId(memberId, pageRequest);
 
-		return ProofDto.toDtoPage(proofPage);
+		return ProofDto.toDtoPage(proofPage, ParseJwtUtil.parseMemberId(jwt));
 	}
 
 	@Override
@@ -103,7 +104,7 @@ public class ProofServiceImpl implements ProofService {
 			throw new ProofException(ErrorCode.PROOF_UNAUTHORIZED);
 		}
 
-		return ProofDto.from(proof);
+		return ProofDto.of(proof, ParseJwtUtil.parseMemberId(jwt).equals(proof.getMemberId()));
 	}
 
 	@Override
@@ -112,14 +113,14 @@ public class ProofServiceImpl implements ProofService {
 
 		List<Long> followIds = followList.memberList()
 			.stream()
-			.map(followMember -> followMember.memberId())
+			.map(FollowMember::memberId)
 			.collect(Collectors.toList());
 
 		followIds.add(ParseJwtUtil.parseMemberId(jwt));
 
 		Page<Proof> proofPage = proofRepository.findAllByMemberList(followIds, pageRequest);
 
-		return ProofDto.toDtoPage(proofPage);
+		return ProofDto.toDtoPage(proofPage, ParseJwtUtil.parseMemberId(jwt));
 	}
 
 	@Override

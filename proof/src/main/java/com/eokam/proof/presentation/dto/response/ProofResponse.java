@@ -13,7 +13,7 @@ import lombok.Builder;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ProofResponse(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId,
-							String createdAt, List<Picture> picture, String content) {
+							String createdAt, List<Picture> picture, String content, Boolean isMine) {
 
 	@Builder
 	private record Picture(String url, String name) {
@@ -39,6 +39,7 @@ public record ProofResponse(Long proofId, Long memberId, ActivityType activityTy
 					.toList()
 			)
 			.content(proofDto.content())
+			.isMine(proofDto.isMine())
 			.build();
 	}
 }

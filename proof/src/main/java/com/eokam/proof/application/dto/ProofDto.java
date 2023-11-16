@@ -13,8 +13,8 @@ import lombok.Builder;
 
 @Builder
 public record ProofDto(Long proofId, Long memberId, ActivityType activityType, Long cCompanyId, String createdAt,
-					   String content, List<ProofImageDto> proofImages) {
-	public static ProofDto from(Proof proof) {
+					   String content, List<ProofImageDto> proofImages, Boolean isMine) {
+	public static ProofDto of(Proof proof, Boolean isMine) {
 		return ProofDto.builder()
 			.proofId(proof.getProofId())
 			.memberId(proof.getMemberId())
@@ -27,6 +27,7 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 					.map(ProofImageDto::from)
 					.toList()
 			)
+			.isMine(isMine)
 			.build();
 	}
 
@@ -46,7 +47,8 @@ public record ProofDto(Long proofId, Long memberId, ActivityType activityType, L
 			.build();
 	}
 
-	public static Page<ProofDto> toDtoPage(Page<Proof> page) {
-		return page.map(ProofDto::from);
+	public static Page<ProofDto> toDtoPage(Page<Proof> page, Long memberId) {
+		return page.map(proof -> ProofDto.of(proof, memberId.equals(proof.getMemberId())));
 	}
+
 }

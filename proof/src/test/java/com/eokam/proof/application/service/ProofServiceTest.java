@@ -92,7 +92,7 @@ class ProofServiceTest extends BaseServiceTest {
 		Page<ProofDto> actualResponse = proofService.getMyProofList(testJwt, pageRequest);
 
 		// then
-		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage, 1L));
 	}
 
 	@Test
@@ -121,7 +121,7 @@ class ProofServiceTest extends BaseServiceTest {
 		Page<ProofDto> actualResponse = proofService.getProofList(testJwt, 2L, pageRequest);
 
 		// then
-		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage, 1L));
 	}
 
 	@Test
@@ -267,7 +267,7 @@ class ProofServiceTest extends BaseServiceTest {
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
 
 		// then
-		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
+		assertThat(actualResponse).isEqualTo(ProofDto.of(proof, true));
 	}
 
 	@Test
@@ -293,7 +293,7 @@ class ProofServiceTest extends BaseServiceTest {
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
 
 		// then
-		assertThat(actualResponse).isEqualTo(ProofDto.from(proof));
+		assertThat(actualResponse).isEqualTo(ProofDto.of(proof, false));
 	}
 
 	@Test
@@ -331,7 +331,7 @@ class ProofServiceTest extends BaseServiceTest {
 		Page<ProofDto> actualResponse = proofService.getFeed(testJwt, pageRequest);
 
 		// then
-		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage));
+		assertThat(actualResponse).usingRecursiveAssertion().isEqualTo(ProofDto.toDtoPage(proofPage, 1L));
 	}
 
 	private String createJwt(Long memberId) {
