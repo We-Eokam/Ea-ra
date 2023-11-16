@@ -113,7 +113,7 @@ class ProofServiceTest extends BaseServiceTest {
 			EXPECTED_FRIENDS_PROOF_LIST.size());
 
 		given(followServiceFeign.isFollow(anyString(), anyLong()))
-			.willReturn(new FollowStatus(2L, "ACCEPT"));
+			.willReturn(new FollowStatus(2L, "FRIEND"));
 		given(proofRepository.findAllByMemberId(anyLong(), any(PageRequest.class)))
 			.willReturn(proofPage);
 
@@ -287,7 +287,7 @@ class ProofServiceTest extends BaseServiceTest {
 
 		given(proofRepository.findByProofId(anyLong())).willReturn(Optional.of(proof));
 		given(followServiceFeign.isFollow(anyString(), anyLong())).willReturn(
-			new FollowStatus(2L, "ACCEPT"));
+			new FollowStatus(2L, "FRIEND"));
 
 		// when
 		ProofDto actualResponse = proofService.getProofDetail(testJwt, 1L);
