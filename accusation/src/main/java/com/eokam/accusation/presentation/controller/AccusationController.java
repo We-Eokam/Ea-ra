@@ -24,6 +24,7 @@ import com.eokam.accusation.presentation.dto.AccusationListResponse;
 import com.eokam.accusation.presentation.dto.AccusationRequest;
 import com.eokam.accusation.presentation.dto.AccusationResponse;
 import com.eokam.accusation.presentation.dto.GrooSavingRequest;
+import com.eokam.accusation.presentation.dto.NotificationRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +45,7 @@ public class AccusationController {
 		AccusationDto accusationDto = accusationService.createAccusation(AccusationDto.of(request, memberId), images);
 		AccusationResponse response = AccusationResponse.from(accusationDto);
 		rabbitSender.send(GrooSavingRequest.from(response));
+		rabbitSender.send(NotificationRequest.from(response));
 		return ResponseEntity.created(URI.create("/accusation/" + response.getAccusationId())).body(response);
 	}
 
