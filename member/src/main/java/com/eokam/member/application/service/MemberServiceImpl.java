@@ -176,7 +176,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public FollowStatus followMember(Long requestorId, Long receiverId) {
 
 		Optional<MemberFollow> memberFollow =
