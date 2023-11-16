@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.eokam.proof.application.dto.ProofCreateDto;
 import com.eokam.proof.application.dto.ProofDto;
 import com.eokam.proof.application.service.ProofServiceImpl;
+import com.eokam.proof.infrastructure.rabbitmq.RabbitSender;
+import com.eokam.proof.infrastructure.rabbitmq.dto.GrooSavingRequest;
 import com.eokam.proof.presentation.dto.request.ProofCreateRequest;
 import com.eokam.proof.presentation.dto.response.ProofListResponse;
 import com.eokam.proof.presentation.dto.response.ProofResponse;
@@ -37,6 +39,7 @@ public class ProofController {
 
 	private final ProofServiceImpl proofService;
 	private final ProofCreateRequestValidator proofCreateRequestValidator;
+	private final RabbitSender rabbitSender;
 
 	@GetMapping("/me")
 	public ResponseEntity<ProofListResponse> getMyProofList(
@@ -65,6 +68,7 @@ public class ProofController {
 		ProofResponse response = ProofResponse.from(
 			proofService.createProof(accessToken, ProofCreateDto.of(accessToken, request), images));
 
+		rabbitSender.send(GrooSavingRequest.from(response));
 		return ResponseEntity.created(URI.create("/proof/" + response.proofId())).body(response);
 	}
 
