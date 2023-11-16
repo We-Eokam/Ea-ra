@@ -11,9 +11,11 @@ import com.eokam.notification.presentation.dto.follow.FollowRequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class NotificationDto {
 	private final NotificationType notificationType;
 	private final Long sender;
