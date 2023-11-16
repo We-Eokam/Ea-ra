@@ -26,7 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public NotificationDto saveAccusationNotification(NotificationDto notificationDto) {
 		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
-			.memberInfoList()
+			.memberList()
 			.get(0)
 			.nickname();
 		Notification notification = notificationRepository.save(
@@ -37,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public NotificationDto saveFollowNotification(NotificationDto notificationDto) {
 		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
-			.memberInfoList()
+			.memberList()
 			.get(0)
 			.nickname();
 		Notification notification = notificationRepository.save(FollowNotification.of(notificationDto, senderNickname));
@@ -47,7 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public NotificationDto saveFollowAcceptNotification(NotificationDto notificationDto) {
 		String senderNickname = memberServiceFeign.getMemberDetail(notificationDto.getSender())
-			.memberInfoList()
+			.memberList()
 			.get(0)
 			.nickname();
 		Notification notification = notificationRepository.save(

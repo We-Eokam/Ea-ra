@@ -10,13 +10,22 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-;
 
 @Configuration
 public class RabbitConfig {
 	@Bean
 	public Queue myQueue() {
 		return new Queue("notificationQueue", true);
+	}
+
+	@Bean
+	public Queue followQueue() {
+		return new Queue("followRequestQueue", true);
+	}
+
+	@Bean
+	public Queue followRequestQueue() {
+		return new Queue("followAcceptQueue", true);
 	}
 
 	@Bean
