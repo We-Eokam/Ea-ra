@@ -4,10 +4,11 @@ import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import { ShortButton, LongButton } from "../../style";
-import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
-import areasList from "../../common/seoul-area.json";
+// import { ReactComponent as Dropdown } from "../../assets/icons/dropdown.svg";
+// import areasList from "../../common/seoul-area.json";
 import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -25,22 +26,24 @@ interface UserInfoProps {
   bill_count: number;
   profile_image_url: string;
   is_test_done: boolean;
+  repay_groo: number;
 }
 
 export default function SignupPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<string>("male");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedArea, setSelectedArea] = useState<number>(0);
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState("");
   const [isNicknameChecked, setIsNicknameChecked] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
   const [groo, setGroo] = useState(0);
+  const [getNoti, setGetNoti] = useState(false);
 
   const axios = axiosInstance();
   const navigate = useNavigate();
 
-  const onToggle = () => setIsOpen(!isOpen);
+  // const onToggle = () => setIsOpen(!isOpen);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -58,10 +61,10 @@ export default function SignupPage() {
     }
   };
 
-  const onOptionClicked = (index: number) => () => {
-    setSelectedArea(index);
-    setIsOpen(false);
-  };
+  // const onOptionClicked = (index: number) => () => {
+  //   setSelectedArea(index);
+  //   setIsOpen(false);
+  // };
 
   const handleGenderSelection = (gender: string) => {
     setSelectedGender(gender);
@@ -85,9 +88,9 @@ export default function SignupPage() {
     try {
       const response = await axios.get(`/member/detail?memberId=3`);
       const data = await response.data;
-      if (data.is_test_done) {
-        window.alert("이미 어라 회원입니다.");
-        window.location.href = "/";
+      if (data.is_test_done === true) {
+        // window.alert("이미 어라 회원입니다.");
+        // window.location.href = "/";
       }
       setUserInfo(data);
       console.log(data);
@@ -164,15 +167,22 @@ export default function SignupPage() {
 
   useEffect(() => {
     getUserInfo();
-    const initGroo = JSON.parse(localStorage.getItem("testGroo") || "{}");
-    if (initGroo) {
-      setGroo(initGroo);
-      localStorage.removeItem("testGroo");
-    } else {
-      window.alert("테스트를 먼저 진행해주세요");
-      navigate("/welcome");
-    }
+    // const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
+    // if (initGroo) {
+    //   setGroo(initGroo);
+    //   localStorage.removeItem("testGroo");
+    // } else {
+    //   window.alert("테스트를 먼저 진행해주세요");
+    //   navigate("/welcome");
+    // }
   }, []);
+
+  const handleNoti = () => {
+    if (!getNoti) {
+      setGetNoti(true)
+      // 여기서 알림 받기
+    }
+  }
 
   return (
     <>
@@ -181,7 +191,7 @@ export default function SignupPage() {
         <ProfileNickname>
           <ProfileFrame>
             <ProfileEditIcon htmlFor="file">
-              {/* 연필아이콘추가하기 */}
+              <ProfileEdit />
             </ProfileEditIcon>
             <ProfileInput
               type="file"
@@ -233,7 +243,7 @@ export default function SignupPage() {
           </GenderButton>
         </GenderButtonFrame>
 
-        <InfoName>활동 지역</InfoName>
+        {/* <InfoName>활동 지역</InfoName>
         <PlaceFrame>
           <BigGray>서울시</BigGray>
           <DropdownFrame>
@@ -256,7 +266,16 @@ export default function SignupPage() {
                 ))}
             </DropdownAreas>
           </DropdownFrame>
-        </PlaceFrame>
+        </PlaceFrame> */}
+        <InfoName>알림</InfoName>
+        <NotiAllow>
+          <div>
+            어라가 소식을 보내드려요
+          </div>
+          <NotiAllowButton onClick={handleNoti} getNoti={getNoti}>
+            받기
+          </NotiAllowButton>
+        </NotiAllow>
         <InfoName>시작 빚</InfoName>
         <InitialGroo>
           {groo},000그루
@@ -309,7 +328,20 @@ const ProfileEditIcon = styled.label`
   background-color: var(--white);
   border: 1px solid var(--gray);
   border-radius: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
+
+const ProfileEdit = styled(Edit)`
+  width: 88%;
+  height: 88%;
+  path {
+    fill: var(--dark-gray);
+  }
+  margin-top: -1px;
+  margin-left: 2.5px;
+`
 
 const ProfileInput = styled.input`
   position: absolute;
@@ -438,61 +470,61 @@ const GenderButton = styled(ShortButton)<GenderButtonProps>`
   height: 34px;
 `;
 
-const PlaceFrame = styled.div`
-  position: relative;
-  width: 100%;
-  margin-bottom: 40px;
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-`;
+// const PlaceFrame = styled.div`
+//   position: relative;
+//   width: 100%;
+//   margin-bottom: 40px;
+//   margin-top: 8px;
+//   display: flex;
+//   justify-content: space-between;
+// `;
 
-const DropdownFrame = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  width: 50%;
-`;
+// const DropdownFrame = styled.div`
+//   display: flex;
+//   flex-wrap: wrap;
+//   width: 50%;
+// `;
 
-const AreaName = styled.div`
-  width: 68px;
-  height: 100%;
-  display: flex;
-  /* border: 1px black solid; */
-`;
+// const AreaName = styled.div`
+//   width: 68px;
+//   height: 100%;
+//   display: flex;
+//   /* border: 1px black solid; */
+// `;
 
-const DropdownAreas = styled.div<DropdownProps>`
-  position: absolute;
-  margin-left: -8px;
-  height: ${({ isOpen }) => (isOpen ? "120px" : "0px")};
-  transition: height 0.25s ease;
-  width: 98px;
-  margin-top: 24px;
-  /* border: 1px var(--nav-gray) solid; */
-  border-radius: 0px 0px 10px 10px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
-  overflow-y: scroll;
-  overflow-x: hidden;
-`;
+// const DropdownAreas = styled.div<DropdownProps>`
+//   position: absolute;
+//   margin-left: -8px;
+//   height: ${({ isOpen }) => (isOpen ? "120px" : "0px")};
+//   transition: height 0.25s ease;
+//   width: 98px;
+//   margin-top: 24px;
+//   /* border: 1px var(--nav-gray) solid; */
+//   border-radius: 0px 0px 10px 10px;
+//   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08);
+//   overflow-y: scroll;
+//   overflow-x: hidden;
+// `;
 
-const OneArea = styled.div`
-  position: relative;
-  width: 100%;
-  height: 34px;
-  border-bottom: 1px solid var(--gray);
-  color: var(--nav-gray);
-  display: flex;
-  align-items: center;
-  padding-left: 8px;
-  font-size: 15px;
-`;
+// const OneArea = styled.div`
+//   position: relative;
+//   width: 100%;
+//   height: 34px;
+//   border-bottom: 1px solid var(--gray);
+//   color: var(--nav-gray);
+//   display: flex;
+//   align-items: center;
+//   padding-left: 8px;
+//   font-size: 15px;
+// `;
 
-const PointDown = styled(Dropdown)<DropdownProps>`
-  /* transform: rotate( 90deg); */
-  transform: ${({ isOpen }) => (isOpen ? "rotate(270deg)" : "rotate(90deg)")};
-  transition: transform 0.25s ease;
-  width: 20px;
-  height: 20px;
-`;
+// const PointDown = styled(Dropdown)<DropdownProps>`
+//   /* transform: rotate( 90deg); */
+//   transform: ${({ isOpen }) => (isOpen ? "rotate(270deg)" : "rotate(90deg)")};
+//   transition: transform 0.25s ease;
+//   width: 20px;
+//   height: 20px;
+// `;
 
 const BigGray = styled.div`
   font-size: 18px;
@@ -503,6 +535,24 @@ const InitialGroo = styled(BigGray)`
   margin-top: 8px;
   margin-bottom: 40px;
 `;
+
+const NotiAllow = styled(InitialGroo)`
+  width: 100%;
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: space-between;
+`;
+
+const NotiAllowButton = styled.div<{getNoti:boolean}>`
+    color: ${({ getNoti }) => (getNoti ? "var(--nav-gray)" : "var(--black)")};
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-top: 1px;
+    margin-right: 2px;
+
+`
 
 const SignupFrame = styled.div`
   position: absolute;
