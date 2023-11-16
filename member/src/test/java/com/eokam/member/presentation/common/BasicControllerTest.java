@@ -3,27 +3,24 @@ package com.eokam.member.presentation.common;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.*;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.restassured.RestAssuredRestDocumentation;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.eokam.member.config.RestDocsConfig;
 import com.eokam.member.domain.Member;
 import com.eokam.member.domain.MemberFollow;
 import com.eokam.member.infra.dto.JwtMemberDto;
 import com.eokam.member.infra.external.service.JwtTokenProvider;
+import com.eokam.member.infra.mq.ReceiveMQService;
+import com.eokam.member.infra.mq.SendMQService;
 import com.eokam.member.infra.repository.MemberFollowRepository;
 import com.eokam.member.infra.repository.MemberRepository;
 import com.eokam.member.util.DatabaseCleanupExtension;
@@ -50,6 +47,9 @@ public class BasicControllerTest {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+
+	@Mock
+	private SendMQService sendMQService;
 
 	public static final String BASE_URL = "http://localhost";
 
