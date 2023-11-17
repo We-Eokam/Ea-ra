@@ -89,9 +89,13 @@ export default function SignupPage() {
     try {
       const response = await axios.get(`/member/detail?memberId=3`);
       const data = await response.data;
-      if (data.is_test_done === true) {
-        // window.alert("이미 어라 회원입니다.");
-        // window.location.href = "/";
+      if (data.member_id && !data.is_test_done) {
+        window.alert("테스트를 먼저 진행해주세요");
+        navigate("/welcome");
+      }
+      if (data.member_id && data.is_test_done) {
+        window.alert("이미 어라 회원입니다.");
+        navigate("/");
       }
       setUserInfo(data);
       console.log(data);
@@ -169,12 +173,8 @@ export default function SignupPage() {
     const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
     if (initGroo) {
       setGroo(initGroo);
+      localStorage.removeItem("testGroo");
     }
-    //   localStorage.removeItem("testGroo");
-    // } else {
-    //   window.alert("테스트를 먼저 진행해주세요");
-    //   navigate("/welcome");
-    // }
   }, []);
 
   const handleNoti = () => {
