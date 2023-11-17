@@ -64,7 +64,6 @@ public class LoginController {
 			.secure(true)
 			.path("/")
 			.maxAge(0)
-			.domain(domain)
 			.build();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
