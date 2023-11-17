@@ -1,73 +1,178 @@
-// import React from 'react'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"
+import moment from "moment";
 import NavBar from "../../components/NavBar/NavBar";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
-// import FollowBtn from "../../components/Buttons/FollowButton";
+import FollowBtn from "../../components/Buttons/FollowButton";
+import axiosInstance from "../../api/axiosInstance";
+import reportData from "../../common/report.json";
+
+interface NotiProps {
+  senderId: number;
+  type: string;
+  createdAt: string;
+  content: string;
+  accusationType: string | null;
+}
+
+interface User {
+  nickname: string;
+  profileImg: string;
+  status: string;
+}
+
+interface Users{
+  [userId: number]: User;
+}
+
+const formatDate = (createdAt: string): string => {
+  const createdMoment = moment(createdAt);
+  const now = moment();
+  const diffDays = now.diff(createdMoment, 'days');
+  const diffHours = now.diff(createdMoment, 'hours');
+  const diffMinutes = now.diff(createdMoment, 'minutes');
+  const diffSeconds = now.diff(createdMoment, 'seconds');
+
+  if (diffDays >= 7) {
+    return createdMoment.format(createdMoment.year() === now.year() ? 'MM월 DD일' : 'YYYY년 MM월 DD일');
+  } else if (diffDays > 0) {
+    return `${diffDays}일 전`;
+  } else if (diffHours > 0) {
+    return `${diffHours}시간 전`;
+  } else if (diffMinutes > 0) {
+    return `${diffMinutes}분 전`;
+  } else if (diffSeconds > 0) {
+    return `${diffSeconds}초 전`;
+  } else {
+    return '방금 전';
+  }
+};
+
+const findeTemplate = (type: string) => {
+  const report = reportData.find(item => item.type === type);
+  if (report) {
+    return report.imgUrl;
+  }
+  return reportData[5].imgUrl;
+}
 
 export default function NotiPage() {
-  const NoticeExample = [
-    {
-      type: "accusation",
-      userNickname: "짱구는못말려",
-      profileImg: "src/assets/images/jjanggu.png",
-      witnessImg: "/images/template6.png",
-      creatAt: "방금",
-    },
-    {
-      type: 1,
-      userNickname: "짱구는못말려",
-      profileImg: "src/assets/images/jjanggu.png",
-      isFollow: "경고",
-      accept: false,
-      creatAt: "2분 전",
-    },
-    {
-      type: 1,
-      userNickname: "나더워",
-      profileImg: "src/assets/images/earth.png",
-      isFollow: "accept",
-      accept: false,
-      creatAt: "1일 전",
-    },
-    {
-      type: 1,
-      userNickname: "지뀨하기",
-      profileImg: "src/assets/images/ziggu.png",
-      isFollow: "경고",
-      accept: true,
-      creatAt: "1일 전",
-    },
-  ];
+  const axios = axiosInstance();
+  const navigate = useNavigate();
+  const today = new Date();
+  const startDate = moment(today).subtract(7, 'days').format("YYYY-MM-DD");
+  const endDate = moment(today).add(1, 'day').format("YYYY-MM-DD");
+  const [notiDatas, setNotiDatas] = useState<NotiProps[]|null>(null);
+  const [userDatas, setUserDatas] = useState<Users>({});
+
+  useEffect (() => {
+    getNotification()
+  }, [])
+
+  const getNotification = async () => {
+    try {
+      const response = await axios.get(
+        `/notification?startDate=${startDate}&endDate=${endDate}`
+      );
+      const data = response.data.notification_list;
+      const updateNotis = data.map((noti: any) => ({
+        senderId: noti.sender,
+        type: noti.notification_type,
+        createdAt: noti.created_at,
+        content: noti.content,
+        accusationType: noti.accusation_type,
+      }));
+      setNotiDatas(updateNotis);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (notiDatas) {
+      console.log(notiDatas)
+      const uniqueSenderIds = Array.from(
+        new Set(notiDatas?.map(noti => noti.senderId))
+      );
+      uniqueSenderIds?.map((senderId) =>{
+        getFriendInfo(senderId);
+      })
+    }
+  }, [notiDatas]);
+
+  const getFriendInfo = async (id: number) => {
+    let status = "";
+    try {
+      const response = await axios.get(`/member/follow?memberId=${id}`);
+      status = response.data.follow_status;
+    } catch (error) {
+      console.log(error);
+    }
+
+    let nickname = "";
+    let profileImg = "";
+    try {
+      const response = await axios.get(`/member?memberId=${id}`);
+      const data = response.data.member_list[0];
+      nickname = data.nickname;
+      profileImg = data.profile_image_url;
+    } catch (error) {
+      console.log(error);
+    }
+    
+    const userInfo = {
+      [id]: {
+        nickname: nickname,
+        profileImg: profileImg,
+        status: status,
+      }
+    };
+    setUserDatas((prev) => ({ ...prev, ...userInfo }));
+  }
+
+  const updateUserStatus = (userId:number, newStatus:string) => {
+    setUserDatas((prevUserDatas) => {
+      const updatedUser = {
+        ...prevUserDatas[userId],
+        status: newStatus,
+      };
+      return {
+        ...prevUserDatas,
+        [userId]: updatedUser,
+      };
+    });
+  };
 
   return (
     <>
       <HeadBar pagename="알림" bgcolor="white" backbutton="yes" />
-      <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
+      <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="medium">
         <MarginFrame />
-        {NoticeExample.map((notice, index) => (
+        {notiDatas && notiDatas.map((notice, index) => (
           <Container key={index}>
-            <LeftContainer type={notice.type}>
-              <ProfileImg src={notice.profileImg} />
+            <LeftContainer>
+              <ProfileImg
+                src={userDatas[notice.senderId]?.profileImg}
+                onClick={() => {navigate(`/profile/${notice.senderId}`)}}
+              />
               <TextContainer>
-                <NickName>{notice.userNickname}</NickName>
-                {notice.type == 1 ? (
-                  notice.accept == true ? (
-                    <span>님이 회원님의 친구 요청을 수락했어요</span>
-                  ) : (
-                    <span>님이 회원님과 친구가 되고 싶어해요.</span>
-                  )
-                ) : (
-                  <span>님이 회원님의 환경 오염 활동을 목격했어요.</span>
-                )}
-                <Time>{notice.creatAt}</Time>
+                <NickName>{userDatas[notice.senderId]?.nickname}</NickName>
+                님이 {notice.content}
+                <Time>{formatDate(notice.createdAt)}</Time>
               </TextContainer>
             </LeftContainer>
-            {notice.type == 1 ? (
-              // <FollowBtn status={notice.isFollow} />
-              <>"공사 중"</>
+            {notice.accusationType ? (
+              <WitnessImg src={findeTemplate(notice.accusationType)} />
+            ) : userDatas[notice.senderId]?.status === "ACCEPT" ? (
+                <FollowBtn
+                  status={userDatas[notice.senderId]?.status}
+                  setStatus={newStatus => updateUserStatus(notice.senderId, newStatus as string)}
+                  target={notice.senderId}
+                />
             ) : (
-              <WitnessImg src={notice.witnessImg} />
+              ""
             )}
           </Container>
         ))}
@@ -89,26 +194,30 @@ const Container = styled.div`
   padding: 8px 0;
 `;
 
-const LeftContainer = styled.div<{ type: number | string }>`
+const LeftContainer = styled.div`
+  flex-shrink: 2;
+  width: 100%;
   display: flex;
   align-items: center;
-  /* width: ${(props) =>
-    props.type == 1 ? "calc(100% - 92px)" : "calc(100% - 60px)"}; */
 `;
 
 const ProfileImg = styled.img`
-  height: 48px;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   margin-right: 4%;
 `;
 
 const WitnessImg = styled.img`
+  flex-shrink: 0;
   height: 60px;
 `;
 
 const TextContainer = styled.div`
-  width: calc(92% - 50px);
+  flex-shrink: 2;
+  width: calc(92% - 42px);
   color: var(--black);
   font-size: 13px;
   font-weight: 400;

@@ -5,8 +5,8 @@ import axiosInstance from "../../api/axiosInstance";
 
 interface FollowBtnProps {
   status: string;
-  setStatus: React.Dispatch<SetStateAction<string>>;
-  target: string | number;
+  setStatus: React.Dispatch<SetStateAction<string>> | (() => void);
+  target: number;
 }
 
 const FollowBtn = ({ status, setStatus, target }: FollowBtnProps) => {
