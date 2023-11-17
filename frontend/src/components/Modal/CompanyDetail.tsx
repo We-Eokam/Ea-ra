@@ -60,8 +60,8 @@ export default function CompanyDetail({
       const response = await axios.post(
         `/cpoint/company/${companyInfo.id}/connect`
       );
+      // @ts-ignore
       const data = await response.data;
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -72,8 +72,8 @@ export default function CompanyDetail({
       const response = await axios.delete(
         `/cpoint/company/${companyInfo.id}/connect`
       );
+      // @ts-ignore
       const data = await response.data;
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
