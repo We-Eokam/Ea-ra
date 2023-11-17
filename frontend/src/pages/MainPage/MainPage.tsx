@@ -121,6 +121,9 @@ export default function MainPage() {
     try {
       const response = await axios.get(`/member/detail`);
       const data = await response.data;
+      if (data.member_id && !data.is_test_done) {
+        navigate("/welcome")
+      }
       setUserInfo(data);
       setGrooInit(data.groo);
       var b = Math.round((data.repay_groo / data.groo) * 100);
@@ -177,9 +180,6 @@ export default function MainPage() {
       <MainFrame headbar="no" navbar="yes" bgcolor="third" marginsize="no">
         <NotiBar>
           <NotificationIcon onClick={toNotification} />
-          <span onClick={() => navigate("/login")}>로그인 페이지</span>
-          <span onClick={() => navigate("/signup")}>회원가입 페이지</span>
-          <span onClick={() => navigate("/welcome")}>테스트 페이지</span>
         </NotiBar>
         <EarthFrame>
           <TodayEarth>
