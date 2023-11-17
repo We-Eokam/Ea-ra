@@ -74,7 +74,7 @@ public class FcmController {
 			NotificationDto.follow(followRequest));
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),
@@ -97,7 +97,7 @@ public class FcmController {
 			NotificationDto.followAccept(followRequest));
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),
@@ -119,7 +119,7 @@ public class FcmController {
 			NotificationDto.accusation(accusationRequest));
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(accusationRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(accusationRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),

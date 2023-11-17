@@ -32,7 +32,7 @@ public class RabbitNotificationListener {
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(accusationRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(accusationRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),
@@ -49,7 +49,7 @@ public class RabbitNotificationListener {
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),
@@ -66,7 +66,7 @@ public class RabbitNotificationListener {
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
 
 		String prefix =
-			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이";
+			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
 		fcmMessageService.sendMessageTo(
 			fcmService.getToken(notificationDto.getReceiver()).token(),
