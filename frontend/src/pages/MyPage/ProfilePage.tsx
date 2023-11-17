@@ -1,4 +1,3 @@
-// import React from 'react'
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -44,13 +43,12 @@ const calcPercent = (tmp: number, total: number) => {
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [ userInfo, setUserInfo ] = useState<UserInfoProps | null>(null);
-  const [ status, setStatus ] = useState("NOTHING");
+  const [ status, setStatus ] = useState("");
   const tabs = ["인증", "제보"];
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
   const navigate = useNavigate();
   const axios = axiosInstance();
-
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [curPosts, setCurPosts] = useState(0);
@@ -66,7 +64,7 @@ export default function ProfilePage() {
     getMemberInfo();
     getStatus();
   }, []);
-
+  
   const getMemberInfo = async () => {
     try {
       const response = await axios.get(`/member?memberId=${id}`);
@@ -102,11 +100,6 @@ export default function ProfilePage() {
     }
   }, [status]);
   
-  useEffect(() => {
-    console.log("인증",posts)
-    console.log("제보",reports)
-  }, [posts, reports])
-  
   const { ref: postInfScrollRef } = useInfScroll({
     getMore: () => {
       getPosts();
@@ -127,7 +120,7 @@ export default function ProfilePage() {
 
     try {
       const nowPosts = curPosts;
-      const response = await axios.get(`/proof?memberId=${userInfo?.id}&page=${nowPosts}&size=12`);
+      const response = await axios.get(`/proof?memberId=${userInfo.id}&page=${nowPosts}&size=12`);
       const data = response.data;
 
       if(response.status !== 204) {
@@ -211,7 +204,7 @@ export default function ProfilePage() {
                 )}
               </SubText>
             </TextBox>
-            <FollowBtn status={status} setStatus={setStatus} />
+            <FollowBtn status={status} setStatus={setStatus} target={id}/>
           </UserInfoContainer>
           <ProgressBar progress={userInfo?.progress} greeninit={userInfo?.groo} />
         </UserFrame>
