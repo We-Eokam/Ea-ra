@@ -1,6 +1,7 @@
-// import React from 'react'
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
 import ImageCropper from "../../components/ImageCropper/ImageCropper";
@@ -33,6 +34,7 @@ export default function PostPage() {
   const [isRegist, setIsRegist] = useState(false);
   const [selectCompanyIdx, setSelectCompanyIdx] = useState<number | null>(null);
   const axios = axiosInstance();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -80,7 +82,6 @@ export default function PostPage() {
       c_company_id: selectCompanyIdx,
       content: activityDetail,
     };
-    // console.log("리퀘스트데이터~~~", requestData)
     formData.append('content',  new Blob([JSON.stringify(requestData)], { type: 'application/json' }))
 
     await fetch(croppedImage).then(res=>res.blob()).then((blob)=>
@@ -93,10 +94,10 @@ export default function PostPage() {
           'Content-Type': 'multipart/form-data',
         }
       });
-      const responseData = await response.data
-      console.log("리스폰스데이터", responseData);
+      console.log(response.status);
+      navigate(-1);
     } catch (error) {
-      console.log("에 ----- 러", error);
+      console.log("에러", error);
     }
   };
 

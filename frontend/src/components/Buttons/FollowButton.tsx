@@ -1,16 +1,19 @@
 import React, { useState, useEffect, SetStateAction } from "react";
 import styled from "styled-components";
+import axiosInstance from "../../api/axiosInstance";
 
 
 interface FollowBtnProps {
-  status?: string;
+  status: string;
   setStatus: React.Dispatch<SetStateAction<string>>;
+  target: string | number;
 }
 
-const FollowBtn = ({ status, setStatus }: FollowBtnProps) => {
+const FollowBtn = ({ status, setStatus, target }: FollowBtnProps) => {
   const [content, setContent] = useState("");
   const [color, setColor] = useState("black");
   const [bgColor, setBgColor] = useState("gray");
+  const axios = axiosInstance();
 
   useEffect(() => {
     if (status === "FRIEND") {
@@ -32,16 +35,28 @@ const FollowBtn = ({ status, setStatus }: FollowBtnProps) => {
     }
   }, [status]);
 
-  const handleBtnClick = () => {
+  const handleBtnClick = async () => {
+    if (status === "REQUEST") { return; }
+    
     if (status === "FRIEND") {
-      // 친구 진짜 끊으시겠습니까? -> 확인 후 친구 삭제 요청 보내고 성공하면 친구 끊기
-      setStatus("NOTHING");
-    } else if (status === "ACCEPT") {
-      // 수락하기 누르면 승인 acios 보낸 후 성공하면 바로 친구 된 것
-      setStatus("FRIEND");
-    } else if (status === "NOTHING") {
-      // 친구신청 요청보낸 후 성공하면 요청됨으로 변경
-      setStatus("REQUEST");
+      try {
+        const response = await axios.delete(`/member/follow?targetId=${target}`);
+        setStatus(response.data.follow_status);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      const requestData = { target_id: Number(target) };
+      let endPoint = ""
+      if (status === "ACCEPT") {
+        endPoint = "/accept"
+      }
+      try {
+        const response = await axios.post(`/member/follow${endPoint}`, requestData);
+        setStatus(response.data.follow_status);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
