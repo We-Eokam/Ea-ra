@@ -1,0 +1,67 @@
+server:
+  port: 4000
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+
+spring:
+  application:
+    name: gateway-server
+  config:
+    import: optional:file:.env[.properties]
+  cloud:
+    gateway:
+      routes:
+        - id: proof-service
+          uri: lb://PROOF-SERVICE
+          predicates:
+            - Path=/proof/**
+          filters:
+            - CustomAuthFilter
+        - id: accusation-service
+          uri: lb://ACCUSATION-SERVICE
+          predicates:
+            - Path=/accusation/**
+          filters:
+            - CustomAuthFilter
+        - id: groo-service
+          uri: lb://GROO-SERVICE
+          predicates:
+            - Path=/groo/**
+          filters:
+            - CustomAuthFilter
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notification/**
+          filters:
+            - CustomAuthFilter
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member/**,/logout/**,/login/**
+        - id: cpoint-service
+          uri: lb://CPOINT-SERVICE
+          predicates:
+            - Path=/cpoint/**
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "https://www.ea-ra.com"
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+
+jwt:
+  key: ${JWT_KEY}
