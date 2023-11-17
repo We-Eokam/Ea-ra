@@ -1,5 +1,5 @@
-// import React from 'react'
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import HeadBar from "../../components/HeadBar/HeadBar";
@@ -45,12 +45,12 @@ export default function ReportPage() {
   const [activityDetail, setActivityDetail] = useState("");
   const [imgSelectorOpen, setImgSelectorOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // @ts-ignore
   const [friendId, setFriendId] = useState<number | null>(null);
   const [friendInfo, setFriendInfo] = useState<FriendDataProps | null>(null);
   const [friendModalOpen, setFriendModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const axios = axiosInstance();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -74,7 +74,6 @@ export default function ReportPage() {
     try {
       const response = await axios.get(`/member?memberId=${friendId}`);
       const data = response.data.member_list[0];
-      console.log(data)
       const userInfo = {
         userId: data.member_id,
         profileImg: data.profile_image_url,
@@ -123,16 +122,15 @@ export default function ReportPage() {
     )
 
     try {
-      console.log("폼데이터ㅓ어어어", formData)
       const response = await axios.post("/accusation", formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      const responseData = await response.data
-      console.log(responseData);
+      console.log(response.status);
+      navigate(-1);
     } catch (error) {
-      console.log("에---러", error);
+      console.log("에러", error);
     }
   };
 
@@ -308,7 +306,6 @@ const ProfileImg = styled.div`
   height: 42px;
   border-radius: 50%;
   border: 1px solid var(--nav-gray);
-  /* background-color: var(--gray); */
 
   img {
     width: 42px;
