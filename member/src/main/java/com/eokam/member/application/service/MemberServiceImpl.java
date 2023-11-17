@@ -253,11 +253,16 @@ public class MemberServiceImpl implements MemberService {
 		//팔로우 수락이므로 requestor receiver가 바뀌어야함
 		MemberFollow newMemberFollow = MemberFollow.builder().requestor(receiver).receiver(requestor).build();
 		memberFollowRepository.save(newMemberFollow);
-		return checkFollowStatus(requestorId,receiverId);
+		FollowStatus followStatus = checkFollowStatus(requestorId,receiverId);
+		if(followStatus.equals(FollowStatus.FRIEND)){
+			sendMQService.sendFollowAcceptNotification(NotificationReqeust.builder()
+				.sender(receiverId).receiver(requestorId).build());
+		}
+		return followStatus;
 	}
 
 	@Override
 	public List<MemberDto> retrieveAllMember() {
-		return memberRepository.findAll().stream().map(member -> MemberDto.from(member)).toList();
+		return memberRepository.findAll().stream().filter(member -> member.getIsTestDone()).map(member -> MemberDto.from(member)).toList();
 	}
 }

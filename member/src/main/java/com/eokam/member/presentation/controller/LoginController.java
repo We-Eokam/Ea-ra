@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eokam.member.application.service.LoginService;
+import com.eokam.member.global.ErrorCode;
+import com.eokam.member.global.exception.JwtParseException;
 import com.eokam.member.infra.external.service.OauthProvider;
 import com.eokam.member.presentation.dto.MemberDetailResponse;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -58,13 +61,15 @@ public class LoginController {
 
 	@GetMapping("/logout")
 	public ResponseEntity<?> loginOut(@CookieValue(value="access-token",required = false) String accessToken){
+		if(accessToken == null){
+			throw new JwtParseException(ErrorCode.JWT_PARSE_FAIL);
+		}
 		loginService.logout(accessToken);
 		ResponseCookie responseCookie = ResponseCookie.from("access-token",accessToken)
 			.httpOnly(true)
 			.secure(true)
 			.path("/")
 			.maxAge(0)
-			.domain(domain)
 			.build();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, responseCookie.toString())

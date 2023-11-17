@@ -53,6 +53,8 @@ public class JwtTokenProvider {
 
 		Claims claims = Jwts.claims();
 		claims.put("memberId",jwtMemberDto.getMemberId());
+		claims.put("issuedAt",now);
+		claims.put("expiryDate",expiryDate);
 		return Jwts
 			.builder()
 			.setSubject("eokam")
