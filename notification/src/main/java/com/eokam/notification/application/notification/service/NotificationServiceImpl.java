@@ -43,7 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public List<NotificationDto> getNotification(String accessToken, LocalDate startDate, LocalDate endDate) {
-		List<Notification> notifications = notificationRepository.findByReceiverAndCreatedAtBetween(
+		List<Notification> notifications = notificationRepository.findByReceiverAndCreatedAtBetweenOrderByCreatedAtDesc(
 			ParseJwtUtil.parseMemberId(accessToken), startDate.atStartOfDay(), endDate.atStartOfDay());
 
 		return notifications.stream()
