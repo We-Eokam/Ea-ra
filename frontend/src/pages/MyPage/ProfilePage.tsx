@@ -94,11 +94,6 @@ export default function ProfilePage() {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    if (status === "FRIEND") {
-    }
-  }, [status]);
   
   const { ref: postInfScrollRef } = useInfScroll({
     getMore: () => {
@@ -120,7 +115,7 @@ export default function ProfilePage() {
 
     try {
       const nowPosts = curPosts;
-      const response = await axios.get(`/proof?memberId=${userInfo.id}&page=${nowPosts}&size=12`);
+      const response = await axios.get(`/proof?memberId=${userInfo?.id}&page=${nowPosts}&size=12`);
       const data = response.data;
 
       if(response.status !== 204) {
@@ -204,7 +199,7 @@ export default function ProfilePage() {
                 )}
               </SubText>
             </TextBox>
-            <FollowBtn status={status} setStatus={setStatus} target={id}/>
+            <FollowBtn status={status} setStatus={setStatus} target={userInfo.id}/>
           </UserInfoContainer>
           <ProgressBar progress={userInfo?.progress} greeninit={userInfo?.groo} />
         </UserFrame>
