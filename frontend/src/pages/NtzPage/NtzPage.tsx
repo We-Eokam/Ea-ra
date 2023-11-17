@@ -152,8 +152,8 @@ export default function NtzPage() {
           "https://github.com/YJS96/eara_test_repo/blob/main/public/images/earth-1.png?raw=true",
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
-          mobileWebUrl: `https://dev.ea-ra.com/login`,
-          webUrl: `https://dev.ea-ra.com/login`,
+          mobileWebUrl: import.meta.env.VITE_BASEURL_FRONT,
+          webUrl: import.meta.env.VITE_BASEURL_FRONT,
         },
       },
     });
