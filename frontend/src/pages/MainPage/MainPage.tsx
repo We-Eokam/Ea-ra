@@ -122,7 +122,6 @@ export default function MainPage() {
       const response = await axios.get(`/member/detail`);
       const data = await response.data;
       setUserInfo(data);
-      console.log(data);
       setGrooInit(data.groo);
       var b = Math.round((data.repay_groo / data.groo) * 100);
       if (data.groo === 0) {
@@ -130,7 +129,7 @@ export default function MainPage() {
       }
       setProgress(b);
     } catch (error) {
-      console.log(error);
+      navigate("/login")
     }
   };
 
@@ -138,7 +137,6 @@ export default function MainPage() {
     try {
       const response = await axios.get(`/groo/current-week`);
       const data = await response.data.groo_saving_list;
-      // console.log(data)
       setGrooSavingList(data);
     } catch (error) {
       console.log(error);
@@ -197,9 +195,10 @@ export default function MainPage() {
           </NicknameLine>
           <GreenLeft>
             <Bold>
-              {userInfo?.groo
-                .toString()
-                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
+              {userInfo?.groo &&
+                userInfo?.groo
+                  .toString()
+                  .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
             </Bold>
             그루
           </GreenLeft>
@@ -229,7 +228,7 @@ export default function MainPage() {
                 {groo_saving_list &&
                 Number(moment(groo_saving_list[index].date).format("YYMMDD")) -
                   Number(moment(date).format("YYMMDD")) >
-                  1 ? (
+                  0 ? (
                   <DayProgress count={getCountColor(-1)}></DayProgress>
                 ) : (
                   <DayProgress

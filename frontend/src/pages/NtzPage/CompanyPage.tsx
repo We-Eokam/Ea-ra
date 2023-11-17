@@ -83,7 +83,6 @@ export default function CompanyPage() {
         `/cpoint/company?category=${categoryInEnglish[selectedCategoryIndex]}`
       );
       const data = await response.data.company_list;
-      console.log(data);
       setCompanyList(data);
     } catch (error) {
       console.log(error);
