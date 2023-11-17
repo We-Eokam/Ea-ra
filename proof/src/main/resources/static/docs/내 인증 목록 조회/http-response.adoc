@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 881
+
+{"proof":[{"proof_id":1,"activity_type":"ELECTRONIC_RECEIPT","c_company_id":1,"created_at":"2023-10-31T14:12:05","picture":[{"url":"http://test1.com","name":"test1.jpg"}],"content":null},{"proof_id":2,"activity_type":"DISPOSABLE_CUP","c_company_id":2,"created_at":"2023-10-31T14:12:05","picture":[{"url":"http://test2.com","name":"test2.jpg"}],"content":null},{"proof_id":3,"activity_type":"MULTI_USE_CONTAINER","c_company_id":3,"created_at":"2023-10-31T14:12:05","picture":[{"url":"http://test3.com","name":"test3.jpg"}],"content":null},{"proof_id":4,"activity_type":"TUMBLER","c_company_id":4,"created_at":"2023-10-31T14:12:05","picture":[{"url":"http://test4.com","name":"test4.jpg"}],"content":null},{"proof_id":5,"activity_type":"EMISSION_FREE_CAR","c_company_id":5,"created_at":"2023-10-31T14:12:05","picture":[{"url":"http://test5.com","name":"test5.jpg"}],"content":null}]}
+----
