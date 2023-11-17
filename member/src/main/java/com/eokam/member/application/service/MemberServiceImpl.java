@@ -256,7 +256,7 @@ public class MemberServiceImpl implements MemberService {
 		FollowStatus followStatus = checkFollowStatus(requestorId,receiverId);
 		if(followStatus.equals(FollowStatus.FRIEND)){
 			sendMQService.sendFollowAcceptNotification(NotificationReqeust.builder()
-				.sender(requestorId).receiver(receiverId).build());
+				.sender(receiverId).receiver(requestorId).build());
 		}
 		return followStatus;
 	}
