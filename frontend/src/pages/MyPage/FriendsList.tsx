@@ -111,7 +111,7 @@ export default function FriendsList() {
         )}
       </MainFrame>
 
-      <OptionModal title="친구 끊기" content={modalContent} btnText="삭제" isOpen={modalOpen} closeModal={closeModal} onConfirm={() => deleteFriend} />
+      <OptionModal title="친구 끊기" content={modalContent} btnText="삭제" isOpen={modalOpen} closeModal={closeModal} onConfirm={deleteFriend} />
       <NavBar />
     </>
   )
