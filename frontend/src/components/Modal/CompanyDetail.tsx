@@ -50,7 +50,9 @@ export default function CompanyDetail({
       connectCompany();
     }
     closeAndAnimate();
-    location.reload();
+    setTimeout(() => {
+      location.reload();
+    }, 260);
   };
 
   const connectCompany = async () => {

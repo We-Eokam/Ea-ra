@@ -97,7 +97,7 @@ export default function SharePage() {
             <br />잘못된 접근입니다.<br /><br />
           </TypeName>
           <div>
-            <LoginBtn href={"https://dev.ea-ra.com/api/login"}>
+            <LoginBtn href={`${import.meta.env.VITE_BASEURL_BACK}/login`}>
               카카오 로그인
               <ButtonLogo src="/images/kakao-logo.png" />
             </LoginBtn>
@@ -137,7 +137,7 @@ export default function SharePage() {
             dangerouslySetInnerHTML={{ __html: earthType.content }}
             style={{ marginBottom: "12px" }}
           />
-          <LoginBtn href={"https://dev.ea-ra.com/api/login"}>
+          <LoginBtn href={`${import.meta.env.VITE_BASEURL_BACK}/login`}>
             카카오로 시작하기
             <ButtonLogo src="/images/kakao-logo.png" />
           </LoginBtn>

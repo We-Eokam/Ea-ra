@@ -48,7 +48,7 @@ export default function LoginPage() {
             <br />
             고소한다면?
           </EARA>
-          <KakaoButton href={"https://dev.ea-ra.com/api/login"}>
+          <KakaoButton href={`${import.meta.env.VITE_BASEURL_BACK}/login`}>
             카카오로 시작하기
             <ButtonLogo src="images/kakao-logo.png" />
           </KakaoButton>

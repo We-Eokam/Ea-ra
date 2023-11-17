@@ -9,6 +9,7 @@ import { ShortButton, LongButton } from "../../style";
 import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
+import initFcm from "../../util/fcm.ts";
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -101,7 +102,9 @@ export default function SignupPage() {
 
   const signupClicked = async () => {
     // 닉네임 중복확인 했는지
-    if (!isNicknameChecked) { return }
+    if (!isNicknameChecked) {
+      return;
+    }
     // 새로운 사진을 선택했는지
     // console.log(selectedImage);
     if (selectedImage) {
@@ -113,21 +116,17 @@ export default function SignupPage() {
         .then((blob) => multiImage.append("profile_image", blob));
 
       try {
-        const response = await axios.post(
-          "/member/profileImage",
-          multiImage,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const response = await axios.post("/member/profileImage", multiImage, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         const data = await response.data;
         console.log(data);
       } catch (error) {
         window.alert("이미지 업로드에 실패했습니다");
         console.log(error);
-        return
+        return;
       }
     }
 
@@ -143,10 +142,10 @@ export default function SignupPage() {
       } catch (error) {
         window.alert("닉네임 변경에 실패했습니다");
         console.log(error);
-        return
+        return;
       }
     }
-    
+
     // 사진이랑 닉네입 성공하면 시작 빚 보내기
     if (groo) {
       try {
@@ -160,7 +159,7 @@ export default function SignupPage() {
         navigate("/");
       } catch (error) {
         console.log(error);
-        return
+        return;
       }
     }
   };
@@ -170,19 +169,20 @@ export default function SignupPage() {
     const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
     if (initGroo) {
       setGroo(initGroo);
-      localStorage.removeItem("testGroo");
-    } else {
-      // window.alert("테스트를 먼저 진행해주세요");
-      // navigate("/welcome");
     }
+    //   localStorage.removeItem("testGroo");
+    // } else {
+    //   window.alert("테스트를 먼저 진행해주세요");
+    //   navigate("/welcome");
+    // }
   }, []);
 
   const handleNoti = () => {
     if (!getNoti) {
-      setGetNoti(true)
-      // 여기서 알림 받기
+      initFcm();
+      setGetNoti(true);
     }
-  }
+  };
 
   return (
     <>
@@ -269,17 +269,13 @@ export default function SignupPage() {
         </PlaceFrame> */}
         <InfoName>알림</InfoName>
         <NotiAllow>
-          <div>
-            어라가 소식을 보내드려요
-          </div>
+          <div>어라가 소식을 보내드려요</div>
           <NotiAllowButton onClick={handleNoti} getNoti={getNoti}>
             받기
           </NotiAllowButton>
         </NotiAllow>
         <InfoName>시작 빚</InfoName>
-        <InitialGroo>
-          {groo},000그루
-        </InitialGroo>
+        <InitialGroo>{groo},000그루</InitialGroo>
         <SignupFrame>
           <SignupButton disabled={!isNicknameChecked} onClick={signupClicked}>
             가입하기
@@ -341,7 +337,7 @@ const ProfileEdit = styled(Edit)`
   }
   margin-top: -1px;
   margin-left: 2.5px;
-`
+`;
 
 const ProfileInput = styled.input`
   position: absolute;
@@ -543,16 +539,15 @@ const NotiAllow = styled(InitialGroo)`
   justify-content: space-between;
 `;
 
-const NotiAllowButton = styled.div<{getNoti:boolean}>`
-    color: ${({ getNoti }) => (getNoti ? "var(--nav-gray)" : "var(--black)")};
-    height: 100%;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    margin-top: 1px;
-    margin-right: 2px;
-
-`
+const NotiAllowButton = styled.div<{ getNoti: boolean }>`
+  color: ${({ getNoti }) => (getNoti ? "var(--nav-gray)" : "var(--black)")};
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-top: 1px;
+  margin-right: 2px;
+`;
 
 const SignupFrame = styled.div`
   position: absolute;

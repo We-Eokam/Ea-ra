@@ -28,7 +28,7 @@ interface StoreProps {
 
 interface StoreListProps {
   activity_type: string;
-  stores: StoreProps;
+  stores: StoreProps[];
 }
 
 export default function MapPage() {
@@ -74,7 +74,7 @@ export default function MapPage() {
     }, 250);
   }, []);
 
-  var filteredList: StoreProps;
+  var filteredList : StoreProps[] = [];
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -85,20 +85,18 @@ export default function MapPage() {
       setSelectedCategoryIndex(0);
     }
   };
-  const [store_list, setStoreList] = useState<StoreListProps | null>(null);
+  const [store_list, setStoreList] = useState<StoreListProps[] | null>(null);
 
   if (selectedCategoryIndex === 0) {
     // @ts-ignore
     filteredList = store_list?.flatMap((item: any) => item.stores);
   } else {
     const selectedType = categoryInEnglish[selectedCategoryIndex];
-    // @ts-ignore
     const foundItem = store_list?.find(
       (item: any) => item.activity_type === selectedType
     );
     filteredList = foundItem ? foundItem.stores : [];
   }
-  // @ts-ignore
   filteredList.sort((a: any, b: any) => a.distance - b.distance);
 
   const calculateTime = (distance: number) => {
@@ -172,17 +170,17 @@ export default function MapPage() {
       var mapLevel = map.getLevel();
       setMapLat(newLat);
       setMapLng(newLng);
-      var radius = 505;
+      var radius = 605;
       if (mapLevel == 1) {
-        radius = 58;
+        radius = 158;
       } else if (mapLevel == 2) {
-        radius = 112;
+        radius = 212;
       } else if (mapLevel == 3) {
-        radius = 260;
+        radius = 360;
       } else if (mapLevel == 4) {
-        radius = 505;
+        radius = 605;
       } else if (mapLevel > 4) {
-        radius = 995;
+        radius = 1095;
       }
       setMapLevel(radius);
     });
@@ -200,6 +198,7 @@ export default function MapPage() {
     getStore(mapLevel, mapLat, mapLng);
     // @ts-ignore
     const map = kakaoMap;
+
     // @ts-ignore
     const newMarkers: any = filteredList.map((store) => {
       const latlng = new kakao.maps.LatLng(store.latitude, store.longitude);
@@ -244,12 +243,7 @@ export default function MapPage() {
   return (
     <>
       <HeadBar pagename="지도" bgcolor="white" backbutton="yes" />
-      <Categories
-        onClick={() => {
-          console.log(mapLat);
-          console.log(mapLng);
-        }}
-      >
+      <Categories>
         <Margin />
         {categoryList.map((category, index) => (
           <Category
@@ -268,14 +262,9 @@ export default function MapPage() {
         <MapModal>
           <CurrencyInfoFrame />
 
-          <StoreScroll
-            onClick={() => {
-              console.log(filteredList);
-              console.log(store_list);
-            }}
-          >
-            {/* @ts-ignore */}
-            {filteredList?.length > 0 ? (filteredList.map((Store: any, index: number) => (
+          <StoreScroll>
+            {filteredList?.length > 0 ? (
+              filteredList.map((Store: any, index: number) => (
                 <StoreFrame key={index}>
                   <LogoFrame>
                     <Logo src={getLogoPath(Store.company_name)} />
@@ -299,6 +288,7 @@ export default function MapPage() {
               <NoStore>주위에 해당하는 매장이 없어요</NoStore>
             )}
             <HideLastBorder />
+            <MarginBottom />
           </StoreScroll>
         </MapModal>
       </MapAndModal>
@@ -458,4 +448,9 @@ const NoStore = styled.div`
   font-size: 16px;
   color: var(--dark-gray);
   font-weight: 400;
+`;
+
+const MarginBottom = styled.div`
+  width: 100%;
+  height: 20px;
 `;

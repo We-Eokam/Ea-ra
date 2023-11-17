@@ -98,8 +98,8 @@ export default function ResultPage() {
           `https://raw.githubusercontent.com/YJS96/eara_test_repo/main/public/images/earth-${earthType.type}.png`,
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
-          mobileWebUrl: `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
-          webUrl: `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
+          mobileWebUrl: `${import.meta.env.VITE_BASEURL_FRONT}/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
+          webUrl: `${import.meta.env.VITE_BASEURL_FRONT}/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`,
         },
       },
     });
@@ -116,7 +116,7 @@ export default function ResultPage() {
   };
 
   const handleCopyClick = () => {
-    const urlToCopy = `https://dev.ea-ra.com/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`;
+    const urlToCopy = `${import.meta.env.VITE_BASEURL_FRONT}/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`;
     navigator.clipboard.writeText(urlToCopy)
       .then(() => {
         console.log("URL이 클립보드에 복사되었습니다.");

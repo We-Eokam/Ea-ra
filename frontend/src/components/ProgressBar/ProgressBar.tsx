@@ -29,17 +29,14 @@ export default function ProgressBar({ progress, greeninit }: ProgressBarProps) {
       setNewProgress(progress);
     }, 180);
     return () => clearTimeout(timer);
-  }, []);
+  }, [progress]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setProgressMargin(newMargin);
-      
     }, 180);
     return () => clearTimeout(timer);
-  }, []);
-
-
+  }, [progress]);
 
   return (
     <ProgressFrame>
@@ -68,7 +65,6 @@ const ProgressRate = styled.div`
   color: var(--dark-gray);
   margin-top: 1px;
   transition: margin-left 0.75s ease;
-
 `;
 const ProgressBarBack = styled.div`
   position: absolute;

@@ -22,7 +22,7 @@ interface UserInfo {
   memberId?: number;
   profileImg?: string;
   nickname?: string;
-  groo?:number;
+  groo?: number;
   progress: number;
   grooInit: number;
   bill?: number;
@@ -30,7 +30,7 @@ interface UserInfo {
 
 interface Post {
   proof_id: number;
-  picture: {url: string }[];
+  picture: { url: string }[];
 }
 
 interface Report {
@@ -46,12 +46,14 @@ export default function MyPage() {
   const [activeTab, setActiveTab] = useState("인증");
   const [offsetX, setOffsetX] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [grooInit, setGrooInit] = useState(0);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
     progress: 0,
     grooInit: 0,
   });
-  
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [curPosts, setCurPosts] = useState(0);
   const [morePosts, setMorePosts] = useState(true);
@@ -90,19 +92,18 @@ export default function MyPage() {
       const response = await axios.get(`/member/detail`);
       const data = response.data;
 
-      setUserInfo({
-        memberId: data.member_id,
-        profileImg: data.profile_image_url,
-        nickname: data.nickname,
-        groo: data.groo,
-        progress: 100,
-        grooInit: 24000,
-        bill: data.bill,
-      });
+      setUserInfo(data);
+
+      setGrooInit(data.groo);
+      var b = Math.round((data.repay_groo / data.groo) * 100);
+      if (data.groo === 0) {
+        b = 0;
+      }
+      setProgress(b);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const getPosts = async () => {
     if (isLoadingPosts) return;
@@ -113,9 +114,9 @@ export default function MyPage() {
       const response = await axios.get(`/proof/me?page=${nowPosts}&size=12`);
       const data = response.data;
 
-      if(response.status !== 204) {
-        setPosts((prevPosts) => [...prevPosts, ...data.proof as Post[]]);
-        setCurPosts(nowPosts+1);
+      if (response.status !== 204) {
+        setPosts((prevPosts) => [...prevPosts, ...(data.proof as Post[])]);
+        setCurPosts(nowPosts + 1);
       } else {
         setMorePosts(false);
       }
@@ -129,24 +130,33 @@ export default function MyPage() {
   const getReports = async () => {
     if (isLoadingReports) return;
     setIsLoadingReports(true);
-    
+
     try {
       const nowReports = curReports;
-      const response = await axios.get(`/accusation?targetId=${userInfo.memberId}&page=${nowReports}&size=12`);
+      const response = await axios.get(
+        `/accusation?targetId=${userInfo.memberId}&page=${nowReports}&size=12`
+      );
       const data = response.data;
 
       const updateReports = data.accusation_list.map((report: any) => {
-        const actData = reportData.find(item => item.type === report.activity_type);
-        const imageUrl = actData ? actData.imgUrl : report.image_list.imageURL_1;
+        const actData = reportData.find(
+          (item) => item.type === report.activity_type
+        );
+        const imageUrl = actData
+          ? actData.imgUrl
+          : report.image_list.imageURL_1;
         return { ...report, imageUrl };
-      })
-      
-      setReports(prevReports => [...prevReports, ...updateReports as Report[]]);   
-      
-      if(data.page_info.is_last) {
+      });
+
+      setReports((prevReports) => [
+        ...prevReports,
+        ...(updateReports as Report[]),
+      ]);
+
+      if (data.page_info.is_last) {
         setMoreReports(false);
       } else {
-        setCurReports(nowReports+1);
+        setCurReports(nowReports + 1);
       }
     } catch (error) {
       console.log(error);
@@ -154,7 +164,7 @@ export default function MyPage() {
       setIsLoadingReports(false);
     }
   };
-  
+
   const handleSlider = (tabName: string) => {
     setActiveTab(tabName);
   };
@@ -173,14 +183,14 @@ export default function MyPage() {
 
   const handleNavigate = (where: string, id: number) => {
     navigate(`/${where}/${id}`);
-  }
+  };
 
   return (
     <>
       <HeadFrame>
         <HeadContext>
           <IconContainer>
-            <Add onClick={() => navigate("/act/post")}/>
+            <Add onClick={() => navigate("/act/post")} />
             <Setting onClick={showModal} />
           </IconContainer>
         </HeadContext>
@@ -195,7 +205,7 @@ export default function MyPage() {
             </TextBox>
             <ShowBtn onClick={navigateFriends}> 친구 보기 </ShowBtn>
           </UserInfoContainer>
-          <ProgressBar progress={userInfo.progress} greeninit={userInfo.grooInit} />
+          <ProgressBar progress={progress} greeninit={grooInit} />
         </UserFrame>
         <SliderFrame>
           {tabs.map((tab) => (
@@ -213,29 +223,39 @@ export default function MyPage() {
           {activeTab === "인증" ? (
             posts.length === 0 ? (
               <NoPost>
-                <NoAct />활동 인증 없음
+                <NoAct />
+                활동 인증 없음
               </NoPost>
             ) : (
               posts.map((post) => (
-                <Post onClick={() => {handleNavigate("post", post.proof_id)}}>
+                <Post
+                  onClick={() => {
+                    handleNavigate("post", post.proof_id);
+                  }}
+                >
                   <CoverImg src={post.picture[0].url} />
                 </Post>
               ))
             )
+          ) : reports.length === 0 ? (
+            <NoPost>
+              <NoReport />
+              받은 경고장 없음
+            </NoPost>
           ) : (
-            reports.length === 0 ? (
-              <NoPost>
-                <NoReport />받은 경고장 없음
-              </NoPost>
-            ) : (
-              reports.map((report) => (
-                <Post onClick={() => {handleNavigate("report", report.accusation_id)}}>
-                  <CoverImg src={report.imageUrl} />
-                </Post>
-              ))
-            )
+            reports.map((report) => (
+              <Post
+                onClick={() => {
+                  handleNavigate("report", report.accusation_id);
+                }}
+              >
+                <CoverImg src={report.imageUrl} />
+              </Post>
+            ))
           )}
-          <div ref={activeTab === "인증" ? postInfScrollRef : reportInfScrollRef} />
+          <div
+            ref={activeTab === "인증" ? postInfScrollRef : reportInfScrollRef}
+          />
         </PostsFrame>
       </MainFrame>
 
@@ -276,7 +296,6 @@ const HeadFrame = styled.div`
   z-index: 2;
   display: flex;
   align-items: flex-end;
-
 `;
 
 const HeadContext = styled.div`
@@ -442,7 +461,7 @@ const OptText = styled.div<{ isRed?: boolean }>`
   margin-left: 12px;
   flex-grow: 1;
   margin-top: 1px;
-  
+
   ${(props) => props.isRed && `color: var(--red);`}
 `;
 
