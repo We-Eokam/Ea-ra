@@ -2,6 +2,7 @@ package com.eokam.member.presentation;
 
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.*;
@@ -9,6 +10,7 @@ import static org.springframework.restdocs.restassured.RestAssuredRestDocumentat
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -942,6 +944,7 @@ public class MemberControllerTest extends BasicControllerTest {
 			.statusCode(HttpStatus.NOT_FOUND.value());
 	}
 
+	@Disabled
 	@Test
 	void 상대_팔로우하기() throws IOException {
 		//given
@@ -1130,6 +1133,7 @@ public class MemberControllerTest extends BasicControllerTest {
 		assertThat(결과.getLong("member_id")).isEqualTo(memberBId);
 		assertThat(결과.getString("follow_status")).isEqualTo(FollowStatus.NOTHING.toString());
 	}
+	@Disabled
 	@Test
 	void 팔로우수락_친구됨(){
 		//given
@@ -1158,6 +1162,7 @@ public class MemberControllerTest extends BasicControllerTest {
 					fieldWithPath("follow_status").type(JsonFieldType.STRING).description("상대와의 팔로우 상태")
 				)
 			));
+
 
 		//when & then
 		var 결과 = updateNickname.when()

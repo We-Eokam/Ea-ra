@@ -49,7 +49,7 @@ public class BasicControllerTest {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@Mock
-	private SendMQService sendMQService;
+	protected SendMQService sendMQService;
 
 	public static final String BASE_URL = "http://localhost";
 
