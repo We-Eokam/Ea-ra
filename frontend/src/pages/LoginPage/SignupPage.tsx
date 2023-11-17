@@ -10,6 +10,7 @@ import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
 import initFcm from "../../util/fcm.ts";
+import toast from "react-hot-toast";
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -76,12 +77,17 @@ export default function SignupPage() {
       const response = await axios.get(`/member/nickname/${nickname}`);
       const data = await response;
       console.log(data);
-      window.alert("사용 가능한 닉네임입니다");
+      toast.success("사용 가능한 닉네임입니다", {
+        position: "top-center",
+        style: {
+          marginTop: "env(safe-area-inset-top)"
+        }
+      });
       setIsNicknameChecked(true);
     } catch (error) {
       console.log(error);
       setNickname("");
-      window.alert("중복된 닉네임입니다");
+      toast.error("중복된 닉네임입니다");
     }
   };
 
@@ -89,10 +95,6 @@ export default function SignupPage() {
     try {
       const response = await axios.get(`/member/detail?memberId=3`);
       const data = await response.data;
-      if (data.member_id && !data.is_test_done) {
-        window.alert("테스트를 먼저 진행해주세요");
-        navigate("/welcome");
-      }
       if (data.member_id && data.is_test_done) {
         window.alert("이미 어라 회원입니다.");
         navigate("/");
@@ -101,6 +103,15 @@ export default function SignupPage() {
       console.log(data);
     } catch (error) {
       console.log(error);
+    } finally {
+      const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
+      if (initGroo) {
+        setGroo(initGroo);
+        localStorage.removeItem("testGroo");
+      } else {
+        window.alert("테스트를 먼저 진행해주세요");
+        navigate("/welcome");
+      }
     }
   };
 
@@ -170,11 +181,6 @@ export default function SignupPage() {
 
   useEffect(() => {
     getUserInfo();
-    const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
-    if (initGroo) {
-      setGroo(initGroo);
-      localStorage.removeItem("testGroo");
-    }
   }, []);
 
   const handleNoti = () => {

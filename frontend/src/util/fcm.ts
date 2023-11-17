@@ -1,6 +1,7 @@
 import { getToken, onMessage, getMessaging } from "firebase/messaging";
 import { initializeApp } from "firebase/app";
 import axiosInstance from "../api/axiosInstance.ts";
+import toast from "react-hot-toast";
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -33,7 +34,7 @@ const initFcm = () => {
                 console.log(data);
               });
             // alert("set token : " + currentToken);
-            alert("알림 설정 성공 알림");
+            toast.success("알림 수신에 동의하셨습니다");
             localStorage.setItem("FCM-key", currentToken);
           } else {
             console.log(
