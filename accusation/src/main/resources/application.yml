@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/mydatabase
+    username: user
+    password: userpassword
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+    open-in-view: false
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B
+      max-file-size: 10MB
+      max-request-size: 10MB
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  application:
+    name: accusation-service
+
+aws:
+  s3:
+    access-key: ${S3_KEY}
+    secret-key: ${S3_SECRET}
+    bucket: ${S3_BUCKET}
+server:
+  port: 8081
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+logging:
+  level:
+    com.eokam.accusation.infrastructure.client: DEBUG
