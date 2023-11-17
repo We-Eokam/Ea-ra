@@ -1,0 +1,55 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+* {
+  font-family: Pretendard !important;
+  --primary: #56b984;
+  --secondary: #81dead;
+  --third: #d6e8db;
+  --black: #1c1c1c;
+  --dark-gray: #727272;
+  --nav-gray: #afafaf;
+  --gray: #ececec;
+  --background: #f6f7f6;
+  --white: #fdfdfd;
+  --red: #f47373;
+  --blue: #4a88e5;
+  --yellow: #fee227;
+  --kakao-black: #351c1b;
+  --kakao-yellow: #f9dd4a;
+}
+
+#root {
+  /* PC */
+  width: 100dvw;
+  min-width: 300px;
+  max-width: 544px;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+
+  /* iOS */
+  /* width: 390px;
+  height: 852px; */
+
+  /* Android */
+  /* width: 360px;
+  height: 800px; */
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--white);
+  color: var(--black);
+  overflow: hidden;
+}
+
+body {
+  -ms-overflow-style: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-use-select: none;
+  user-select: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}
