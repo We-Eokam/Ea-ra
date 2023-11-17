@@ -19,14 +19,20 @@ interface UserInfoProps {
   is_test_done: boolean;
 }
 
+interface SummaryProps {
+  activity_type: string;
+  point: number;
+}
+
 export default function NtzPage() {
   const [charSort, setChartSort] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
   const [userCpoint, setUserCpoint] = useState(0);
-  const [summary_list, setSummaryList] = useState([
-    { activity_type: "TUMBLER", point: 1 },
-    { activity_type: "ELECTRONIC_RECEIPT", point: 2 },
-  ]);
+  const [summary_list, setSummaryList] = useState<SummaryProps[]>([]);
+  // const [summary_list, setSummaryList] = useState([
+  //   { activity_type: "TUMBLER", point: 1 },
+  //   { activity_type: "ELECTRONIC_RECEIPT", point: 2 },
+  // ]);
   const axios = axiosInstance();
 
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function NtzPage() {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`/member/detail?memberId=3`);
+      const response = await axios.get(`/member/detail`);
       const data = await response.data;
       setUserInfo(data);
     } catch (error) {
@@ -113,33 +119,6 @@ export default function NtzPage() {
     "hsl(265, 30.6%, 75.7%)",
   ];
 
-  // const summary_list = [
-  //   {
-  //     activity_type: "ELECTRONIC_RECEIPT",
-  //     point: 1200,
-  //   },
-  //   {
-  //     activity_type: "TUMBLER",
-  //     point: 2000,
-  //   },
-  //   {
-  //     activity_type: "DISPOSABLE_CUP",
-  //     point: 1000,
-  //   },
-  //   {
-  //     activity_type: "REFILL_STATION",
-  //     point: 2100,
-  //   },
-  //   {
-  //     activity_type: "MULTI_USE_CONTAINER",
-  //     point: 2100,
-  //   },
-  //   {
-  //     activity_type: "HIGH_QUALITY_RECYCLED_PRODUCTS",
-  //     point: 2100,
-  //   },
-  // ];
-
   for (var i = 0; i < summary_list.length; i++) {
     var cat =
       categoryList[categoryInEnglish.indexOf(summary_list[i].activity_type)];
@@ -170,7 +149,7 @@ export default function NtzPage() {
         title: "일상 속 작은 실천, 어라🌱",
         description: `${userInfo?.nickname}님이 어라로 초대했어요`,
         imageUrl:
-          "https://github.com/YJS96/eara_test_repo/blob/main/public/icons/icon-512x512.png?raw=true",
+          "https://github.com/YJS96/eara_test_repo/blob/main/public/images/earth-1.png?raw=true",
         link: {
           // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
           mobileWebUrl: `https://dev.ea-ra.com/login`,
@@ -257,51 +236,59 @@ export default function NtzPage() {
             <Bold>나의 활동 요약</Bold>
           </TextLine>
           <TextLine style={{ fontSize: "14px", marginTop: "6px" }}>
-            {highestActivity()}로 가장 많은 포인트를 얻었어요!
+            {summary_list.length === 0
+              ? "활동 탭에서 활동을 시작해보세요"
+              : `${highestActivity()}로 가장 많은 포인트를 얻었어요!`}
           </TextLine>
           <ChartFrame>
             <ChartInner>
-              <ResponsivePie
-                data={charData}
-                margin={{ top: 16, right: 84, bottom: 10, left: 84 }}
-                innerRadius={0.5}
-                padAngle={1.3}
-                cornerRadius={1}
-                activeOuterRadiusOffset={8}
-                borderWidth={1}
-                borderColor={{
-                  from: "color",
-                  modifiers: [["darker", 0.2]],
-                }}
-                arcLinkLabelsSkipAngle={10}
-                arcLinkLabelsTextColor="#727272"
-                arcLinkLabelsThickness={1}
-                arcLinkLabelsDiagonalLength={16}
-                arcLinkLabelsStraightLength={10}
-                arcLinkLabelsOffset={-11}
-                arcLinkLabelsColor={{ from: "color" }}
-                arcLabelsSkipAngle={10}
-                arcLabelsTextColor="#1C1C1C"
-                sortByValue={charSort}
-                // legends={[
-                //   {
-                //     anchor: "right",
-                //     direction: "column",
-                //     justify: false,
-                //     translateX: 140,
-                //     translateY: 90,
-                //     itemsSpacing: 1,
-                //     itemWidth: 100,
-                //     itemHeight: 15,
-                //     itemTextColor: "#727272",
-                //     itemDirection: "left-to-right",
-                //     itemOpacity: 1,
-                //     symbolSize: 10,
-                //     symbolShape: "circle",
-                //     effects: [],
-                //   },
-                // ]}
-              />
+              {summary_list.length === 0 ? (
+                <EmptyImageFrame>
+                  <EmptyImage src="/images/netzero/ntz-empty.png" />
+                </EmptyImageFrame>
+              ) : (
+                <ResponsivePie
+                  data={charData}
+                  margin={{ top: 16, right: 84, bottom: 10, left: 84 }}
+                  innerRadius={0.5}
+                  padAngle={1.3}
+                  cornerRadius={1}
+                  activeOuterRadiusOffset={8}
+                  borderWidth={1}
+                  borderColor={{
+                    from: "color",
+                    modifiers: [["darker", 0.2]],
+                  }}
+                  arcLinkLabelsSkipAngle={10}
+                  arcLinkLabelsTextColor="#727272"
+                  arcLinkLabelsThickness={1}
+                  arcLinkLabelsDiagonalLength={16}
+                  arcLinkLabelsStraightLength={10}
+                  arcLinkLabelsOffset={-11}
+                  arcLinkLabelsColor={{ from: "color" }}
+                  arcLabelsSkipAngle={10}
+                  arcLabelsTextColor="#1C1C1C"
+                  sortByValue={charSort}
+                  // legends={[
+                  //   {
+                  //     anchor: "right",
+                  //     direction: "column",
+                  //     justify: false,
+                  //     translateX: 140,
+                  //     translateY: 90,
+                  //     itemsSpacing: 1,
+                  //     itemWidth: 100,
+                  //     itemHeight: 15,
+                  //     itemTextColor: "#727272",
+                  //     itemDirection: "left-to-right",
+                  //     itemOpacity: 1,
+                  //     symbolSize: 10,
+                  //     symbolShape: "circle",
+                  //     effects: [],
+                  //   },
+                  // ]}
+                />
+              )}
             </ChartInner>
           </ChartFrame>
         </ChartContainer>
@@ -435,4 +422,17 @@ const ChartInner = styled.div`
     font-size: 14px;
     color: var(--black);
   }
+`;
+
+const EmptyImage = styled.img`
+  height: 64%;
+  width: auto;
+`;
+
+const EmptyImageFrame = styled.div`
+  width: 100%;
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

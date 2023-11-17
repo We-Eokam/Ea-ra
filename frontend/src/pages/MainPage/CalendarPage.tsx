@@ -23,7 +23,7 @@ interface MonthCalendarProps {
   proof_count: number;
   accusation_sum: number;
   accusation_count: number;
-  groo_saving_list: GrooSavingProps;
+  groo_saving_list: GrooSavingProps[];
 }
 
 export default function CalendarPage() {
@@ -83,7 +83,6 @@ export default function CalendarPage() {
           }
           // @ts-ignore
           tileContent={({ date, view }) => {
-            // @ts-ignore
             const data = monthGroo?.groo_saving_list.find(
               (x: any) => x.date === moment(date).format("YYYY-MM-DD")
             );

@@ -25,7 +25,7 @@ export default function CompanyPage() {
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedCompany, setSelectedCompany] = useState<number>(0);
-  const [company_list, setCompanyList] = useState<CompanyConnectProps | null>(
+  const [company_list, setCompanyList] = useState<CompanyConnectProps[] | null>(
     null
   );
 
@@ -134,7 +134,6 @@ export default function CompanyPage() {
               }}
             >
               {company_list ? (
-                // @ts-ignore
                 company_list[index]?.is_connect === true ? (
                   <CompanyConnected />
                 ) : null
@@ -155,8 +154,7 @@ export default function CompanyPage() {
           closeModal={closeModal}
           companyInfo={filteredCompanies[selectedCompany]}
           isConnected={
-            // @ts-ignore
-            company_list ? company_list[selectedCompany]?.is_connect : null
+            company_list ? company_list[selectedCompany]?.is_connect : false
           }
         />
       ) : null}

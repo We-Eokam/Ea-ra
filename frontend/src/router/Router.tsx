@@ -25,15 +25,17 @@ import ProfilePage from "../pages/MyPage/ProfilePage";
 
 import SharePage from "../pages/SharePage";
 
+import NotFound from "../pages/MainPage/NotFound";
+
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
-        <Route path="/welcome" element={<StartPage/>}/>
-        <Route path="/test" element={<TestPage/>}/>
-        <Route path="/result" element={<ResultPage/>}/>
+        <Route path="/welcome" element={<StartPage />} />
+        <Route path="/test" element={<TestPage />} />
+        <Route path="/result" element={<ResultPage />} />
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/calendar" element={<CalendarPage />}></Route>
         <Route path="/notice" element={<NotiPage />}></Route>
@@ -42,7 +44,7 @@ export default function Router() {
         <Route path="/act/post" element={<PostPage />}></Route>
         <Route path="/post/:id" element={<PostDetail />}></Route>
         <Route path="/act/report" element={<ReportPage />}></Route>
-        <Route path="/report/:id" element={<ReportDetail/>}></Route>
+        <Route path="/report/:id" element={<ReportDetail />}></Route>
         <Route path="/netzero" element={<NtzPage />}></Route>
         <Route path="/netzero/subsidy" element={<Subsidy />}></Route>
         <Route path="/netzero/map" element={<MapPage />}></Route>
@@ -51,6 +53,7 @@ export default function Router() {
         <Route path="/mypage/friends" element={<FriendsList />}></Route>
         <Route path="/profile/:id" element={<ProfilePage />}></Route>
         <Route path="/earth-trial" element={<SharePage />}></Route>
+        <Route path="/*" element={<NotFound />}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -11,10 +11,10 @@ import axiosInstance from "../../api/axiosInstance";
 import { useState, useEffect } from "react";
 
 import { ReactComponent as Notification } from "../../assets/icons/notification-icon.svg";
-// import AngryEarth from "../../assets/lottie/angry-earth.json";
-// import ChuEarth from "../../assets/lottie/chu-earth.json";
-// import CryEarth from "../../assets/lottie/cry-earth.json";
-// import MeltingEarth from "../../assets/lottie/melting-earth.json";
+import AngryEarth from "../../assets/lottie/angry-earth.json";
+import ChuEarth from "../../assets/lottie/chu-earth.json";
+import CryEarth from "../../assets/lottie/cry-earth.json";
+import MeltingEarth from "../../assets/lottie/melting-earth.json";
 import WowEarth from "../../assets/lottie/wow-earth.json";
 
 interface UserInfoProps {
@@ -25,6 +25,12 @@ interface UserInfoProps {
   bill_count: number;
   profile_image_url: string;
   is_test_done: boolean;
+  repay_groo: number;
+}
+
+interface WeeklyProps {
+  date: string;
+  proof_count: number;
 }
 
 function getCurrentWeek() {
@@ -45,6 +51,8 @@ function getCurrentWeek() {
 
 const getCountColor = (count: number): string => {
   if (count === 0) {
+    return "var(--gray)";
+  } else if (count === -1) {
     return "var(--white)";
   } else if (count <= 1) {
     return "var(--third)";
@@ -57,6 +65,14 @@ const getCountColor = (count: number): string => {
 
 export default function MainPage() {
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
+  const [groo_saving_list, setGrooSavingList] = useState<WeeklyProps[] | null>(
+    null
+  );
+  const [progress, setProgress] = useState(0);
+  const [grooInit, setGrooInit] = useState(0);
+  const [lottieIndex, setLottieIndex] = useState(0);
+
+  const lottieList = [WowEarth, ChuEarth, MeltingEarth, CryEarth, AngryEarth];
 
   const navigate = useNavigate();
   const axios = axiosInstance();
@@ -74,7 +90,7 @@ export default function MainPage() {
   };
 
   const options = {
-    animationData: WowEarth,
+    animationData: lottieList[lottieIndex],
     loop: false,
     autoplay: true,
   };
@@ -94,53 +110,25 @@ export default function MainPage() {
   const currentWeek = getCurrentWeek();
 
   const onlyDay = currentWeek.map((date) => {
-    const lastTwoChars = date.slice(-2);
+    const lastTwoChars: string = date.slice(-2);
     if (lastTwoChars.startsWith("0")) {
       return lastTwoChars.substring(1);
     }
     return lastTwoChars;
   });
 
-  var progress = 100;
-  var greenInit = 2400000;
-
-  const groo_saving_list = [
-    {
-      date: "2023-11-5",
-      proof_count: 1,
-    },
-    {
-      date: "2023-11-6",
-      proof_count: 0,
-    },
-    {
-      date: "2023-11-7",
-      proof_count: 2,
-    },
-    {
-      date: "2023-11-8",
-      proof_count: 0,
-    },
-    {
-      date: "2023-11-9",
-      proof_count: 4,
-    },
-    {
-      date: "2023-11-10",
-      proof_count: 1,
-    },
-    {
-      date: "2023-11-11",
-      proof_count: 2,
-    },
-  ];
-
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`/member/detail?memberId=3`);
+      const response = await axios.get(`/member/detail`);
       const data = await response.data;
       setUserInfo(data);
       console.log(data);
+      setGrooInit(data.groo);
+      var b = Math.round((data.repay_groo / data.groo) * 100);
+      if (data.groo === 0) {
+        b = 0;
+      }
+      setProgress(b);
     } catch (error) {
       console.log(error);
     }
@@ -149,8 +137,32 @@ export default function MainPage() {
   const getWeekAct = async () => {
     try {
       const response = await axios.get(`/groo/current-week`);
+      const data = await response.data.groo_saving_list;
+      // console.log(data)
+      setGrooSavingList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDayAct = async () => {
+    try {
+      const response = await axios.get(`/groo/today`);
       const data = await response.data;
-      console.log(data);
+      const proofCount = data.proof_count;
+      const accusCount = data.accusation_count;
+
+      if (proofCount > 0 && accusCount === 0) {
+        setLottieIndex(0);
+      } else if (proofCount > 0 && accusCount > 0 && proofCount >= accusCount) {
+        setLottieIndex(1);
+      } else if (proofCount > 0 && accusCount > 0 && proofCount < accusCount) {
+        setLottieIndex(2);
+      } else if (proofCount === 0 && accusCount === 0) {
+        setLottieIndex(3);
+      } else if (proofCount === 0 && accusCount > 0) {
+        setLottieIndex(4);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -159,6 +171,7 @@ export default function MainPage() {
   useEffect(() => {
     getUserInfo();
     getWeekAct();
+    getDayAct();
   }, []);
 
   return (
@@ -183,10 +196,15 @@ export default function MainPage() {
             <Bold>{userInfo?.nickname}</Bold>님의 남은 빚
           </NicknameLine>
           <GreenLeft>
-            <Bold>{userInfo?.groo}</Bold>그루
+            <Bold>
+              {userInfo?.groo
+                .toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
+            </Bold>
+            그루
           </GreenLeft>
 
-          <ProgressBar progress={progress} greeninit={greenInit} />
+          <ProgressBar progress={progress} greeninit={grooInit} />
 
           <SummaryText>주간 활동 요약</SummaryText>
 
@@ -200,12 +218,28 @@ export default function MainPage() {
               <WeekName>금</WeekName>
               <WeekName>토</WeekName>
             </WeekNameFrame>
-            {onlyDay.map((day, index) => (
+            {onlyDay.map((dayNum, index) => (
               <OneDay>
-                <DayNumber>{day}</DayNumber>
-                <DayProgress
-                  count={getCountColor(groo_saving_list[index].proof_count)}
-                />
+                <DayNumberFrame>
+                  <DayNumber>{dayNum}</DayNumber>
+                  {dayNum === moment(date).format("DD") ? (
+                    <DayNumberCircle />
+                  ) : null}
+                </DayNumberFrame>
+                {groo_saving_list &&
+                Number(moment(groo_saving_list[index].date).format("YYMMDD")) -
+                  Number(moment(date).format("YYMMDD")) >
+                  1 ? (
+                  <DayProgress count={getCountColor(-1)}></DayProgress>
+                ) : (
+                  <DayProgress
+                    count={
+                      groo_saving_list
+                        ? getCountColor(groo_saving_list[index].proof_count)
+                        : getCountColor(-1)
+                    }
+                  />
+                )}
               </OneDay>
             ))}
           </WeekdayFrame>
@@ -248,7 +282,7 @@ const EarthFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: -14px;
+  margin-top: -24px;
 `;
 
 const TodayEarth = styled.div`
@@ -272,7 +306,7 @@ const EarthLottie = styled.div`
 
 const HomeFrame = styled(ModalFrame)`
   padding: 0px 5.56%;
-  max-height: 56.4%;
+  max-height: 56%;
   font-weight: 400;
   overflow-y: scroll;
 `;
@@ -295,11 +329,11 @@ const Bold = styled.span`
 const GreenLeft = styled.div`
   margin-top: 14px;
   font-size: 28px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 `;
 
 const SummaryText = styled.div`
-  margin-top: 24px;
+  margin-top: 14px;
   font-size: 14.5px;
   font-weight: 550;
 `;
@@ -342,12 +376,32 @@ const OneDay = styled.div`
   align-items: center;
 `;
 
-const DayNumber = styled.div`
+const DayNumberFrame = styled.div`
   position: relative;
   width: 100%;
   text-align: center;
   font-size: 13.5px;
   font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+`;
+
+const DayNumber = styled.div`
+  width: 100%;
+  position: absolute;
+  z-index: 2;
+`;
+
+const DayNumberCircle = styled.div`
+  position: absolute;
+  margin-top: 1px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--gray);
+  border-radius: 50px;
+  z-index: 1;
 `;
 
 const DayProgress = styled.div<{ count: string }>`
@@ -361,7 +415,7 @@ const DayProgress = styled.div<{ count: string }>`
 const ButtonsFrame = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 56px;
+  margin-top: 48px;
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
