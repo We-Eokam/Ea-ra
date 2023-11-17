@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: jdbc:h2:~/test;MODE=MySQL
+    username: user
+    password: userpassword
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+    open-in-view: false
+
+  h2:
+    console:
+      enabled=true:
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_KEY}
+      secret-key: ${S3_SECRET}
+    s3:
+      bucket: ${S3_BUCKET}
+
+
+
+auth:
+  kakao:
+    token-request-uri: ${KAKAO_TOKEN_REQUEST_URI}
+    member-info-request-uri: ${KAKAO_MEMBER_REQUEST_URI}
+    client-id: ${KAKAO_CLIENT_ID}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+    login-uri: ${KAKAO_LOGIN_URI}
+    unlink-uri: ${KAKAO_UNLINK_URI}
+    client-secret: ${KAKAO_CLIENT_SECRET}
