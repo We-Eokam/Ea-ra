@@ -219,7 +219,7 @@ export default function NtzPage() {
           <InfoButton onClick={navigateComapny}>
             <InfoButtonGray>참여기업</InfoButtonGray>
             <InfoButtonBlack>
-              60<SmallText>개</SmallText>
+              63<SmallText>개</SmallText>
             </InfoButtonBlack>
             <InfoImage src="/images/netzero/company.png" />
           </InfoButton>
