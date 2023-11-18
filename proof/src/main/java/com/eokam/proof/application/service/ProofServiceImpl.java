@@ -18,8 +18,6 @@ import com.eokam.proof.domain.repository.ProofImageRepository;
 import com.eokam.proof.domain.repository.ProofRepository;
 import com.eokam.proof.infrastructure.external.cpoint.CPointServiceFeign;
 import com.eokam.proof.infrastructure.external.cpoint.SaveCpointRequest;
-import com.eokam.proof.infrastructure.external.groo.GrooSaveRequest;
-import com.eokam.proof.infrastructure.external.groo.GrooServiceFeign;
 import com.eokam.proof.infrastructure.external.member.FollowList;
 import com.eokam.proof.infrastructure.external.member.FollowMember;
 import com.eokam.proof.infrastructure.external.member.FollowServiceFeign;
@@ -42,7 +40,6 @@ public class ProofServiceImpl implements ProofService {
 	private final S3Service s3Service;
 
 	private final FollowServiceFeign followServiceFeign;
-	private final GrooServiceFeign grooServiceFeign;
 	private final CPointServiceFeign cPointServiceFeign;
 
 	@Override
@@ -83,9 +80,7 @@ public class ProofServiceImpl implements ProofService {
 		}
 
 		followServiceFeign.increaseAccusationCount(jwt, IsFollowRequest.from(proofCreateDto.memberId()));
-		grooServiceFeign.saveGroo(jwt,
-			GrooSaveRequest.of(ParseJwtUtil.parseMemberId(jwt), savedProof.getActivityType(), savedProof.getProofId(),
-				savedProof.getCreatedAt()));
+
 		if (savedProof.getCCompanyId() != null) {
 			cPointServiceFeign.saveCpoint(jwt,
 				SaveCpointRequest.of(
