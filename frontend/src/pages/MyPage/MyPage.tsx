@@ -14,6 +14,8 @@ import { ReactComponent as Logout } from "../../assets/icons/logout-icon.svg";
 import { ReactComponent as Trash } from "../../assets/icons/Trash-icon.svg";
 import { ReactComponent as NoAct } from "../../assets/icons/no-act-icon.svg";
 import { ReactComponent as NoReport } from "../../assets/icons/no-repot-icon.svg";
+import { ReactComponent as Notification } from "../../assets/icons/noti-setting.svg";
+import initFcm from "../../util/fcm.ts";
 import useInfScroll from "../../hooks/useInfScroll";
 import axiosInstance from "../../api/axiosInstance";
 import reportData from "../../common/report.json";
@@ -86,6 +88,10 @@ export default function MyPage() {
     },
     hasMore: moreReports,
   });
+
+  const handleNoti = () => {
+    initFcm();
+  };
 
   const getUserInfo = async () => {
     try {
@@ -269,6 +275,10 @@ export default function MyPage() {
             <Article />
             <OptText>경고장 수</OptText>
             <OptSubText>{userInfo.bill} 개</OptSubText>
+          </Opt>
+          <Opt onClick={handleNoti}>
+            <Notification />
+            <OptText>알림 설정</OptText>            
           </Opt>
           <Opt>
             <Logout />
