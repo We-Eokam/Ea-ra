@@ -122,7 +122,7 @@ export default function MainPage() {
       const response = await axios.get(`/member/detail`);
       const data = await response.data;
       if (data.member_id && !data.is_test_done) {
-        navigate("/welcome")
+        navigate("/welcome");
       }
       setUserInfo(data);
       setGrooInit(data.groo);
@@ -132,7 +132,7 @@ export default function MainPage() {
       }
       setProgress(b);
     } catch (error) {
-      navigate("/login")
+      navigate("/login");
     }
   };
 
@@ -205,7 +205,16 @@ export default function MainPage() {
 
           <ProgressBar progress={progress} greeninit={grooInit} />
 
-          <SummaryText>주간 활동 요약</SummaryText>
+          <SummaryText>
+            주간 활동 요약{" "}
+            <span
+              onClick={() => {
+                navigate("/signup");
+              }}
+            >
+              사인업페이지
+            </span>
+          </SummaryText>
 
           <WeekdayFrame>
             <WeekNameFrame>

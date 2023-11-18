@@ -9,6 +9,7 @@ import { ReactComponent as ReportSend } from "../../assets/icons/report-send-ico
 import { ReactComponent as PersonCancel } from "../../assets/icons/person_cancel.svg";
 import OptionModal from "../../components/Modal/OptionModal";
 import axiosInstance from "../../api/axiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 interface User {
   id: number;
@@ -57,6 +58,9 @@ export default function FriendsList() {
     try {
       await axios.delete(`/member/follow?targetId=${target.id}`);
       getFriends();
+      toast("더 이상 친구가 아니에요", {
+        icon: "😧",
+      });
       closeModal();
     } catch (error) {
       console.error('친구 삭제 실패:', error);
@@ -90,6 +94,13 @@ export default function FriendsList() {
 
   return (
     <>
+      <Toaster
+        containerStyle={{
+          position: "fixed",
+          zIndex: "999",
+          top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+        }}
+      />
       <HeadBar pagename="친구 목록" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="medium">
         {friends.length === 0 ? (

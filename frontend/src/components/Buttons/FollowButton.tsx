@@ -1,7 +1,7 @@
 import React, { useState, useEffect, SetStateAction } from "react";
 import styled from "styled-components";
 import axiosInstance from "../../api/axiosInstance";
-
+import toast from "react-hot-toast";
 
 interface FollowBtnProps {
   status: string;
@@ -42,6 +42,9 @@ const FollowBtn = ({ status, setStatus, target }: FollowBtnProps) => {
       try {
         const response = await axios.delete(`/member/follow?targetId=${target}`);
         setStatus(response.data.follow_status);
+        toast("더 이상 친구가 아니에요", {
+          icon: "😧",
+        });
       } catch (error) {
         console.log(error);
       }

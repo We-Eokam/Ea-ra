@@ -10,7 +10,7 @@ import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as Edit } from "../../assets/icons/edit-icon.svg";
 import initFcm from "../../util/fcm.ts";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 interface GenderButtonProps {
   isSelected: boolean;
@@ -36,8 +36,8 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<string>("male");
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedArea, setSelectedArea] = useState<number>(0);
-  const [nickname, setNickname] = useState("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState(true);
+  const [nickname, setNickname] = useState<string>("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
   const [groo, setGroo] = useState(0);
   const [getNoti, setGetNoti] = useState(false);
@@ -73,21 +73,18 @@ export default function SignupPage() {
   };
 
   const handleCheckNickname = async () => {
-    try {
-      const response = await axios.get(`/member/nickname/${nickname}`);
-      const data = await response;
-      console.log(data);
-      toast.success("사용 가능한 닉네임입니다", {
-        position: "top-center",
-        style: {
-          marginTop: "env(safe-area-inset-top)"
-        }
-      });
-      setIsNicknameChecked(true);
-    } catch (error) {
-      console.log(error);
-      setNickname("");
-      toast.error("중복된 닉네임입니다");
+    if (nickname.length >= 2) {
+      try {
+        const response = await axios.get(`/member/nickname/${nickname}`);
+        const data = await response;
+        console.log(data);
+        toast.success("사용 가능한 닉네임입니다");
+        setIsNicknameChecked(true);
+      } catch (error) {
+        console.log(error);
+        setNickname("");
+        toast.error("중복된 닉네임입니다");
+      }
     }
   };
 
@@ -97,10 +94,11 @@ export default function SignupPage() {
       const data = await response.data;
       if (data.member_id && data.is_test_done) {
         window.alert("이미 어라 회원입니다.");
-        navigate("/");
+        // navigate("/");
       }
       setUserInfo(data);
-      console.log(data);
+      setNickname(data.nickname);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -110,7 +108,7 @@ export default function SignupPage() {
         localStorage.removeItem("testGroo");
       } else {
         window.alert("테스트를 먼저 진행해주세요");
-        navigate("/welcome");
+        // navigate("/welcome");
       }
     }
   };
@@ -194,6 +192,13 @@ export default function SignupPage() {
     <>
       <HeadBar pagename="회원 정보 입력" bgcolor="white" backbutton="no" />
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
+        <Toaster
+          containerStyle={{
+            position: "fixed",
+            zIndex: "999",
+            top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+          }}
+        />
         <ProfileNickname>
           <ProfileFrame>
             <ProfileEditIcon htmlFor="file">
@@ -341,8 +346,8 @@ const ProfileEdit = styled(Edit)`
   path {
     fill: var(--dark-gray);
   }
-  margin-top: -1px;
-  margin-left: 2.5px;
+  margin-top: -1.5px;
+  margin-left: 1px;
 `;
 
 const ProfileInput = styled.input`

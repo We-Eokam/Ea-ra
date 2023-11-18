@@ -95,6 +95,7 @@ export default function PostPage() {
         }
       });
       console.log(response.status);
+      localStorage.setItem("checkPosted", "actPosted");
       navigate(-1);
     } catch (error) {
       console.log("에러", error);

@@ -7,6 +7,7 @@ import MainFrame from "../../components/MainFrame/MainFrame";
 import styled from "styled-components";
 import { ReactComponent as LeftArrow } from "../../assets/icons/left-arrow.svg";
 import { ShadowBox } from "../../components/ShadowBox/ShadowBox";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ActPage() {
   const navigate = useNavigate();
@@ -23,6 +24,17 @@ export default function ActPage() {
   }, [cloneImages.length, lastImage, num]);
 
   useEffect(() => {
+    const checkPosted = localStorage.getItem("checkPosted") || "noPost";
+
+    if (checkPosted === "actPosted") {
+      toast.success("인증 게시물을 작성했어요");
+    } else if (checkPosted === "reportPosted") {
+      toast("경고장을 전송했어요", {
+        icon: "🚨",
+      });
+    }
+    localStorage.removeItem("checkPosted");
+
     const timer = setInterval(() => {
       setNum((num) => num + 1);
       setCarouselTransition("transform 500ms ease-in-out");
@@ -53,6 +65,13 @@ export default function ActPage() {
 
   return (
     <>
+      <Toaster
+        containerStyle={{
+          position: "fixed",
+          zIndex: "999",
+          top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+        }}
+      />
       <HeadBar pagename="활동 인증" bgcolor="background" backbutton="no" />
       <MainFrame
         headbar="yes"

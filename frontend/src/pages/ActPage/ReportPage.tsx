@@ -18,6 +18,8 @@ import { ReactComponent as DropdownSvg } from "../../assets/icons/dropdown.svg";
 import reportTypes from "../../common/report.json"
 import axiosInstance from "../../api/axiosInstance";
 
+import toast, { Toaster } from "react-hot-toast";
+
 interface ReportTypeProps {
   type: string;
   content: string;
@@ -128,14 +130,26 @@ export default function ReportPage() {
         },
       });
       console.log(response.status);
+      localStorage.setItem("checkPosted", "reportPosted");
       navigate(-1);
-    } catch (error) {
-      console.log("에러", error);
+    } catch (error:any) {
+      const a = error.response.data.error_code;
+      if (a === "F-003") {
+        toast.error("경고장이 없어요")
+      }
+
     }
   };
 
   return (
     <>
+      <Toaster
+        containerStyle={{
+          position: "fixed",
+          zIndex: "999",
+          top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+        }}
+      />
       <HeadBar pagename="경고장 작성" bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="no" bgcolor="white" marginsize="large">
         <InfoFrame>
