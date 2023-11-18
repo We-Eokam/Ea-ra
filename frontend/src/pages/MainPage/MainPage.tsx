@@ -103,7 +103,7 @@ export default function MainPage() {
       if (data.member_id && !data.is_test_done) {
         navigate("/welcome");
       }
-      console.log(data);
+      // console.log(data);
       setUserInfo(data);
       setGrooInit(data.groo);
       var b = Math.round((data.repay_groo / data.groo) * 100);
@@ -121,7 +121,7 @@ export default function MainPage() {
       const response = await axios.get(`/groo/current-week`);
       const data = await response.data.groo_saving_list;
       setGrooSavingList(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }

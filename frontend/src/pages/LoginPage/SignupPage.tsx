@@ -79,8 +79,9 @@ export default function SignupPage() {
     } else if (nickname !== firstNickname && nickname.length >= 2) {
       try {
         const response = await axios.get(`/member/nickname/${nickname}`);
+        // @ts-ignore
         const data = await response;
-        console.log(data);
+        // console.log(data);
         toast.success("사용 가능한 닉네임입니다");
         setIsNicknameChecked(true);
       } catch (error) {
@@ -97,7 +98,7 @@ export default function SignupPage() {
       const data = await response.data;
       if (data.member_id && data.is_test_done) {
         window.alert("이미 어라 회원입니다.");
-        // navigate("/");
+        navigate("/");
       } else {
         const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
         if (initGroo) {
@@ -105,7 +106,7 @@ export default function SignupPage() {
           // localStorage.removeItem("testGroo");
         } else {
           window.alert("테스트를 먼저 진행해주세요");
-          // navigate("/welcome");
+          navigate("/welcome");
         }
       }
       setUserInfo(data);
@@ -139,8 +140,9 @@ export default function SignupPage() {
             "Content-Type": "multipart/form-data",
           },
         });
+        // @ts-ignore
         const data = await response.data;
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         window.alert("이미지 업로드에 실패했습니다");
         console.log(error);
@@ -149,14 +151,14 @@ export default function SignupPage() {
     }
 
     if (nickname === firstNickname && groo) {
-      console.log("Ddddd");
       try {
         const response = await axios.put(`/member/test`, {
           member_id: userInfo?.member_id,
           groo: groo * 1000,
         });
+        // @ts-ignore
         const data = await response.data;
-        console.log(data);
+        // console.log(data);
         window.alert("가입되었습니다");
         navigate("/");
         return;
@@ -173,8 +175,9 @@ export default function SignupPage() {
           member_id: userInfo?.member_id,
           nickname: nickname,
         });
+        // @ts-ignore
         const data = await response.data;
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         window.alert("닉네임 변경에 실패했습니다");
         console.log(error);
@@ -189,8 +192,9 @@ export default function SignupPage() {
           member_id: userInfo?.member_id,
           groo: groo * 1000,
         });
+        // @ts-ignore
         const data = await response.data;
-        console.log(data);
+        // console.log(data);
         window.alert("가입되었습니다");
         navigate("/");
       } catch (error) {
@@ -369,8 +373,6 @@ const ProfileEdit = styled(Edit)`
   path {
     fill: var(--dark-gray);
   }
-  margin-top: -1.5px;
-  margin-left: 1px;
 `;
 
 const ProfileInput = styled.input`

@@ -119,7 +119,7 @@ export default function FeedPage() {
       const nowPosts = curPosts;
       const response = await axios.get(`/proof/feed?page=${nowPosts}&size=12`);
       const data = response.data;
-      console.log(data);
+      // console.log(data);
 
       if(response.status !== 204) {
         const memberIdsObj = data.proof.reduce((acc: { [key: number]: boolean }, post: Post) => {
