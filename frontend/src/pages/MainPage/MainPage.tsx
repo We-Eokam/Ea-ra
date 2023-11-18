@@ -186,16 +186,7 @@ export default function MainPage() {
 
           <ProgressBar progress={progress} greeninit={grooInit} />
 
-          <SummaryText>
-            주간 활동 요약{" "}
-            <span
-              onClick={() => {
-                navigate("/signup");
-              }}
-            >
-              사인업페이지
-            </span>
-          </SummaryText>
+          <SummaryText>주간 활동 요약</SummaryText>
 
           <WeekdayFrame>
             <WeekNameFrame>

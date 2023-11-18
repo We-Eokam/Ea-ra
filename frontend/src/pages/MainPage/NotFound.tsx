@@ -45,7 +45,7 @@ export default function NotFound() {
   const getDevelopers = async () => {
     try {
       const response = await axios.get(
-        `/member?memberId=1&memberId=2&memberId=3&memberId=4&memberId=5&memberId=6`
+        `/member?memberId=1&memberId=2&memberId=3&memberId=4&memberId=5&memberId=8`
       );
       const data = await response.data.member_list;
       // console.log(data)
