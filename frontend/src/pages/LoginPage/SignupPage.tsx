@@ -37,7 +37,7 @@ export default function SignupPage() {
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState<string>("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState<boolean>(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
   const [groo, setGroo] = useState(0);
   const [getNoti, setGetNoti] = useState(false);
