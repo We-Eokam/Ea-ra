@@ -23,6 +23,13 @@ spring:
     port: 5672
     username: guest
     password: guest
+  
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 cloud:
   aws:
