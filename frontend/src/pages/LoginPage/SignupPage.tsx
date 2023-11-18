@@ -1,4 +1,3 @@
-// import React from "react";
 import { ChangeEvent, useState, useEffect } from "react";
 import HeadBar from "../../components/HeadBar/HeadBar";
 import MainFrame from "../../components/MainFrame/MainFrame";
@@ -37,7 +36,8 @@ export default function SignupPage() {
   // const [isOpen, setIsOpen] = useState<boolean>(false);
   // const [selectedArea, setSelectedArea] = useState<number>(0);
   const [nickname, setNickname] = useState<string>("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState<boolean>(true);
+  const [firstNickname, setFirstNickname] = useState<string>("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
   const [groo, setGroo] = useState(0);
   const [getNoti, setGetNoti] = useState(false);
@@ -73,7 +73,10 @@ export default function SignupPage() {
   };
 
   const handleCheckNickname = async () => {
-    if (nickname.length >= 2) {
+    if (nickname === firstNickname) {
+      setIsNicknameChecked(true);
+      toast.success("사용 가능한 닉네임입니다");
+    } else if (nickname !== firstNickname && nickname.length >= 2) {
       try {
         const response = await axios.get(`/member/nickname/${nickname}`);
         const data = await response;
@@ -90,26 +93,28 @@ export default function SignupPage() {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`/member/detail?memberId=3`);
+      const response = await axios.get(`/member/detail`);
       const data = await response.data;
       if (data.member_id && data.is_test_done) {
         window.alert("이미 어라 회원입니다.");
         // navigate("/");
+      } else {
+        const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
+        if (initGroo) {
+          setGroo(initGroo);
+          // localStorage.removeItem("testGroo");
+        } else {
+          window.alert("테스트를 먼저 진행해주세요");
+          // navigate("/welcome");
+        }
       }
       setUserInfo(data);
       setNickname(data.nickname);
+      setFirstNickname(data.nickname);
+      // console.log(firstNickname)
       // console.log(data);
     } catch (error) {
       console.log(error);
-    } finally {
-      const initGroo = JSON.parse(localStorage.getItem("testGroo") || "0");
-      if (initGroo) {
-        setGroo(initGroo);
-        localStorage.removeItem("testGroo");
-      } else {
-        window.alert("테스트를 먼저 진행해주세요");
-        // navigate("/welcome");
-      }
     }
   };
 
@@ -143,8 +148,26 @@ export default function SignupPage() {
       }
     }
 
+    if (nickname === firstNickname && groo) {
+      console.log("Ddddd");
+      try {
+        const response = await axios.put(`/member/test`, {
+          member_id: userInfo?.member_id,
+          groo: groo * 1000,
+        });
+        const data = await response.data;
+        console.log(data);
+        window.alert("가입되었습니다");
+        navigate("/");
+        return;
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    }
+
     // 중복검사 true이고, 닉네임 있을 때 (없을 땐 변경 x)
-    if (nickname) {
+    if (groo && nickname) {
       try {
         const response = await axios.put(`/member/nickname`, {
           member_id: userInfo?.member_id,
