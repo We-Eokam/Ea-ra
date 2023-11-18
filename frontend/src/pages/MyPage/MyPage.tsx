@@ -26,8 +26,6 @@ interface UserInfo {
   profileImg?: string;
   nickname?: string;
   groo?: number;
-  progress: number;
-  grooInit: number;
   bill?: number;
 }
 
@@ -52,10 +50,7 @@ export default function MyPage() {
   const [progress, setProgress] = useState(0);
   const [grooInit, setGrooInit] = useState(0);
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    progress: 0,
-    grooInit: 0,
-  });
+  const [userInfo, setUserInfo] = useState<UserInfo>({});
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [curPosts, setCurPosts] = useState(0);
@@ -110,7 +105,13 @@ export default function MyPage() {
       const response = await axios.get(`/member/detail`);
       const data = response.data;
 
-      setUserInfo(data);
+      setUserInfo({
+        memberId: data.member_id,
+        profileImg: data.profile_image_url,
+        nickname: data.nickname,
+        groo: data.groo,
+        bill: data.bill,
+      });
 
       setGrooInit(data.groo);
       var b = Math.round((data.repay_groo / data.groo) * 100);
