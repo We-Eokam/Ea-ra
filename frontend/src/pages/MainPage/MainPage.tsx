@@ -33,22 +33,6 @@ interface WeeklyProps {
   proof_count: number;
 }
 
-function getCurrentWeek() {
-  const day = new Date();
-  const sunday = day.getTime() - 86400000 * day.getDay();
-
-  day.setTime(sunday);
-
-  const result = [day.toISOString().slice(0, 10)];
-
-  for (let i = 1; i < 7; i++) {
-    day.setTime(day.getTime() + 86400000);
-    result.push(day.toISOString().slice(0, 10));
-  }
-
-  return result;
-}
-
 const getCountColor = (count: number): string => {
   if (count === 0) {
     return "var(--gray)";
@@ -63,16 +47,21 @@ const getCountColor = (count: number): string => {
   }
 };
 
+const lottieList = [WowEarth, ChuEarth, MeltingEarth, CryEarth, AngryEarth];
+const lottieContent = [
+  "환경 활동을 열심히 하고 있어요!",
+  "경고장만 안 받으면 완벽해요!",
+  "활동 수보다 받은 경고장 수가 더 많아요",
+  "환경 활동을 통해 지구 상태를 바꿔보세요",
+  "오늘 하루동안 경고장만 받았어요",
+];
+
 export default function MainPage() {
-  const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
-  const [groo_saving_list, setGrooSavingList] = useState<WeeklyProps[] | null>(
-    null
-  );
+  const [userInfo, setUserInfo] = useState<UserInfoProps>();
+  const [groo_saving_list, setGrooSavingList] = useState<WeeklyProps[]>([]);
   const [progress, setProgress] = useState(0);
   const [grooInit, setGrooInit] = useState(0);
   const [lottieIndex, setLottieIndex] = useState(0);
-
-  const lottieList = [WowEarth, ChuEarth, MeltingEarth, CryEarth, AngryEarth];
 
   const navigate = useNavigate();
   const axios = axiosInstance();
@@ -107,16 +96,6 @@ export default function MainPage() {
   const day = Number(moment(date).format("DD"));
   const dateString = `${month}월 ${day}일`;
 
-  const currentWeek = getCurrentWeek();
-
-  const onlyDay = currentWeek.map((date) => {
-    const lastTwoChars: string = date.slice(-2);
-    if (lastTwoChars.startsWith("0")) {
-      return lastTwoChars.substring(1);
-    }
-    return lastTwoChars;
-  });
-
   const getUserInfo = async () => {
     try {
       const response = await axios.get(`/member/detail`);
@@ -124,6 +103,7 @@ export default function MainPage() {
       if (data.member_id && !data.is_test_done) {
         navigate("/welcome");
       }
+      console.log(data);
       setUserInfo(data);
       setGrooInit(data.groo);
       var b = Math.round((data.repay_groo / data.groo) * 100);
@@ -141,6 +121,7 @@ export default function MainPage() {
       const response = await axios.get(`/groo/current-week`);
       const data = await response.data.groo_saving_list;
       setGrooSavingList(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +165,7 @@ export default function MainPage() {
         <EarthFrame>
           <TodayEarth>
             오늘의 지구
-            <div>활동을 통해 지구 상태를 바꿔보세요!</div>
+            <div>{lottieContent[lottieIndex]}</div>
           </TodayEarth>
           <EarthLottie onClick={handleAnimationClick}>{View}</EarthLottie>
         </EarthFrame>
@@ -195,8 +176,8 @@ export default function MainPage() {
           </NicknameLine>
           <GreenLeft>
             <Bold>
-              {userInfo?.groo &&
-                userInfo?.groo
+              {userInfo &&
+                (userInfo?.groo - userInfo?.repay_groo)
                   .toString()
                   .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
             </Bold>
@@ -226,11 +207,12 @@ export default function MainPage() {
               <WeekName>금</WeekName>
               <WeekName>토</WeekName>
             </WeekNameFrame>
-            {onlyDay.map((dayNum, index) => (
+            {groo_saving_list.map((dayNum, index) => (
               <OneDay>
                 <DayNumberFrame>
-                  <DayNumber>{dayNum}</DayNumber>
-                  {dayNum === moment(date).format("DD") ? (
+                  <DayNumber>{moment(dayNum.date).format("DD")}</DayNumber>
+                  {moment(dayNum.date).format("DD") ===
+                  moment(date).format("DD") ? (
                     <DayNumberCircle />
                   ) : null}
                 </DayNumberFrame>
