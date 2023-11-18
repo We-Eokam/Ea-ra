@@ -34,7 +34,12 @@ const initFcm = () => {
                 console.log(data);
               });
             // alert("set token : " + currentToken);
-            toast.success("알림 수신에 동의하셨습니다");
+            // alert("알림 설정 성공 알림")
+            toast.success("알림 수신에 동의하였습니다", {
+              style: {
+                zIndex: "20",
+              },
+            });
             localStorage.setItem("FCM-key", currentToken);
           } else {
             console.log(

@@ -12,6 +12,7 @@ import { ReactComponent as ReportSend } from "../../assets/icons/report-send-ico
 import useInfScroll from "../../hooks/useInfScroll";
 import axiosInstance from "../../api/axiosInstance";
 import reportData from "../../common/report.json";
+import toast, { Toaster } from "react-hot-toast";
 
 interface UserInfoProps {
   id: number;
@@ -63,6 +64,16 @@ export default function ProfilePage() {
   useEffect(() => {
     getMemberInfo();
     getStatus();
+
+    const checkPosted = (localStorage.getItem("checkPosted") || "noPost");
+
+    if (checkPosted === "reportPosted") {
+      toast("경고장을 전송했어요", {
+        icon: "🚨"
+      })
+      console.log("있어어어어어어")
+    }
+    localStorage.removeItem("checkPosted");
   }, []);
   
   const getMemberInfo = async () => {
@@ -184,6 +195,13 @@ export default function ProfilePage() {
 
   return (
     <>
+      <Toaster
+        containerStyle={{
+          position: "fixed",
+          zIndex: "999",
+          top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+        }}
+      />
       <HeadBar pagename={userInfo?.nickname} bgcolor="white" backbutton="yes" center={true} />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="no">
         <UserFrame>

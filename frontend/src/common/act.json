@@ -184,6 +184,12 @@
         "name": "(주)다와",
         "logo": "/company-logo/dawa.png",
         "detail": "[텀블러/다회용컵이용] 모바일 앱(반들이) 이용자"
+      },
+      {
+        "id": 56,
+        "name": "보틀팩토리",
+        "logo": "/company-logo/bottle-factory.jpg",
+        "detail": "[텀블러·다회용컵 이용] 보틀클럽 이용자"
       }
     ]
   },
@@ -246,6 +252,18 @@
         "name": "(주)다와",
         "logo": "/company-logo/dawa.png",
         "detail": "[리필스테이션 이용] 노노샵(서울시 용산구) ※모바일 앱(반들이) 이용자"
+      },
+      {
+        "id": 26,
+        "name": "해피해빗",
+        "logo": "/company-logo/happy-habit.jpg",
+        "detail": "[리필스테이션 이용] 모바일 앱(해피해빗) 이용자"
+      },
+      {
+        "id": 56,
+        "name": "보틀팩토리",
+        "logo": "/company-logo/bottle-factory.jpg",
+        "detail": "[리필스테이션 이용] 보틀클럽 이용자"
       }
     ]
   },
@@ -307,6 +325,12 @@
         "name": "KT WIZ",
         "logo": "/company-logo/kt-wiz.jpg",
         "detail": "[다회용기 이용] 탄탄제로(KT탄소중립) 앱 이용자"
+      },
+      {
+        "id": 56,
+        "name": "보틀팩토리",
+        "logo": "/company-logo/bottle-factory.jpg",
+        "detail": "[다회용기 이용] 보틀클럽 이용자"
       }
     ]
   },

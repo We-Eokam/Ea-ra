@@ -19,6 +19,7 @@ import initFcm from "../../util/fcm.ts";
 import useInfScroll from "../../hooks/useInfScroll";
 import axiosInstance from "../../api/axiosInstance";
 import reportData from "../../common/report.json";
+import { toast, Toaster } from "react-hot-toast";
 
 interface UserInfo {
   memberId?: number;
@@ -67,6 +68,17 @@ export default function MyPage() {
 
   useEffect(() => {
     getUserInfo();
+
+    const checkPosted = localStorage.getItem("checkPosted") || "noPost";
+
+    if (checkPosted === "actPosted") {
+      toast.success("인증 게시물을 작성했어요");
+    } else if (checkPosted === "reportPosted") {
+      toast("경고장을 전송했어요", {
+        icon: "🚨",
+      });
+    }
+    localStorage.removeItem("checkPosted");
   }, []);
 
   useEffect(() => {
@@ -194,6 +206,13 @@ export default function MyPage() {
   return (
     <>
       <HeadFrame>
+        <Toaster
+          containerStyle={{
+            position: "fixed",
+            zIndex: "999",
+            top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+          }}
+        />
         <HeadContext>
           <IconContainer>
             <Add onClick={() => navigate("/act/post")} />
@@ -278,7 +297,7 @@ export default function MyPage() {
           </Opt>
           <Opt onClick={handleNoti}>
             <Notification />
-            <OptText>알림 설정</OptText>            
+            <OptText>알림 설정</OptText>
           </Opt>
           <Opt>
             <Logout />
