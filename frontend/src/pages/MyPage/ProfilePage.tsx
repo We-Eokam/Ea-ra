@@ -41,6 +41,10 @@ const calcPercent = (tmp: number, total: number) => {
   return Math.round((tmp / total) * 100)
 };
 
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+}
+
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [ userInfo, setUserInfo ] = useState<UserInfoProps | null>(null);
@@ -213,7 +217,7 @@ export default function ProfilePage() {
                 {userInfo?.leftGroo === 0 ? (
                   "그루를 다 갚았어요 !"
                 ) : (
-                  `빚 청산까지 ${userInfo?.leftGroo}그루`
+                  `${addComma(userInfo?.leftGroo)}그루`
                 )}
               </SubText>
             </TextBox>

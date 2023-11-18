@@ -22,11 +22,12 @@ import reportData from "../../common/report.json";
 import { toast, Toaster } from "react-hot-toast";
 
 interface UserInfo {
-  memberId?: number;
-  profileImg?: string;
-  nickname?: string;
-  groo?: number;
-  bill?: number;
+  memberId: number;
+  profileImg: string;
+  nickname: string;
+  groo: number;
+  leftGroo: number;
+  bill: number;
 }
 
 interface Post {
@@ -39,6 +40,10 @@ interface Report {
   imageUrl: string;
 }
 
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+}
+
 export default function MyPage() {
   const navigate = useNavigate();
   const axios = axiosInstance();
@@ -49,8 +54,7 @@ export default function MyPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [grooInit, setGrooInit] = useState(0);
-
-  const [userInfo, setUserInfo] = useState<UserInfo>({});
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [curPosts, setCurPosts] = useState(0);
@@ -110,6 +114,7 @@ export default function MyPage() {
         profileImg: data.profile_image_url,
         nickname: data.nickname,
         groo: data.groo,
+        leftGroo: data.groo - data.repay_groo,
         bill: data.bill,
       });
 
@@ -153,7 +158,7 @@ export default function MyPage() {
     try {
       const nowReports = curReports;
       const response = await axios.get(
-        `/accusation?targetId=${userInfo.memberId}&page=${nowReports}&size=12`
+        `/accusation?targetId=${userInfo?.memberId}&page=${nowReports}&size=12`
       );
       const data = response.data;
 
@@ -204,6 +209,10 @@ export default function MyPage() {
     navigate(`/${where}/${id}`);
   };
 
+  if (userInfo === null) {
+    return
+  }
+
   return (
     <>
       <HeadFrame>
@@ -227,7 +236,13 @@ export default function MyPage() {
             <ProfileImg src={userInfo.profileImg} />
             <TextBox>
               {userInfo.nickname}
-              <SubText>{userInfo.groo}그루</SubText>
+              <SubText>
+                {userInfo?.leftGroo === 0 ? (
+                    "그루를 다 갚았어요 !"
+                  ) : (
+                    `${addComma(userInfo?.leftGroo)}그루`
+                  )}
+              </SubText>
             </TextBox>
             <ShowBtn onClick={navigateFriends}> 친구 보기 </ShowBtn>
           </UserInfoContainer>

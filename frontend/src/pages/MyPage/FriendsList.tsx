@@ -13,9 +13,13 @@ import toast, { Toaster } from "react-hot-toast";
 
 interface User {
   id: number;
-  profileImg?: string;
-  nickname?: string;
-  groo?: number;
+  profileImg: string;
+  nickname: string;
+  groo: number;
+}
+
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
 }
 
 export default function FriendsList() {
@@ -26,9 +30,7 @@ export default function FriendsList() {
   const [modalContent, setModalContent] = useState("");
 
   const [friends, setFriends] = useState<User[]>([]);
-  const [target, setTarget] = useState<User>({
-    id: 0
-  });
+  const [target, setTarget] = useState<User | null>(null);
 
   useEffect(() => {
     getFriends();
@@ -43,7 +45,7 @@ export default function FriendsList() {
         id: member.member_id,
         profileImg: member.profile_image_url,
         nickname: member.nickname,
-        groo: member.groo
+        groo: member.groo - member.repay_groo,
       }));
 
       setFriends(transUsers);
@@ -53,7 +55,7 @@ export default function FriendsList() {
   }
 
   const deleteFriend = async () => {
-    if (!target.id) return;
+    if (!target) return;
 
     try {
       await axios.delete(`/member/follow?targetId=${target.id}`);
@@ -69,10 +71,6 @@ export default function FriendsList() {
 
   const handleReportBtn = (e: any, userId: number) => {
     e.stopPropagation();
-    goToReport(userId);
-  }
-
-  const goToReport = (userId: number) => {
     navigate(`/act/report?target=${userId}`);
   }
 
@@ -89,7 +87,7 @@ export default function FriendsList() {
 
   const closeModal = () => {
     setModalOpen(false);
-    setTarget({ id: 0 });
+    setTarget(null);
   };
 
   return (
@@ -111,7 +109,13 @@ export default function FriendsList() {
               <ProfileImg src={friend.profileImg} />
               <TextBox>
                 {friend.nickname}
-                <SubText>{friend.groo}그루</SubText>
+                <SubText>
+                  {friend.groo === 0 ? (
+                    "그루를 다 갚았어요 !"
+                  ) : (
+                    `${addComma(friend.groo)}그루`
+                  )}
+                </SubText>
               </TextBox>
               <IconContainer>
                 <ReportSend onClick={(e) => handleReportBtn(e, friend.id)} />
