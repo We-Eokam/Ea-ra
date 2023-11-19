@@ -141,7 +141,7 @@ export default function MapPage() {
 
         setMapLat(lat);
         setMapLng(lon);
-
+        map.setCenter(locPosition);
 
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
@@ -158,14 +158,10 @@ export default function MapPage() {
           image: markerImage,
         });
 
+        map.setCenter(locPosition);
         marker.setMap(map);
-        map.setCenter(locPosition);
-
         getFirstStore(lat, lon);
-        map.setCenter(locPosition);
-
       });
-      map.setCenter(mapLat, mapLng)
     }
     kakao.maps.event.addListener(map, "dragend", function () {
       var center = map.getCenter();
@@ -188,7 +184,6 @@ export default function MapPage() {
       }
       setMapLevel(radius);
     });
-
   }, []);
 
   const clearMarkers = () => {
