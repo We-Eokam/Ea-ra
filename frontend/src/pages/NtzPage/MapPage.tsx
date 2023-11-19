@@ -62,8 +62,8 @@ export default function MapPage() {
 
   const [selectedCategoryIndex, setSelectedCategoryIndex] =
     useState<number>(10);
-  const [mapLat, setMapLat] = useState(0);
-  const [mapLng, setMapLng] = useState(0);
+  const [mapLat, setMapLat] = useState(37.5013068);
+  const [mapLng, setMapLng] = useState(127.0396597);
   const [mapLevel, setMapLevel] = useState(555);
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [markers, setMarkers] = useState([]);
@@ -120,9 +120,9 @@ export default function MapPage() {
   }
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      console.log("")
-    }
+    // if (navigator.geolocation) {
+    //   console.log("")
+    // }
     var container = document.getElementById("map");
     var options = {
       center: new kakao.maps.LatLng(37.5013068, 127.0396597),
@@ -145,7 +145,7 @@ export default function MapPage() {
         
         setMapLat(lat);
         setMapLng(lon);
-        getFirstStore(lat, lon);
+        // getFirstStore(lat, lon);
 
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
@@ -230,17 +230,17 @@ export default function MapPage() {
     }
   };
 
-  const getFirstStore = async (initlat: number, initlon: number) => {
-    try {
-      const response = await axios.get(
-        `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
-      );
-      const data = await response.data.store_list;
-      setStoreList(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getFirstStore = async (initlat: number, initlon: number) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
+  //     );
+  //     const data = await response.data.store_list;
+  //     setStoreList(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
