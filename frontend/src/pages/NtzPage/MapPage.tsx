@@ -74,7 +74,7 @@ export default function MapPage() {
     }, 250);
   }, []);
 
-  var filteredList : StoreProps[] = [];
+  var filteredList: StoreProps[] = [];
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -122,7 +122,7 @@ export default function MapPage() {
   useEffect(() => {
     const container = document.getElementById("map");
     const options = {
-      center: new kakao.maps.LatLng(33.450701, 126.570667),
+      center: new kakao.maps.LatLng(37.5013068, 127.0396597),
       level: 4,
     };
 
@@ -139,8 +139,6 @@ export default function MapPage() {
 
         setMapLat(lat);
         setMapLng(lon);
-
-        getFirstStore(lat, lon);
 
         var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
@@ -161,6 +159,7 @@ export default function MapPage() {
         });
 
         marker.setMap(map);
+        getFirstStore(lat, lon);
       });
     }
     kakao.maps.event.addListener(map, "dragend", function () {
@@ -170,17 +169,17 @@ export default function MapPage() {
       var mapLevel = map.getLevel();
       setMapLat(newLat);
       setMapLng(newLng);
-      var radius = 605;
+      var radius = 555;
       if (mapLevel == 1) {
-        radius = 158;
+        radius = 108;
       } else if (mapLevel == 2) {
-        radius = 212;
+        radius = 162;
       } else if (mapLevel == 3) {
-        radius = 360;
+        radius = 310;
       } else if (mapLevel == 4) {
-        radius = 605;
+        radius = 555;
       } else if (mapLevel > 4) {
-        radius = 1095;
+        radius = 1045;
       }
       setMapLevel(radius);
     });
