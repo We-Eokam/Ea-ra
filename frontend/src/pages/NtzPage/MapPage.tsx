@@ -160,7 +160,7 @@ export default function MapPage() {
 
         map.setCenter(locPosition);
         marker.setMap(map);
-        getFirstStore(lat, lon);
+        // getFirstStore(lat, lon);
       });
     }
     kakao.maps.event.addListener(map, "dragend", function () {
@@ -228,17 +228,17 @@ export default function MapPage() {
     }
   };
 
-  const getFirstStore = async (initlat: number, initlon: number) => {
-    try {
-      const response = await axios.get(
-        `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
-      );
-      const data = await response.data.store_list;
-      setStoreList(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getFirstStore = async (initlat: number, initlon: number) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
+  //     );
+  //     const data = await response.data.store_list;
+  //     setStoreList(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
