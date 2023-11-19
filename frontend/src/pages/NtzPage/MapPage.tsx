@@ -120,29 +120,31 @@ export default function MapPage() {
   }
 
   useEffect(() => {
-    const container = document.getElementById("map");
-    const options = {
+    if (navigator.geolocation) {
+      console.log("")
+    }
+    var container = document.getElementById("map");
+    var options = {
       center: new kakao.maps.LatLng(37.5013068, 127.0396597),
       level: 4,
     };
 
+    var map = new kakao.maps.Map(container, options);
+    setKakaoMap(map);
+    
+    map.setMinLevel(1);
+    map.setMaxLevel(8);
+    
     if (navigator.geolocation) {
-      const map = new kakao.maps.Map(container, options);
-      setKakaoMap(map);
-
-      map.setMinLevel(1);
-      map.setMaxLevel(8);
-
       navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude - 0.00025;
-        var lon = position.coords.longitude;
-
-        setMapLat(lat);
-        setMapLng(lon);
+        var lon = position.coords.longitude - 0.0003;
 
         var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
-
+        
+        setMapLat(lat);
+        setMapLng(lon);
         getFirstStore(lat, lon);
 
         var imageSrc = "/images/netzero/gps-my.png";
