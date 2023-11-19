@@ -145,15 +145,16 @@ export default function MapPage() {
     //   navigator.geolocation.watchPosition(function (position) {
         // var lat = position.coords.latitude - 0.00025;
         // var lon = position.coords.longitude;
-
+      setTimeout(() => {
+        
         setMapLat(latTest);
         setMapLng(lngTest);
-
+        
         getFirstStore(latTest, lngTest);
-
+        
         var locPosition = new kakao.maps.LatLng(latTest, lngTest);
         map.setCenter(locPosition);
-
+        
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
         var imageOption = { offset: new kakao.maps.Point(16, 24) };
@@ -162,14 +163,15 @@ export default function MapPage() {
           imageSrc,
           imageSize,
           imageOption
-        );
+          );
 
-        var marker = new kakao.maps.Marker({
-          position: locPosition,
-          image: markerImage,
-        });
-
-        marker.setMap(map);
+          var marker = new kakao.maps.Marker({
+            position: locPosition,
+            image: markerImage,
+          });
+          
+          marker.setMap(map);
+        }, 250);
     //   });
     // }
     kakao.maps.event.addListener(map, "dragend", function () {
