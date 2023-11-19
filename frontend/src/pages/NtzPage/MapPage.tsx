@@ -120,9 +120,18 @@ export default function MapPage() {
   }
 
   useEffect(() => {
+    var latTest = 37.5013068;
+    var lngTest = 127.0396597;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(function (position) {
+        latTest = position.coords.latitude;
+        lngTest = position.coords.longitude;
+  })}
+
     const container = document.getElementById("map");
     const options = {
-      center: new kakao.maps.LatLng(37.5013068, 127.0396597),
+      center: new kakao.maps.LatLng(latTest, lngTest),
       level: 4,
     };
 
@@ -132,17 +141,17 @@ export default function MapPage() {
     map.setMinLevel(1);
     map.setMaxLevel(8);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function (position) {
-        var lat = position.coords.latitude - 0.00025;
-        var lon = position.coords.longitude;
+    // if (navigator.geolocation) {
+    //   navigator.geolocation.watchPosition(function (position) {
+        // var lat = position.coords.latitude - 0.00025;
+        // var lon = position.coords.longitude;
 
-        setMapLat(lat);
-        setMapLng(lon);
+        setMapLat(latTest);
+        setMapLng(lngTest);
 
-        getFirstStore(lat, lon);
+        getFirstStore(latTest, lngTest);
 
-        var locPosition = new kakao.maps.LatLng(lat, lon);
+        var locPosition = new kakao.maps.LatLng(latTest, lngTest);
         map.setCenter(locPosition);
 
         var imageSrc = "/images/netzero/gps-my.png";
@@ -161,8 +170,8 @@ export default function MapPage() {
         });
 
         marker.setMap(map);
-      });
-    }
+    //   });
+    // }
     kakao.maps.event.addListener(map, "dragend", function () {
       var center = map.getCenter();
       var newLat = center.getLat();
