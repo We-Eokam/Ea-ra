@@ -118,10 +118,20 @@ export default function MapPage() {
       }
     }
   }
+  
+  var lat = 37.5013068;
+  var lon = 127.0396597;
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      location.reload();
+      console.log("위치정보가 없습니다")
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        lat = position.coords.latitude - 0.00025;
+        lon = position.coords.longitude - 0.0003;
+      })
     }
     var container = document.getElementById("map");
     var options = {
@@ -137,8 +147,9 @@ export default function MapPage() {
     
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude - 0.00025;
-        var lon = position.coords.longitude - 0.0003;
+        lat = position.coords.latitude - 0.00025;
+        lon = position.coords.longitude - 0.0003;
+        window.alert("위치정보가 있습니다")
 
         var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
