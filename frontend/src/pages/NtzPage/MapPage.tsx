@@ -64,7 +64,7 @@ export default function MapPage() {
     useState<number>(10);
   const [mapLat, setMapLat] = useState(0);
   const [mapLng, setMapLng] = useState(0);
-  const [mapLevel, setMapLevel] = useState(505);
+  const [mapLevel, setMapLevel] = useState(555);
   const [kakaoMap, setKakaoMap] = useState<any>(null);
   const [markers, setMarkers] = useState([]);
 
@@ -74,7 +74,7 @@ export default function MapPage() {
     }, 250);
   }, []);
 
-  var filteredList : StoreProps[] = [];
+  var filteredList: StoreProps[] = [];
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -170,17 +170,17 @@ export default function MapPage() {
       var mapLevel = map.getLevel();
       setMapLat(newLat);
       setMapLng(newLng);
-      var radius = 605;
+      var radius = 555;
       if (mapLevel == 1) {
-        radius = 158;
+        radius = 108;
       } else if (mapLevel == 2) {
-        radius = 212;
+        radius = 162;
       } else if (mapLevel == 3) {
-        radius = 360;
+        radius = 310;
       } else if (mapLevel == 4) {
-        radius = 605;
+        radius = 555;
       } else if (mapLevel > 4) {
-        radius = 1095;
+        radius = 1045;
       }
       setMapLevel(radius);
     });
