@@ -122,17 +122,17 @@ export default function MapPage() {
   useEffect(() => {
     const container = document.getElementById("map");
     const options = {
-      center: new kakao.maps.LatLng(33.450701, 126.570667),
+      center: new kakao.maps.LatLng(37.5013068, 127.0396597),
       level: 4,
     };
 
-    const map = new kakao.maps.Map(container, options);
-    setKakaoMap(map);
-
-    map.setMinLevel(1);
-    map.setMaxLevel(8);
-
     if (navigator.geolocation) {
+      const map = new kakao.maps.Map(container, options);
+      setKakaoMap(map);
+
+      map.setMinLevel(1);
+      map.setMaxLevel(8);
+
       navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude - 0.00025;
         var lon = position.coords.longitude;
@@ -140,10 +140,10 @@ export default function MapPage() {
         setMapLat(lat);
         setMapLng(lon);
 
-        getFirstStore(lat, lon);
-
         var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
+
+        getFirstStore(lat, lon);
 
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
