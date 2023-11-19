@@ -17,6 +17,10 @@ interface FriendDataProps {
   groo: number;
 }
 
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+}
+
 export default function SearchBar({ setUserId, type }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -36,12 +40,12 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
     try {
       const response = await axios.get(`/member${type}/list`);
       const data = response.data;
-      console.log(data)
+      // console.log(data)
       const transUsers = data.member_list.map((member: any) => ({
         id: member.member_id,
         profileImg: member.profile_image_url,
         nickname: member.nickname,
-        groo: member.groo
+        groo: member.groo - member.repay_groo
       }));
       setEntire(transUsers);
       if (type === "/follow") {
@@ -106,11 +110,14 @@ export default function SearchBar({ setUserId, type }: SearchBarProps) {
       </SearchBarFrame>
       <SearchResultFrame isFocused={isFocused}>
         {results.map((user) => (
-          <UserInfoContainer onClick={() => setUserId(user.id)}>
+          <UserInfoContainer
+            type={type}
+            onClick={() => setUserId(user.id)}
+          >
             <ProfileImg src={user.profileImg} />
             <TextBox>
               {user.nickname}
-              <SubText>{user.groo}그루</SubText>
+              <SubText>{addComma(user.groo)}그루</SubText>
             </TextBox>
           </UserInfoContainer>
         ))}
@@ -128,7 +135,7 @@ const SearchBarFrame = styled.div<{ type: string }>`
   padding: ${(props) => (props.type === "" ? "0 20px" : "0")};
   left: 0;
   right: 0;
-  height: 52px;
+  height: 56px;
   border-bottom: 0.5px solid var(--gray);
   display: flex;
   align-items: center;
@@ -141,7 +148,7 @@ const SearchWindow = styled.div<{ isFocused: boolean, px: number }>`
   padding: 0px 6px;
   width: ${(props) => (props.isFocused ? `calc(100% - ${props?.px}px)` : "100%")};
   transition: width 0.3s ease-in-out;
-  height: 32px;
+  height: 36px;
   border-radius: 6px;
   background-color: var(--gray);
   display: flex;
@@ -154,14 +161,14 @@ const SearchInput = styled.input`
   border: none;
   outline: none;
   background-color: transparent;
+  font-size: 15px;
 `;
 
 const CancelButton = styled.div<{ isFocused: Boolean }>`
   position: absolute;
   white-space: nowrap;
-  font-size: 14px;
-  font-weight: 400;
-  right: -24px; // Adjust this value as needed
+  font-size: 15px;
+  right: -24px;
   right: ${(props) => (props.isFocused ? "18px" : "-24px")};
   opacity: ${(props) => (props.isFocused ? "1" : "0")};
   visibility: ${(props) => (props.isFocused ? "visible" : "hidden")};
@@ -175,8 +182,8 @@ const SearchResultFrame = styled.div<{ isFocused: boolean }>`
   position: absolute;
   left: 0;
   right: 0;
-  margin-top: calc(env(safe-area-inset-top) + 53px);
-  height: calc(100% - 76px);
+  margin-top: calc(env(safe-area-inset-top) + 57px);
+  height: calc(100% - 80px);
   z-index: 1;
   background-color: var(--white);
   overflow-y: scroll;
@@ -188,19 +195,19 @@ const SearchResultFrame = styled.div<{ isFocused: boolean }>`
     transform 0.3s;
 `;
 
-const UserInfoContainer = styled.div`
+const UserInfoContainer = styled.div<{ type: string }>`
   position: relative;
   left: 0;
   right: 0;
-  padding: 0 4.44%;
+  padding: ${(props) => (props.type === "" ? "0 5.56%" : "0")};
   display: flex;
   align-items: center;
   margin: 20px 0;
 `;
 
 const ProfileImg = styled.img`
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;
