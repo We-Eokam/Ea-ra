@@ -118,45 +118,32 @@ export default function MapPage() {
       }
     }
   }
-  
-  var lat = 37.5013068;
-  var lon = 127.0396597;
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      console.log("위치정보가 없습니다")
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        lat = position.coords.latitude - 0.00025;
-        lon = position.coords.longitude - 0.0003;
-      })
-    }
-    var container = document.getElementById("map");
-    var options = {
+    const container = document.getElementById("map");
+    const options = {
       center: new kakao.maps.LatLng(37.5013068, 127.0396597),
       level: 4,
     };
 
-    var map = new kakao.maps.Map(container, options);
+    const map = new kakao.maps.Map(container, options);
     setKakaoMap(map);
-    
+
     map.setMinLevel(1);
     map.setMaxLevel(8);
-    
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        lat = position.coords.latitude - 0.00025;
-        lon = position.coords.longitude - 0.0003;
-        window.alert("위치정보가 있습니다")
+      navigator.geolocation.watchPosition(function (position) {
+        var lat = position.coords.latitude - 0.00025;
+        var lon = position.coords.longitude;
+
+        setMapLat(lat);
+        setMapLng(lon);
+
+        getFirstStore(lat, lon);
 
         var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
-        
-        setMapLat(lat);
-        setMapLng(lon);
-        // getFirstStore(lat, lon);
 
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
@@ -183,17 +170,17 @@ export default function MapPage() {
       var mapLevel = map.getLevel();
       setMapLat(newLat);
       setMapLng(newLng);
-      var radius = 555;
+      var radius = 605;
       if (mapLevel == 1) {
-        radius = 108;
+        radius = 158;
       } else if (mapLevel == 2) {
-        radius = 162;
+        radius = 212;
       } else if (mapLevel == 3) {
-        radius = 310;
+        radius = 360;
       } else if (mapLevel == 4) {
-        radius = 555;
+        radius = 605;
       } else if (mapLevel > 4) {
-        radius = 1045;
+        radius = 1095;
       }
       setMapLevel(radius);
     });
@@ -241,17 +228,17 @@ export default function MapPage() {
     }
   };
 
-  // const getFirstStore = async (initlat: number, initlon: number) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
-  //     );
-  //     const data = await response.data.store_list;
-  //     setStoreList(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getFirstStore = async (initlat: number, initlon: number) => {
+    try {
+      const response = await axios.get(
+        `/cpoint/store?radius=505&latitude=${initlat}&longitude=${initlon}`
+      );
+      const data = await response.data.store_list;
+      setStoreList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
