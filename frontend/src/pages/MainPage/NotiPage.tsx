@@ -93,7 +93,7 @@ export default function NotiPage() {
 
   useEffect(() => {
     if (notiDatas) {
-      console.log(notiDatas)
+      // console.log(notiDatas)
       const uniqueSenderIds = Array.from(
         new Set(notiDatas?.map(noti => noti.senderId))
       );

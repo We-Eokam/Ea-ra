@@ -268,9 +268,9 @@ const EarthFrame = styled.div`
 
 const TodayEarth = styled.div`
   text-align: center;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 550;
-  line-height: 30px;
+  line-height: 28px;
   color: var(--primary);
   div {
     font-size: 16px;
@@ -280,7 +280,7 @@ const TodayEarth = styled.div`
 `;
 
 const EarthLottie = styled.div`
-  width: 52%;
+  width: 50%;
   padding-top: 8px;
   cursor: pointer;
 `;
