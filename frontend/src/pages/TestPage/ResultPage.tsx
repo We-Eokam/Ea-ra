@@ -13,6 +13,7 @@ import data from "../../common/result.json";
 import { ScoreBar } from "../../components/ProgressBar/ScoreBar";
 import { ReactComponent as CopySvg } from "../../assets/icons/copy_icon.svg";
 import axiosInstance from "../../api/axiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 interface ResultDataProps {
   type: number;
@@ -119,7 +120,8 @@ export default function ResultPage() {
     const urlToCopy = `${import.meta.env.VITE_BASEURL_FRONT}/earth-trial?code=${initCode}${earthType.type}${shareInfo[0]}`;
     navigator.clipboard.writeText(urlToCopy)
       .then(() => {
-        console.log("URL이 클립보드에 복사되었습니다.");
+        // console.log("URL이 클립보드에 복사되었습니다.");
+        toast.success("복사되었습니다");
       })
       .catch(error => {
         console.error("클립보드에 복사하는 데 실패했습니다.", error);
@@ -128,6 +130,13 @@ export default function ResultPage() {
 
   return (
     <MainFrame>
+      <Toaster
+        containerStyle={{
+          position: "fixed",
+          zIndex: "999",
+          top: "calc(env(safe-area-inset-top) * 2 + 20px)",
+        }}
+      />
       {wrong && (
         <WrongPage>
           <Title>
