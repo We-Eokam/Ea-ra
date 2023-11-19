@@ -74,7 +74,7 @@ export default function MapPage() {
     }, 250);
   }, []);
 
-  var filteredList: StoreProps[] = [];
+  var filteredList : StoreProps[] = [];
 
   // 클릭된 카테고리를 출력
   const handleCategoryClick = (index: number) => {
@@ -120,18 +120,9 @@ export default function MapPage() {
   }
 
   useEffect(() => {
-    var latTest = 37.5013068;
-    var lngTest = 127.0396597;
-
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function (position) {
-        latTest = position.coords.latitude;
-        lngTest = position.coords.longitude;
-  })}
-
     const container = document.getElementById("map");
     const options = {
-      center: new kakao.maps.LatLng(latTest, lngTest),
+      center: new kakao.maps.LatLng(33.450701, 126.570667),
       level: 4,
     };
 
@@ -141,20 +132,19 @@ export default function MapPage() {
     map.setMinLevel(1);
     map.setMaxLevel(8);
 
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.watchPosition(function (position) {
-        // var lat = position.coords.latitude - 0.00025;
-        // var lon = position.coords.longitude;
-      setTimeout(() => {
-        
-        setMapLat(latTest);
-        setMapLng(lngTest);
-        
-        getFirstStore(latTest, lngTest);
-        
-        var locPosition = new kakao.maps.LatLng(latTest, lngTest);
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(function (position) {
+        var lat = position.coords.latitude - 0.00025;
+        var lon = position.coords.longitude;
+
+        setMapLat(lat);
+        setMapLng(lon);
+
+        getFirstStore(lat, lon);
+
+        var locPosition = new kakao.maps.LatLng(lat, lon);
         map.setCenter(locPosition);
-        
+
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
         var imageOption = { offset: new kakao.maps.Point(16, 24) };
@@ -163,17 +153,16 @@ export default function MapPage() {
           imageSrc,
           imageSize,
           imageOption
-          );
+        );
 
-          var marker = new kakao.maps.Marker({
-            position: locPosition,
-            image: markerImage,
-          });
-          
-          marker.setMap(map);
-        }, 250);
-    //   });
-    // }
+        var marker = new kakao.maps.Marker({
+          position: locPosition,
+          image: markerImage,
+        });
+
+        marker.setMap(map);
+      });
+    }
     kakao.maps.event.addListener(map, "dragend", function () {
       var center = map.getCenter();
       var newLat = center.getLat();
