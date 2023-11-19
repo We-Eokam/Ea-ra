@@ -28,7 +28,7 @@ public class FcmTokenTokenServiceImpl implements FcmTokenService {
 	@Override
 	public TokenDto getToken(Long memberId) {
 		Token token = fcmTokenRepository.findTokenByMemberId(memberId)
-			.orElseThrow();
+			.orElse(new Token("-1", "unValidToken"));
 		return TokenDto.from(token);
 	}
 

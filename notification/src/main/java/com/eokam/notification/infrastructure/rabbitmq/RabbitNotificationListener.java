@@ -26,7 +26,7 @@ public class RabbitNotificationListener {
 	private final MemberServiceFeign memberServiceFeign;
 
 	@RabbitListener(queues = "notificationQueue")
-	public void receiveMessage(AccusationRequest accusationRequest) throws FirebaseMessagingException {
+	public void receiveMessage(AccusationRequest accusationRequest) {
 		NotificationDto notificationDto = notificationService.saveAccusationNotification(
 			NotificationDto.accusation(accusationRequest));
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
@@ -34,16 +34,20 @@ public class RabbitNotificationListener {
 		String prefix =
 			memberServiceFeign.getMemberDetail(accusationRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
-		fcmMessageService.sendMessageTo(
-			fcmService.getToken(notificationDto.getReceiver()).token(),
-			"환경 오염 제보",
-			prefix + notificationDto.getContent()
-		);
+		try {
+			fcmMessageService.sendMessageTo(
+				fcmService.getToken(notificationDto.getReceiver()).token(),
+				"환경 오염 제보",
+				prefix + notificationDto.getContent()
+			);
+		} catch (FirebaseMessagingException e) {
+			log.error("Firebase Cloud Messaging Token is Not exists: '{}'", notificationDto);
+		}
 		log.info("Message sent successfully. Message: '{}'", notificationDto.getContent());
 	}
 
 	@RabbitListener(queues = "followRequestQueue")
-	public void receiveFollowMessage(FollowRequest followRequest) throws FirebaseMessagingException {
+	public void receiveFollowMessage(FollowRequest followRequest) {
 		NotificationDto notificationDto = notificationService.saveFollowNotification(
 			NotificationDto.follow(followRequest));
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
@@ -51,16 +55,20 @@ public class RabbitNotificationListener {
 		String prefix =
 			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
-		fcmMessageService.sendMessageTo(
-			fcmService.getToken(notificationDto.getReceiver()).token(),
-			"친구 요청",
-			prefix + notificationDto.getContent()
-		);
+		try {
+			fcmMessageService.sendMessageTo(
+				fcmService.getToken(notificationDto.getReceiver()).token(),
+				"친구 요청",
+				prefix + notificationDto.getContent()
+			);
+		} catch (FirebaseMessagingException e) {
+			log.error("Firebase Cloud Messaging Token is Not exists: '{}'", notificationDto);
+		}
 		log.info("Message sent successfully. Message: '{}'", notificationDto.getContent());
 	}
 
 	@RabbitListener(queues = "followAcceptQueue")
-	public void receiveAcceptMessage(FollowRequest followRequest) throws FirebaseMessagingException {
+	public void receiveAcceptMessage(FollowRequest followRequest) {
 		NotificationDto notificationDto = notificationService.saveFollowAcceptNotification(
 			NotificationDto.followAccept(followRequest));
 		log.info("Data has been successfully saved to the Notification. Saved Data: '{}'", notificationDto);
@@ -68,11 +76,15 @@ public class RabbitNotificationListener {
 		String prefix =
 			memberServiceFeign.getMemberDetail(followRequest.sender()).memberList().get(0).nickname() + "님이 ";
 
-		fcmMessageService.sendMessageTo(
-			fcmService.getToken(notificationDto.getReceiver()).token(),
-			"친구 요청 수락",
-			prefix + notificationDto.getContent()
-		);
+		try {
+			fcmMessageService.sendMessageTo(
+				fcmService.getToken(notificationDto.getReceiver()).token(),
+				"친구 요청 수락",
+				prefix + notificationDto.getContent()
+			);
+		} catch (FirebaseMessagingException e) {
+			log.error("Firebase Cloud Messaging Token is Not exists: '{}'", notificationDto);
+		}
 		log.info("Message sent successfully. Message: '{}'", notificationDto.getContent());
 	}
 }
