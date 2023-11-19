@@ -41,6 +41,7 @@ interface RequestProps {
 }
 
 export default function ReportPage() {
+  const [reportAble, setReportAble] = useState(false);
   const [activityType, setActivityType] = useState<ReportTypeProps>(
     reportTypes[0]
   );
@@ -71,6 +72,16 @@ export default function ReportPage() {
       setFriendInfo(null);
     }
   }, [friendId])
+
+  useEffect(() => {
+    if (!croppedImage || !friendId) {
+      setReportAble(false);
+    } else if (activityType.type === "OTHER" && !activityDetail) {
+      setReportAble(false);
+    } else {
+      setReportAble(true);
+    }
+  }, [croppedImage, friendId, activityType, activityDetail])
 
   const getFriendInfo = async () => {
     try {
@@ -106,7 +117,7 @@ export default function ReportPage() {
   };
 
   const hadleReportClick = async () => {
-    if (!croppedImage || !friendId || (activityType.type==="OTHER" && !activityDetail)) {
+    if (!reportAble || !friendId || !croppedImage) {
       return
     }
 
@@ -216,9 +227,12 @@ export default function ReportPage() {
       </MainFrame>
 
       <ButtonFrame>
-        <LongButton background="var(--red)" onClick={hadleReportClick}>
+        <ReportButton 
+          isAble={reportAble}
+          onClick={hadleReportClick}
+        >
           경고장 보내기
-        </LongButton>
+        </ReportButton>
       </ButtonFrame>
 
       <Background isShow={isModalOpen} onClick={() => setIsModalOpen(false)}>
@@ -353,6 +367,12 @@ const ImgIcon = styled.img`
 
 const Margin = styled.div`
   margin: 88px;
+`;
+
+const ReportButton = styled(LongButton)<{ isAble: boolean }>`
+  color: ${(props) => (props.isAble ? "var(--white)" : "var(--black)")};
+  background-color: ${(props) => (props.isAble ? "var(--red)" : "var(--gray)")};
+  cursor: ${(props) => (props.isAble ? "pointer" : "")};
 `;
 
 const FriendListFrame = styled.div`

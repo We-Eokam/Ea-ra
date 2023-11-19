@@ -26,6 +26,7 @@ interface DataProps {
 }
 
 export default function PostPage() {
+  const [postAble, setPostAble] = useState(false);
   const [type, setType] = useState(1);
   const [actType, setActType] = useState<DataProps>(data[0]);
   const [showOptions, setShowOptions] = useState(false);
@@ -48,6 +49,14 @@ export default function PostPage() {
   useEffect(() => {
     setActType(data[type - 1]);
   }, [type]);
+
+  useEffect(() => {
+    if (!croppedImage || (isRegist && !selectCompanyIdx)) {
+      setPostAble(false);
+    } else {
+      setPostAble(true);
+    }
+  }, [croppedImage, isRegist, selectCompanyIdx])
 
   const handleSelectOption = (index: number) => {
     if (index + 1 !== type) {
@@ -73,7 +82,7 @@ export default function PostPage() {
   };
 
   const hadlePostClick = async () => {
-    if (!croppedImage || (isRegist && !selectCompanyIdx)) {
+    if (!postAble || !croppedImage) {
       return
     }
     const formData = new FormData();
@@ -98,7 +107,7 @@ export default function PostPage() {
       localStorage.setItem("checkPosted", "actPosted");
       navigate(-1);
     } catch (error) {
-      console.log("에러", error);
+      console.log(error);
     }
   };
 
@@ -170,7 +179,12 @@ export default function PostPage() {
         )}
         <Margin />
         <ButtonFrame>
-          <LongButton onClick={hadlePostClick}>인증하기</LongButton>
+          <PostButton
+            isAble = {postAble}
+            onClick={hadlePostClick}
+          >
+            인증하기
+          </PostButton>
         </ButtonFrame>
       </MainFrame>
     </>
@@ -267,6 +281,12 @@ const Button = styled(ShortButton)<{ isSelected: boolean }>`
   &:hover {
     font-size: 14px;
   }
+`;
+
+const PostButton = styled(LongButton)<{ isAble: boolean }>`
+  color: ${(props) => (props.isAble ? "var(--white)" : "var(--black)")};
+  background-color: ${(props) => (props.isAble ? "var(--primary)" : "var(--gray)")};
+  cursor: ${(props) => (props.isAble ? "pointer" : "")};
 `;
 
 const Margin = styled.div`

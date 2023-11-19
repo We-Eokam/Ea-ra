@@ -25,14 +25,18 @@ interface Post {
   writerNickname?: string;
   activity_type?: string | number;
   activity?: string;
-  cpoint?: number;
-  groo?: number;
+  cpoint: number;
+  groo: number;
 }
 
 interface UserInfo {
   member_id: number;
   profile_image_url: string;
   nickname: string;
+}
+
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
 }
 
 export default function FeedPage() {
@@ -180,11 +184,11 @@ export default function FeedPage() {
                 {(post.cpoint !== 0) && 
                     <>
                       <PointCircle />
-                      <RewardText>{post.cpoint} 포인트 적립</RewardText>
+                      <RewardText>{addComma(post.cpoint)} 포인트 적립</RewardText>
                     </>
                   }
                   <GruCircle />
-                  <RewardText>{post.groo} 그루 갚음</RewardText>
+                  <RewardText>{addComma(post.groo)} 그루 갚음</RewardText>
                   <RewardText style={{ marginLeft: 0 }}> |&nbsp;&nbsp;{formatDate(post.created_at)} </RewardText>
                 </RewardContainer>
               </TextBox>
@@ -205,7 +209,6 @@ export default function FeedPage() {
             <div ref={feedInfScrollRef} />
           </PostFrame>
         ))}
-        <BottomMargin />
       </MainFrame>
 
       <NavBar />
@@ -215,7 +218,7 @@ export default function FeedPage() {
 
 const Margin = styled.div`
   position: relative;
-  height: calc(env(safe-area-inset-top) + 52px);
+  height: calc(env(safe-area-inset-top) + 56px);
   width: 100%;
 `
 
@@ -232,8 +235,8 @@ const WriterContainer = styled.div`
 `;
 
 const ProfileImg = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 0.5px solid var(--nav-gray);
   box-sizing: border-box;
@@ -242,7 +245,7 @@ const ProfileImg = styled.img`
 const TextBox = styled.div`
   margin-top: 4px;
   margin-left: 4%;
-  width: calc(100% - 50px);
+  width: calc(96% - 48px);
   font-size: 14px;
   word-wrap: break-word;
 `;
@@ -283,7 +286,3 @@ const ActImg = styled.img`
 //   margin-left: 4px;
 //   font-size: 12px;
 // `;
-
-const BottomMargin = styled.div`
-  height: 16px;
-`;

@@ -27,8 +27,12 @@ interface Post {
 }
 
 interface Reward {
-  cpoint: string | number;
-  groo: string | number;
+  cpoint: number;
+  groo: number;
+}
+
+const addComma = (groo: number) => {
+  return groo.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
 }
 
 export default function PostDetail() {
@@ -173,11 +177,11 @@ export default function PostDetail() {
           {(reward.cpoint !== 0) && 
             <>
               <PointCircle />
-              <RewardText>{reward.cpoint} 포인트 적립</RewardText>
+              <RewardText>{addComma(reward.cpoint)} 포인트 적립</RewardText>
             </>
           }
           <GruCircle />
-          <RewardText>{reward.groo} 그루 갚음</RewardText>
+          <RewardText>{addComma(reward.groo)} 그루 갚음</RewardText>
         </RewardContainer>
         <MiddleMargin/>
         <ActContainer>
@@ -272,7 +276,10 @@ const RewardText = styled.div`
 `;
 
 const MiddleMargin = styled.div`
-  width: calc(100% + 32px);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   height: 8px;
   background-color: var(--background);
 `;
