@@ -137,8 +137,7 @@ export default function MapPage() {
         var lat = position.coords.latitude - 0.00025;
         var lon = position.coords.longitude - 0.0003;
         var locPosition = new kakao.maps.LatLng(lat, lon);
-        // map.setCenter(locPosition);
-        map.panTo(locPosition);
+        map.setCenter(locPosition);
 
         setMapLat(lat);
         setMapLng(lon);
@@ -160,8 +159,13 @@ export default function MapPage() {
         });
 
         marker.setMap(map);
+        map.setCenter(locPosition);
+
         getFirstStore(lat, lon);
+        map.setCenter(locPosition);
+
       });
+      map.setCenter(mapLat, mapLng)
     }
     kakao.maps.event.addListener(map, "dragend", function () {
       var center = map.getCenter();
@@ -184,6 +188,7 @@ export default function MapPage() {
       }
       setMapLevel(radius);
     });
+
   }, []);
 
   const clearMarkers = () => {
