@@ -120,9 +120,9 @@ export default function MapPage() {
   }
 
   useEffect(() => {
-    // if (navigator.geolocation) {
-    //   console.log("")
-    // }
+    if (!navigator.geolocation) {
+      location.reload();
+    }
     var container = document.getElementById("map");
     var options = {
       center: new kakao.maps.LatLng(37.5013068, 127.0396597),
