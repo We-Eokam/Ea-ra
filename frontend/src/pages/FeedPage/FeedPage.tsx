@@ -218,7 +218,7 @@ export default function FeedPage() {
 
 const Margin = styled.div`
   position: relative;
-  height: calc(env(safe-area-inset-top) + 56px);
+  height: 8px;
   width: 100%;
 `
 
