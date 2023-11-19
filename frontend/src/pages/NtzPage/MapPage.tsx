@@ -133,7 +133,7 @@ export default function MapPage() {
     map.setMaxLevel(8);
 
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function (position) {
+      navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude - 0.00025;
         var lon = position.coords.longitude - 0.0003;
         var locPosition = new kakao.maps.LatLng(lat, lon);
