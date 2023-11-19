@@ -135,13 +135,14 @@ export default function MapPage() {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(function (position) {
         var lat = position.coords.latitude - 0.00025;
-        var lon = position.coords.longitude;
+        var lon = position.coords.longitude - 0.0003;
+        var locPosition = new kakao.maps.LatLng(lat, lon);
+        // map.setCenter(locPosition);
+        map.panTo(locPosition);
 
         setMapLat(lat);
         setMapLng(lon);
 
-        var locPosition = new kakao.maps.LatLng(lat, lon);
-        map.setCenter(locPosition);
 
         var imageSrc = "/images/netzero/gps-my.png";
         var imageSize = new kakao.maps.Size(32, 32);
