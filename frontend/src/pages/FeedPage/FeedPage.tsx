@@ -167,7 +167,7 @@ export default function FeedPage() {
   return (
     <>
       <SearchBar setUserId={setSearchUserId} type=""/>
-      <MainFrame headbar="no" navbar="yes" bgcolor="white" marginsize="small">
+      <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="small">
         <Margin />
         {posts.map((post, index) => (
           <PostFrame key={index} onClick={() => goToDetail(post.proof_id)}>
