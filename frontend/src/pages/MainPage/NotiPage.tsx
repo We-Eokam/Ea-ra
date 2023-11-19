@@ -8,6 +8,7 @@ import styled from "styled-components";
 import FollowBtn from "../../components/Buttons/FollowButton";
 import axiosInstance from "../../api/axiosInstance";
 import reportData from "../../common/report.json";
+import { ReactComponent as Notification } from "../../assets/icons/noti-setting.svg";
 
 interface NotiProps {
   senderId: number;
@@ -150,32 +151,39 @@ export default function NotiPage() {
       <HeadBar pagename="알림" bgcolor="white" backbutton="yes" />
       <MainFrame headbar="yes" navbar="yes" bgcolor="white" marginsize="medium">
         <MarginFrame />
-        {notiDatas && notiDatas.map((notice, index) => (
-          <Container key={index}>
-            <LeftContainer>
-              <ProfileImg
-                src={userDatas[notice.senderId]?.profileImg}
-                onClick={() => {navigate(`/profile/${notice.senderId}`)}}
-              />
-              <TextContainer>
-                <NickName>{userDatas[notice.senderId]?.nickname}</NickName>
-                님이 {notice.content}
-                <Time>{formatDate(notice.createdAt)}</Time>
-              </TextContainer>
-            </LeftContainer>
-            {notice.accusationType ? (
-              <WitnessImg src={findeTemplate(notice.accusationType)} />
-            ) : userDatas[notice.senderId]?.status === "ACCEPT" ? (
-                <FollowBtn
-                  status={userDatas[notice.senderId]?.status}
-                  setStatus={newStatus => updateUserStatus(notice.senderId, newStatus as string)}
-                  target={notice.senderId}
+        {notiDatas ? (
+          notiDatas.map((notice, index) => (
+            <Container key={index}>
+              <LeftContainer>
+                <ProfileImg
+                  src={userDatas[notice.senderId]?.profileImg}
+                  onClick={() => {navigate(`/profile/${notice.senderId}`)}}
                 />
-            ) : (
-              ""
-            )}
-          </Container>
-        ))}
+                <TextContainer>
+                  <NickName>{userDatas[notice.senderId]?.nickname}</NickName>
+                  님이 {notice.content}
+                  <Time>{formatDate(notice.createdAt)}</Time>
+                </TextContainer>
+              </LeftContainer>
+              {notice.accusationType ? (
+                <WitnessImg src={findeTemplate(notice.accusationType)} />
+              ) : userDatas[notice.senderId]?.status === "ACCEPT" ? (
+                  <FollowBtn
+                    status={userDatas[notice.senderId]?.status}
+                    setStatus={newStatus => updateUserStatus(notice.senderId, newStatus as string)}
+                    target={notice.senderId}
+                  />
+              ) : (
+                ""
+              )}
+            </Container>
+          ))
+        ) : (
+          <NoNoti>
+           <Notification/>
+            알림이 없습니다.
+          </NoNoti>
+        )}
       </MainFrame>
       <NavBar />
     </>
@@ -230,5 +238,16 @@ const NickName = styled.span`
 
 const Time = styled.span`
   padding-left: 2%;
+  color: var(--dark-gray);
+`;
+
+const NoNoti = styled.div`
+  margin-top: 120px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
   color: var(--dark-gray);
 `;
