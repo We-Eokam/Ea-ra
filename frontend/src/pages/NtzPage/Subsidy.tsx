@@ -1,13 +1,31 @@
-import styled from "styled-components";
-
 // import React from 'react'
-import HeadBar from "../../components/HeadBar/HeadBar"
-import NavBar from "../../components/NavBar/NavBar"
-import MainFrame from "../../components/MainFrame/MainFrame"
-import { LongButton } from "../../style"
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import HeadBar from "../../components/HeadBar/HeadBar";
+import NavBar from "../../components/NavBar/NavBar";
+import MainFrame from "../../components/MainFrame/MainFrame";
+import { LongButton } from "../../style";
+import axiosInstance from "../../api/axiosInstance";
 
 export default function Subsidy() {
-  const signupURL = "https://cpoint.or.kr/netzero/member/nv_memberRegistStep1.do"
+  const [userName, setUsername] = useState<String>("");
+  const signupURL =
+    "https://cpoint.or.kr/netzero/member/nv_memberRegistStep1.do";
+  const axios = axiosInstance();
+
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(`/member/detail`);
+      const data = await response.data.nickname;
+      setUsername(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   return (
     <>
@@ -19,7 +37,7 @@ export default function Subsidy() {
           아직도 가입 안하셨나요?
         </Title>
         <SubTitle>
-          환경지켜님, 제도 가입 시<br />연 최대 70,000원을 받을 수 있어요
+          {userName}님, 제도 가입 시<br />연 최대 70,000원을 받을 수 있어요
         </SubTitle>
 
         <ImageFrame>
@@ -52,7 +70,13 @@ export default function Subsidy() {
         <ForMargin />
       </MainFrame>
       <SignUpFrame>
-        <SingupButton onClick={() => {window.open(signupURL)}}>가입하기</SingupButton>
+        <SingupButton
+          onClick={() => {
+            window.open(signupURL);
+          }}
+        >
+          가입하기
+        </SingupButton>
       </SignUpFrame>
       <NavBar />
     </>

@@ -27,7 +27,7 @@ interface SummaryProps {
 export default function NtzPage() {
   const [charSort, setChartSort] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfoProps | null>(null);
-  const [userCpoint, setUserCpoint] = useState(0);
+  const [userCpoint, setUserCpoint] = useState<number>(0);
   const [summary_list, setSummaryList] = useState<SummaryProps[]>([]);
   // const [summary_list, setSummaryList] = useState([
   //   { activity_type: "TUMBLER", point: 1 },
@@ -56,7 +56,7 @@ export default function NtzPage() {
     try {
       const response = await axios.get(`/cpoint`);
       const data = await response.data;
-      setUserCpoint(data?.cpoint);
+      setUserCpoint(data.cpoint);
     } catch (error) {
       console.log(error);
     }
@@ -193,7 +193,12 @@ export default function NtzPage() {
             이번달 모은 <Green>탄소중립포인트</Green>는
           </TextLine>
           <CPoint>
-            <Bold>{userCpoint ? userCpoint : 0}</Bold>원
+            <Bold>
+              {userCpoint
+                .toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
+            </Bold>
+            원
           </CPoint>
           <PigCoinFrame>
             <PigCoin />
