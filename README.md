@@ -1,7 +1,7 @@
 <div align="center">
-<h2>
+<h1>
 	생활 속 탄소 중립 실천 동행 서비스
-</h2>
+</h1>
 <img src="https://github.com/We-Eokam/Ea-ra/assets/80499642/f18375d7-6ef8-4a8f-9a77-ba5650770fd7"/>
 <p>
 <br>어느 날 지구가 갑자기 당신을 고소한다면?<br>
