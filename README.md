@@ -12,8 +12,9 @@
 <br><br>
 </p>
 <p>
-<a href=""><img src="https://img.shields.io/badge/EARA%20체험해보기-56B984?style=flat-square&logo=vercel&logoColor=white"/></a>
+<a href=""><img src="https://img.shields.io/badge/EARA%20직접%20체험-56B984?style=flat-square&logo=vercel&logoColor=white"/></a>
 <a href="https://lemonade-log.notion.site/38aa0b3d39b948e8aac676cb81f86f50?v=b0a1bfa1a8c048c1b01986e233ea6772&pvs=4"><img src="https://img.shields.io/badge/팀%20 어캄%20Wiki-000000?style=flat-square&logo=notion&logoColor=white"/></a>
+<a href="https://youtu.be/8FcnqC_jvRc?feature=shared&t=65"><img src="https://img.shields.io/badge/EARA%20소개%20영상-FF0000?style=flat-square&logo=youtube&logoColor=white"/></a>
 <br><br>
 </p>
 
@@ -24,30 +25,26 @@
 <br /><br /><br />
 
 ## 🎉 프로젝트 소개
+EARA(어라)는 생활 속 탄소 중립 실천을 인증하고, 탄소 중립 포인트 제도와 동행하는 서비스입니다.
 
- <table>
-    <tr>
-      <td align="center"><img src="=" /></td>
-      <td align="center"><img src="" /></td>
-      <td align="center"><img src="" /></td>
-    </tr>
-</table>
+<div align="center"><img src="https://github.com/We-Eokam/Ea-ra/assets/80499642/a5d122ef-5089-4892-9373-da7644b3facb" /></div>
 
-
-📝 <b>서비스 설명</b>
-
-> 가입 후 테스트를 통해 가상의 벌금이 측정됩니다. \
-> 카카오톡 공유를 통해 친구에게 테스트 결과를 공유할 수 있습니다.\
-> 생활 속 탄소 중립 실천을 통해 벌금을 갚을 수 있습니다. \
-> 실천을 인증하면 이를 바탕으로 예상 탄소 중립 포인트를 추정합니다. \
-> 제보를 통해 친구에게 경고장을 전송할 수도 있습니다. \
-> 복잡한 탄소 중립 포인트 제도 정보를 보기 쉽게 제공합니다. \
-> 현재 위치를 기반으로 포인트 적립 가능한 주변 매장을 안내합니다. \
+가입 후 테스트를 통해 가상의 벌금이 측정되고, 생활 속 탄소 중립 실천을 통해 이를 갚을 수 있습니다. 복잡한 탄소 중립 포인트 제도 정보를 보기 쉽게 제공하고, 생활 속 실천을 인증하면 이를 바탕으로 예상 포인트를 추정합니다. 또, 이러한 활동을 친구들과 즐길 수 있도록 제보를 통해 친구에게 경고장을 전송할 수도 있습니다.
 
 <br /><br /><br />
 
 ## ✨ 주요 기능
-> 자세한 내용은 [시연 시나리오](./exec/시연시나리오.md) 를 확인해주세요😃
+<table>
+    <tr>
+      <td align="center"><img src="https://github.com/We-Eokam/Ea-ra/assets/80499642/e5974262-f037-4951-aa5e-a0a351f8b494" /></td>
+      <td align="center"><img src="https://github.com/We-Eokam/Ea-ra/assets/80499642/38f37e60-c582-4988-be57-10ca7a74e158" /></td>
+      <td align="center"><img src="https://github.com/We-Eokam/Ea-ra/assets/80499642/3889960d-4cd8-4d9c-97c4-c162e4192cd3" /></td>
+    </tr>
+    <tr>
+	<td align="center" colspan="3">자세한 내용은 <a href="./exec/시연시나리오.md">시연 시나리오</a> 를 확인해주세요😃</td>
+    </tr>
+</table>
+
 <br>
 
 - [x] 카카오 **소셜 로그인** 지원
